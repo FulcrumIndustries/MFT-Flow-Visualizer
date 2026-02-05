@@ -132,6 +132,161 @@
             border-bottom: 1px solid var(--border-color);
             box-shadow: var(--shadow-sm);
             flex-shrink: 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Animated Noisy Gradient with Organic Waves */
+        .header-gradient {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 70%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            mask-image: linear-gradient(to left, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.5) 50%, rgba(0,0,0,0.2) 75%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to left, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.5) 50%, rgba(0,0,0,0.2) 75%, transparent 100%);
+        }
+
+        .header-gradient-inner {
+            position: absolute;
+            top: -100%;
+            left: -100%;
+            width: 400%;
+            height: 400%;
+            background: 
+                radial-gradient(ellipse 80% 60% at 15% 40%, rgba(96, 180, 172, 0.7) 0%, transparent 50%),
+                radial-gradient(ellipse 70% 80% at 70% 30%, rgba(230, 160, 130, 0.65) 0%, transparent 45%),
+                radial-gradient(ellipse 60% 70% at 40% 70%, rgba(40, 60, 80, 0.6) 0%, transparent 50%),
+                radial-gradient(ellipse 90% 50% at 85% 60%, rgba(200, 140, 120, 0.55) 0%, transparent 55%),
+                radial-gradient(ellipse 50% 60% at 25% 80%, rgba(80, 150, 160, 0.5) 0%, transparent 45%);
+            animation: organicFlow 20s ease-in-out infinite;
+            filter: blur(40px);
+        }
+
+        .header-gradient-wave1 {
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: 
+                radial-gradient(ellipse 100% 40% at 30% 50%, rgba(96, 180, 172, 0.4) 0%, transparent 60%),
+                radial-gradient(ellipse 80% 50% at 70% 60%, rgba(40, 50, 70, 0.35) 0%, transparent 55%);
+            animation: waveFlow1 15s ease-in-out infinite;
+            filter: blur(30px);
+        }
+
+        .header-gradient-wave2 {
+            position: absolute;
+            top: -30%;
+            left: -30%;
+            width: 160%;
+            height: 160%;
+            background: 
+                radial-gradient(ellipse 70% 60% at 60% 40%, rgba(220, 150, 120, 0.45) 0%, transparent 50%),
+                radial-gradient(ellipse 60% 40% at 20% 70%, rgba(100, 170, 170, 0.35) 0%, transparent 55%);
+            animation: waveFlow2 18s ease-in-out infinite reverse;
+            filter: blur(35px);
+        }
+
+        .header-gradient-noise {
+            position: absolute;
+            top: -10%;
+            left: -10%;
+            width: 120%;
+            height: 120%;
+            opacity: 0.35;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='5' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+            mix-blend-mode: overlay;
+            animation: noiseShift 0.5s steps(3) infinite;
+        }
+
+        .header-gradient-grain {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.2;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='grain'%3E%3CfeTurbulence type='turbulence' baseFrequency='0.85' numOctaves='4' result='noise'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23grain)'/%3E%3C/svg%3E");
+            mix-blend-mode: soft-light;
+        }
+
+        @keyframes organicFlow {
+            0%, 100% {
+                transform: translate(0, 0) rotate(0deg) scale(1);
+            }
+            20% {
+                transform: translate(5%, 3%) rotate(2deg) scale(1.05);
+            }
+            40% {
+                transform: translate(-3%, 5%) rotate(-1deg) scale(0.98);
+            }
+            60% {
+                transform: translate(4%, -2%) rotate(1.5deg) scale(1.02);
+            }
+            80% {
+                transform: translate(-2%, -3%) rotate(-0.5deg) scale(1.03);
+            }
+        }
+
+        @keyframes waveFlow1 {
+            0%, 100% {
+                transform: translate(0, 0) rotate(0deg);
+            }
+            33% {
+                transform: translate(8%, -5%) rotate(3deg);
+            }
+            66% {
+                transform: translate(-5%, 8%) rotate(-2deg);
+            }
+        }
+
+        @keyframes waveFlow2 {
+            0%, 100% {
+                transform: translate(0, 0) rotate(0deg);
+            }
+            50% {
+                transform: translate(-6%, 6%) rotate(-4deg);
+            }
+        }
+
+        @keyframes noiseShift {
+            0% { transform: translate(0, 0); }
+            33% { transform: translate(-1px, 1px); }
+            66% { transform: translate(1px, -1px); }
+            100% { transform: translate(0, 0); }
+        }
+
+        [data-theme="dark"] .header-gradient-inner {
+            background: 
+                radial-gradient(ellipse 80% 60% at 15% 40%, rgba(80, 160, 155, 0.75) 0%, transparent 50%),
+                radial-gradient(ellipse 70% 80% at 70% 30%, rgba(210, 140, 110, 0.7) 0%, transparent 45%),
+                radial-gradient(ellipse 60% 70% at 40% 70%, rgba(30, 45, 65, 0.65) 0%, transparent 50%),
+                radial-gradient(ellipse 90% 50% at 85% 60%, rgba(190, 130, 100, 0.6) 0%, transparent 55%),
+                radial-gradient(ellipse 50% 60% at 25% 80%, rgba(70, 140, 150, 0.55) 0%, transparent 45%);
+        }
+
+        [data-theme="dark"] .header-gradient-wave1 {
+            background: 
+                radial-gradient(ellipse 100% 40% at 30% 50%, rgba(80, 160, 155, 0.5) 0%, transparent 60%),
+                radial-gradient(ellipse 80% 50% at 70% 60%, rgba(30, 40, 60, 0.45) 0%, transparent 55%);
+        }
+
+        [data-theme="dark"] .header-gradient-wave2 {
+            background: 
+                radial-gradient(ellipse 70% 60% at 60% 40%, rgba(200, 130, 100, 0.5) 0%, transparent 50%),
+                radial-gradient(ellipse 60% 40% at 20% 70%, rgba(90, 155, 160, 0.4) 0%, transparent 55%);
+        }
+
+        [data-theme="dark"] .header-gradient-noise {
+            opacity: 0.4;
+        }
+
+        [data-theme="dark"] .header-gradient-grain {
+            opacity: 0.25;
         }
 
         .header-left {
@@ -165,6 +320,13 @@
             display: flex;
             align-items: center;
             gap: 8px;
+        }
+
+        .workspace-divider {
+            width: 1px;
+            height: 20px;
+            background: var(--border-color);
+            margin: 0 4px;
         }
 
         .workspace-select {
@@ -336,6 +498,12 @@
         /* ============================================
            CANVAS SECTION
            ============================================ */
+        .canvas-wrapper {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
         .canvas-section {
             flex: 1;
             position: relative;
@@ -347,6 +515,7 @@
             min-width: 100%;
             min-height: 100%;
             padding: 20px;
+            display: inline-block;
         }
 
         /* Empty State */
@@ -381,15 +550,31 @@
            FLOW ROW STYLES
            ============================================ */
         .flow-row {
-            display: flex;
+            display: inline-flex;
             align-items: center;
             margin-bottom: 40px;
             padding: 20px;
+            padding-right: 30px;
             background: var(--bg-secondary);
             border-radius: var(--border-radius-lg);
             border: 1px solid var(--border-color);
             box-shadow: var(--shadow-sm);
             position: relative;
+            cursor: pointer;
+            transition: all var(--transition-speed);
+            min-width: calc(100% - 40px);
+            white-space: nowrap;
+        }
+
+        .flow-row:hover {
+            border-color: var(--accent-primary);
+            box-shadow: var(--shadow-md);
+        }
+
+        .flow-row.selected {
+            border-color: var(--accent-primary);
+            border-width: 2px;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
         }
 
         .flow-row:last-child {
@@ -475,28 +660,22 @@
         .edge-line {
             flex: 1;
             height: 2px;
-            background: var(--edge-color);
             position: relative;
-        }
-
-        .edge-line::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: repeating-linear-gradient(90deg,
+            background-image: repeating-linear-gradient(90deg,
                     var(--edge-color) 0,
                     var(--edge-color) 6px,
                     transparent 6px,
                     transparent 10px);
-            animation: flowDash 0.5s linear infinite;
+            background-size: 10px 2px;
+            animation: flowDash 0.4s linear infinite;
         }
 
         @keyframes flowDash {
+            from {
+                background-position: 0 0;
+            }
             to {
-                transform: translateX(10px);
+                background-position: 10px 0;
             }
         }
 
@@ -527,6 +706,40 @@
             left: 50%;
             transform: translateX(-50%);
             white-space: nowrap;
+        }
+
+        .edge-protocol.invalid {
+            font-style: italic;
+            border-color: var(--accent-warning, #ff9800);
+            background: var(--bg-warning, rgba(255, 152, 0, 0.1));
+        }
+
+        .edge-protocol.invalid::before {
+            content: '⚠ ';
+            margin-right: 2px;
+        }
+
+        .edge-protocol-select {
+            background: var(--bg-secondary);
+            border: 1px solid var(--accent-warning, #ff9800);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            position: absolute;
+            top: -22px;
+            left: 50%;
+            transform: translateX(-50%);
+            white-space: nowrap;
+            cursor: pointer;
+            min-width: 150px;
+            font-style: italic;
+        }
+
+        .edge-protocol-select:focus {
+            outline: 2px solid var(--accent-primary);
+            outline-offset: 2px;
         }
 
         /* ============================================
@@ -570,6 +783,71 @@
             text-transform: uppercase;
             letter-spacing: 0.5px;
             text-align: center;
+        }
+
+        /* ============================================
+           SOURCE/TARGET DESCRIPTION FIELDS
+           ============================================ */
+        .flow-description-field {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 8px;
+            min-width: 120px;
+            max-width: 180px;
+        }
+
+        .flow-description-label {
+            font-size: 9px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+
+        .flow-description-input {
+            width: 100%;
+            min-height: 60px;
+            padding: 8px;
+            font-size: 11px;
+            border: 1px dashed var(--border-color);
+            border-radius: var(--border-radius);
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            text-align: center;
+            resize: vertical;
+            transition: all var(--transition-speed);
+        }
+
+        .flow-description-input::placeholder {
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        .flow-description-input:focus {
+            outline: none;
+            border-style: solid;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+        }
+
+        .flow-description-field.before-source .flow-description-input {
+            border-color: var(--node-source);
+        }
+
+        .flow-description-field.after-target .flow-description-input {
+            border-color: var(--node-target);
+        }
+
+        .flow-description-field.before-source .flow-description-input:focus {
+            border-color: var(--node-source);
+            box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.2);
+        }
+
+        .flow-description-field.after-target .flow-description-input:focus {
+            border-color: var(--node-target);
+            box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2);
         }
 
         /* ============================================
@@ -638,6 +916,59 @@
             display: flex;
             justify-content: flex-end;
             gap: 8px;
+        }
+
+        /* ============================================
+           LOADING OVERLAY
+           ============================================ */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 50%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .loading-overlay.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(255, 255, 255, 0.2);
+            border-top-color: #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .loading-text {
+            color: #ffffff;
+            font-size: 16px;
+            margin-top: 20px;
+            font-weight: 500;
+        }
+
+        .loading-subtext {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 13px;
+            margin-top: 8px;
         }
 
         /* ============================================
@@ -711,6 +1042,152 @@
         }
 
         /* ============================================
+           PATTERN INFO PANEL
+           ============================================ */
+        .pattern-info-panel {
+            width: 350px;
+            background: var(--bg-secondary);
+            border-left: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+
+        .pattern-info-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border-color);
+            background: var(--bg-tertiary);
+        }
+
+        .pattern-info-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .flow-selector {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            font-size: 13px;
+            cursor: pointer;
+            transition: all var(--transition-speed);
+        }
+
+        .flow-selector:hover {
+            border-color: var(--accent-primary);
+        }
+
+        .flow-selector:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+
+        .pattern-info-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .info-section {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .info-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .general-notes-field {
+            width: 100%;
+            min-height: 150px;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            font-family: var(--font-family);
+            font-size: 13px;
+            line-height: 1.5;
+            resize: vertical;
+            transition: all var(--transition-speed);
+        }
+
+        .general-notes-field:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+
+        .general-notes-field::placeholder {
+            color: var(--text-muted);
+        }
+
+        .required-products-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .product-item {
+            padding: 12px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            transition: all var(--transition-speed);
+        }
+
+        .product-item:hover {
+            border-color: var(--accent-primary);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .product-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .product-capabilities {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .capability-badge {
+            padding: 4px 8px;
+            background: var(--accent-primary);
+            color: white;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        .no-products-message {
+            padding: 20px;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 13px;
+            font-style: italic;
+        }
+
+        /* ============================================
            RESPONSIVE
            ============================================ */
         @media (max-width: 768px) {
@@ -740,6 +1217,15 @@
             .flow-row {
                 overflow-x: auto;
             }
+
+            .canvas-wrapper {
+                flex-direction: column;
+            }
+
+            .pattern-info-panel {
+                width: 100%;
+                max-height: 300px;
+            }
         }
     </style>
 </head>
@@ -748,6 +1234,15 @@
     <div class="app-container">
         <!-- Header -->
         <header class="header">
+            <!-- Animated Organic Wavy Gradient with Grain -->
+            <div class="header-gradient">
+                <div class="header-gradient-inner"></div>
+                <div class="header-gradient-wave1"></div>
+                <div class="header-gradient-wave2"></div>
+                <div class="header-gradient-noise"></div>
+                <div class="header-gradient-grain"></div>
+            </div>
+            
             <div class="header-left">
                 <div class="logo">
                     <div class="logo-icon">⇌</div>
@@ -785,6 +1280,34 @@
                             </path>
                         </svg>
                     </button>
+                    <span class="workspace-divider"></span>
+                    <button id="exportWorkspaceBtn" class="btn btn-icon" title="Export Workspace">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="7 10 12 15 17 10"></polyline>
+                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                        </svg>
+                    </button>
+                    <button id="importWorkspaceBtn" class="btn btn-icon" title="Import Workspace">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="17 8 12 3 7 8"></polyline>
+                            <line x1="12" y1="3" x2="12" y2="15"></line>
+                        </svg>
+                    </button>
+                    <button id="exportPdfBtn" class="btn btn-icon" title="Export PDF Report">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <line x1="16" y1="13" x2="8" y2="13"></line>
+                            <line x1="16" y1="17" x2="8" y2="17"></line>
+                            <polyline points="10 9 9 9 8 9"></polyline>
+                        </svg>
+                    </button>
+                    <input type="file" id="importFileInput" accept=".json" style="display: none;">
                 </div>
             </div>
             <div class="header-right">
@@ -833,20 +1356,46 @@ TESTZ <- PeSIT PULL <- CFT -> SSH PUSH -> TESTF" spellcheck="false"></textarea>
         </section>
 
         <!-- Canvas Section -->
-        <section class="canvas-section">
-            <div id="canvasContainer" class="canvas-container">
-                <!-- Flow rows will be rendered here -->
-            </div>
+        <div class="canvas-wrapper">
+            <section class="canvas-section">
+                <div id="canvasContainer" class="canvas-container">
+                    <!-- Flow rows will be rendered here -->
+                </div>
 
-            <div id="emptyState" class="empty-state">
-                <div class="empty-state-icon">⇌</div>
-                <div class="empty-state-title">No Flows Defined</div>
-                <div class="empty-state-description">
-                    Enter flow patterns in the editor above to visualize your MFT flows.
+                <div id="emptyState" class="empty-state">
+                    <div class="empty-state-icon">⇌</div>
+                    <div class="empty-state-title">No Flows Defined</div>
+                    <div class="empty-state-description">
+                        Enter flow patterns in the editor above to visualize your MFT flows.
+                    </div>
+                </div>
+            </section>
+
+            <!-- Pattern Info Panel -->
+            <div id="patternInfoPanel" class="pattern-info-panel">
+                <div class="pattern-info-header">
+                    <span class="pattern-info-title">Flow Information</span>
+                </div>
+                <div class="pattern-info-content">
+                    <div class="info-section">
+                        <label class="info-label">Select Flow</label>
+                        <select id="flowSelector" class="flow-selector">
+                            <option value="">-- Select a flow --</option>
+                        </select>
+                    </div>
+                    <div class="info-section">
+                        <label class="info-label">General Notes</label>
+                        <textarea id="generalNotesField" class="general-notes-field" placeholder="Add general notes about this flow..."></textarea>
+                    </div>
+                    <div class="info-section">
+                        <label class="info-label">Potential Products</label>
+                        <div id="requiredProductsList" class="required-products-list">
+                            <div class="no-products-message">Select a flow to see potential products</div>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </section>
-    </div>
+        </div>
 
     <!-- Help Panel -->
     <div id="helpPanel" class="help-panel">
@@ -887,6 +1436,13 @@ TESTZ <- PeSIT PULL <- CFT -> SSH PUSH -> TESTF" spellcheck="false"></textarea>
         </div>
     </div>
 
+    <!-- Loading Overlay for PDF Generation -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Generating PDF Report</div>
+        <div class="loading-subtext">Please wait...</div>
+    </div>
+
     <!-- Modal for Rename/New Workspace -->
     <div id="modalOverlay" class="modal-overlay">
         <div class="modal">
@@ -899,6 +1455,9 @@ TESTZ <- PeSIT PULL <- CFT -> SSH PUSH -> TESTF" spellcheck="false"></textarea>
         </div>
     </div>
 
+    <script src="products_capabilities.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script>
         // ============================================
         // UTILITY FUNCTIONS
@@ -961,6 +1520,50 @@ TESTZ <- PeSIT PULL <- CFT -> SSH PUSH -> TESTF" spellcheck="false"></textarea>
                 }
             },
 
+            updateFlowNotes(flowIndex, text) {
+                const workspace = this.getActiveWorkspace();
+                if (workspace) {
+                    if (!workspace.flowNotes) {
+                        workspace.flowNotes = {};
+                    }
+                    workspace.flowNotes[flowIndex] = text;
+                    workspace.metadata.updatedAt = Date.now();
+                    this.notify({ type: 'FLOW_NOTES_UPDATED', workspaceId: workspace.id, flowIndex });
+                }
+            },
+
+            getFlowNotes(flowIndex) {
+                const workspace = this.getActiveWorkspace();
+                if (workspace && workspace.flowNotes) {
+                    return workspace.flowNotes[flowIndex] || '';
+                }
+                return '';
+            },
+
+            updateFlowDescription(flowIndex, type, text) {
+                // type is 'beforeSource' or 'afterTarget'
+                const workspace = this.getActiveWorkspace();
+                if (workspace) {
+                    if (!workspace.flowDescriptions) {
+                        workspace.flowDescriptions = {};
+                    }
+                    const key = `${flowIndex}-${type}`;
+                    workspace.flowDescriptions[key] = text;
+                    workspace.metadata.updatedAt = Date.now();
+                    this.notify({ type: 'FLOW_DESCRIPTION_UPDATED', workspaceId: workspace.id, flowIndex, descType: type });
+                }
+            },
+
+            getFlowDescription(flowIndex, type) {
+                // type is 'beforeSource' or 'afterTarget'
+                const workspace = this.getActiveWorkspace();
+                if (workspace && workspace.flowDescriptions) {
+                    const key = `${flowIndex}-${type}`;
+                    return workspace.flowDescriptions[key] || '';
+                }
+                return '';
+            },
+
             updateAnnotation(flowIndex, edgeIndex, field, value) {
                 const workspace = this.getActiveWorkspace();
                 if (workspace) {
@@ -1006,6 +1609,8 @@ TESTZ <- PeSIT PULL <- CFT -> SSH PUSH -> TESTF" spellcheck="false"></textarea>
                             id: ws.id,
                             name: ws.name,
                             patternText: ws.patternText,
+                            flowNotes: ws.flowNotes || {},
+                            flowDescriptions: ws.flowDescriptions || {},
                             annotations: ws.annotations || {},
                             metadata: ws.metadata
                         }))
@@ -1028,12 +1633,14 @@ TESTZ <- PeSIT PULL <- CFT -> SSH PUSH -> TESTF" spellcheck="false"></textarea>
                     // Convert workspaces array back to Map
                     const workspaces = new Map();
                     if (data.workspaces) {
-                        data.workspaces.forEach(ws => {
-                            workspaces.set(ws.id, {
-                                ...ws,
-                                annotations: ws.annotations || {}
-                            });
+                    data.workspaces.forEach(ws => {
+                        workspaces.set(ws.id, {
+                            ...ws,
+                            flowNotes: ws.flowNotes || {},
+                            flowDescriptions: ws.flowDescriptions || {},
+                            annotations: ws.annotations || {}
                         });
+                    });
                     }
 
                     return {
@@ -1061,6 +1668,8 @@ TESTZ <- PeSIT PULL <- CFT -> SSH PUSH -> TESTF" spellcheck="false"></textarea>
                     id,
                     name,
                     patternText: '',
+                    flowNotes: {},
+                    flowDescriptions: {},
                     annotations: {},
                     metadata: {
                         createdAt: Date.now(),
@@ -1216,11 +1825,8 @@ TESTZ <- PeSIT PULL <- CFT -> SSH PUSH -> TESTF" spellcheck="false"></textarea>
 
                 let currentIndex = 0;
 
-                // First entity
+                // First entity - accept any string (no validation)
                 const firstEntity = parts[currentIndex];
-                if (!this.isValidEntity(firstEntity)) {
-                    return { error: `Invalid entity name: "${firstEntity}"` };
-                }
                 segments.push({ type: 'entity', value: firstEntity });
                 currentIndex++;
 
@@ -1237,7 +1843,8 @@ TESTZ <- PeSIT PULL <- CFT -> SSH PUSH -> TESTF" spellcheck="false"></textarea>
                         return { error: 'Unexpected end of pattern after arrow' };
                     }
                     const protocolDir = parts[currentIndex];
-                    const pdMatch = protocolDir.match(/^([A-Za-z0-9_]+)\s+(PULL|PUSH)$/i);
+                    // Match protocol (can contain spaces, letters, numbers, underscores) followed by PULL or PUSH
+                    const pdMatch = protocolDir.match(/^(.+?)\s+(PULL|PUSH)$/i);
                     if (!pdMatch) {
                         return { error: `Invalid protocol/direction: "${protocolDir}". Expected: PROTOCOL PULL/PUSH` };
                     }
@@ -1258,19 +1865,18 @@ TESTZ <- PeSIT PULL <- CFT -> SSH PUSH -> TESTF" spellcheck="false"></textarea>
                     }
                     currentIndex++;
 
-                    // Expect entity
+                    // Expect entity - accept any string (no validation)
                     if (currentIndex >= parts.length) {
                         return { error: 'Unexpected end of pattern, expected entity' };
                     }
                     const entity = parts[currentIndex];
-                    if (!this.isValidEntity(entity)) {
-                        return { error: `Invalid entity name: "${entity}"` };
-                    }
 
+                    // Preserve original protocol name case for matching (e.g., "Amazon S3" not "AMAZON S3")
+                    const protocolName = pdMatch[1].trim();
                     segments.push({
                         type: 'connection',
                         arrow: arrow1,
-                        protocol: pdMatch[1].toUpperCase(),
+                        protocol: protocolName,
                         direction: pdMatch[2].toUpperCase(),
                         toEntity: entity
                     });
@@ -1282,9 +1888,6 @@ TESTZ <- PeSIT PULL <- CFT -> SSH PUSH -> TESTF" spellcheck="false"></textarea>
                 return { segments };
             },
 
-            isValidEntity(str) {
-                return /^[A-Za-z][A-Za-z0-9_]*$/.test(str);
-            },
 
             buildGraph(segments) {
                 const nodes = [];
@@ -1350,11 +1953,18 @@ TESTZ <- PeSIT PULL <- CFT -> SSH PUSH -> TESTF" spellcheck="false"></textarea>
         // DIAGRAM RENDERER
         // ============================================
         const DiagramRenderer = {
+            selectedFlowIndex: null,
+            flows: [],
+
             render(flows, container) {
                 container.innerHTML = '';
+                this.flows = flows;
 
                 if (!flows || flows.length === 0) {
                     document.getElementById('emptyState').style.display = 'block';
+                    this.updateFlowSelector([]);
+                    this.updateRequiredProducts(null);
+                    this.updateNotesField(null);
                     return;
                 }
 
@@ -1364,11 +1974,117 @@ TESTZ <- PeSIT PULL <- CFT -> SSH PUSH -> TESTF" spellcheck="false"></textarea>
                     const rowElement = this.createFlowRow(flow, flowIndex);
                     container.appendChild(rowElement);
                 });
+
+                // Update flow selector
+                this.updateFlowSelector(flows);
+                
+                // If no flow selected, select first one
+                if (this.selectedFlowIndex === null && flows.length > 0) {
+                    this.selectFlow(0);
+                } else if (this.selectedFlowIndex !== null) {
+                    this.selectFlow(this.selectedFlowIndex);
+                }
+            },
+
+            updateFlowSelector(flows) {
+                const selector = document.getElementById('flowSelector');
+                if (!selector) return;
+
+                selector.innerHTML = '<option value="">-- Select a flow --</option>';
+                flows.forEach((flow, index) => {
+                    const option = document.createElement('option');
+                    option.value = index;
+                    option.textContent = `Flow ${index + 1}: ${flow.originalText.substring(0, 50)}${flow.originalText.length > 50 ? '...' : ''}`;
+                    selector.appendChild(option);
+                });
+
+                if (this.selectedFlowIndex !== null) {
+                    selector.value = this.selectedFlowIndex;
+                }
+            },
+
+            selectFlow(flowIndex) {
+                this.selectedFlowIndex = flowIndex;
+                
+                // Update UI
+                const rows = document.querySelectorAll('.flow-row');
+                rows.forEach((row, index) => {
+                    if (index === flowIndex) {
+                        row.classList.add('selected');
+                    } else {
+                        row.classList.remove('selected');
+                    }
+                });
+
+                const selector = document.getElementById('flowSelector');
+                if (selector) {
+                    selector.value = flowIndex;
+                }
+
+                // Update notes and products for selected flow
+                if (flowIndex !== null && this.flows[flowIndex]) {
+                    this.updateNotesField(flowIndex);
+                    this.updateRequiredProducts(flowIndex);
+                } else {
+                    this.updateNotesField(null);
+                    this.updateRequiredProducts(null);
+                }
+            },
+
+            updateRequiredProducts(flowIndex) {
+                const productsList = document.getElementById('requiredProductsList');
+                if (!productsList) return;
+
+                if (flowIndex === null || !this.flows[flowIndex]) {
+                    productsList.innerHTML = '<div class="no-products-message">Select a flow to see potential products</div>';
+                    return;
+                }
+
+                const flow = this.flows[flowIndex];
+                const requiredProducts = getRequiredProducts([flow]);
+
+                if (requiredProducts.length === 0) {
+                    productsList.innerHTML = '<div class="no-products-message">No matching products found for the protocols used</div>';
+                    return;
+                }
+
+                productsList.innerHTML = requiredProducts.map(product => {
+                    const capabilitiesHtml = product.supportedCapabilities
+                        .map(cap => `<span class="capability-badge">${cap}</span>`)
+                        .join('');
+                    return `
+                        <div class="product-item">
+                            <div class="product-name">${product.name}</div>
+                            <div class="product-capabilities">${capabilitiesHtml}</div>
+                        </div>
+                    `;
+                }).join('');
+            },
+
+            updateNotesField(flowIndex) {
+                const notesField = document.getElementById('generalNotesField');
+                if (!notesField) return;
+
+                if (flowIndex === null) {
+                    notesField.value = '';
+                    notesField.disabled = true;
+                } else {
+                    notesField.value = StateManager.getFlowNotes(flowIndex);
+                    notesField.disabled = false;
+                }
             },
 
             createFlowRow(flow, flowIndex) {
                 const row = document.createElement('div');
                 row.className = 'flow-row';
+                if (flowIndex === this.selectedFlowIndex) {
+                    row.classList.add('selected');
+                }
+
+                // Make row clickable
+                row.addEventListener('click', () => {
+                    this.selectFlow(flowIndex);
+                });
 
                 // Row number indicator
                 const rowNumber = document.createElement('div');
@@ -1378,6 +2094,12 @@ TESTZ <- PeSIT PULL <- CFT -> SSH PUSH -> TESTF" spellcheck="false"></textarea>
 
                 // Render nodes and edges
                 flow.nodes.forEach((node, nodeIndex) => {
+                    // Add "Before Source" description field before the first node (source)
+                    if (nodeIndex === 0 && node.type === 'source') {
+                        const beforeSourceField = this.createDescriptionField(flowIndex, 'beforeSource', 'Before Source');
+                        row.appendChild(beforeSourceField);
+                    }
+
                     // Add node
                     const nodeElement = this.createNodeElement(node);
                     row.appendChild(nodeElement);
@@ -1388,9 +2110,49 @@ TESTZ <- PeSIT PULL <- CFT -> SSH PUSH -> TESTF" spellcheck="false"></textarea>
                         const edgeElement = this.createEdgeElement(edge, flowIndex, nodeIndex);
                         row.appendChild(edgeElement);
                     }
+
+                    // Add "After Target" description field after the last node (target)
+                    if (nodeIndex === flow.nodes.length - 1 && node.type === 'target') {
+                        const afterTargetField = this.createDescriptionField(flowIndex, 'afterTarget', 'After Target');
+                        row.appendChild(afterTargetField);
+                    }
                 });
 
                 return row;
+            },
+
+            createDescriptionField(flowIndex, type, label) {
+                const container = document.createElement('div');
+                container.className = `flow-description-field ${type === 'beforeSource' ? 'before-source' : 'after-target'}`;
+
+                const labelElement = document.createElement('div');
+                labelElement.className = 'flow-description-label';
+                labelElement.textContent = label;
+
+                const textarea = document.createElement('textarea');
+                textarea.className = 'flow-description-input';
+                textarea.placeholder = type === 'beforeSource' 
+                    ? 'Describe pre-source steps...' 
+                    : 'Describe post-target steps...';
+                textarea.value = StateManager.getFlowDescription(flowIndex, type);
+
+                // Debounced save
+                let saveTimeout;
+                textarea.addEventListener('input', () => {
+                    clearTimeout(saveTimeout);
+                    saveTimeout = setTimeout(() => {
+                        StateManager.updateFlowDescription(flowIndex, type, textarea.value);
+                        Persistence.save();
+                    }, 300);
+                });
+
+                // Stop propagation to prevent row selection when typing
+                textarea.addEventListener('click', (e) => e.stopPropagation());
+
+                container.appendChild(labelElement);
+                container.appendChild(textarea);
+
+                return container;
             },
 
             createNodeElement(node) {
@@ -1415,10 +2177,69 @@ TESTZ <- PeSIT PULL <- CFT -> SSH PUSH -> TESTF" spellcheck="false"></textarea>
                 const container = document.createElement('div');
                 container.className = 'flow-edge';
 
-                // Protocol label
-                const protocol = document.createElement('div');
-                protocol.className = 'edge-protocol';
-                protocol.textContent = `${edge.protocol} ${edge.direction}`;
+                // Check if protocol+direction is valid
+                const currentCapability = `${edge.protocol} ${edge.direction}`;
+                // Ensure functions are available (defensive check)
+                // If function doesn't exist, default to invalid (show dropdown) to be safe
+                let isValid = false;
+                if (typeof isValidCapability === 'function') {
+                    try {
+                        isValid = isValidCapability(edge.protocol, edge.direction);
+                    } catch (e) {
+                        console.error('Error checking capability validity:', e);
+                        isValid = false; // Default to invalid on error
+                    }
+                } else {
+                    console.warn('isValidCapability function not found - treating all as potentially invalid');
+                    // Default to showing dropdown if function not available
+                    isValid = false;
+                }
+
+                // Protocol label or select dropdown
+                let protocolElement;
+                if (!isValid) {
+                    // Create select dropdown for invalid capabilities
+                    protocolElement = document.createElement('select');
+                    protocolElement.className = 'edge-protocol-select';
+                    protocolElement.title = 'Unknown capability - select a valid one';
+                    
+                    // Get all available capabilities
+                    const allCapabilities = getAllAvailableCapabilities();
+                    
+                    // Add current (invalid) value as first option
+                    const currentOption = document.createElement('option');
+                    currentOption.value = currentCapability;
+                    currentOption.textContent = `${edge.protocol} ${edge.direction} ⚠`;
+                    currentOption.selected = true;
+                    protocolElement.appendChild(currentOption);
+                    
+                    // Add separator
+                    const separator = document.createElement('option');
+                    separator.disabled = true;
+                    separator.textContent = '──────────';
+                    protocolElement.appendChild(separator);
+                    
+                    // Add all valid capabilities
+                    allCapabilities.forEach(cap => {
+                        const option = document.createElement('option');
+                        option.value = cap;
+                        option.textContent = cap;
+                        protocolElement.appendChild(option);
+                    });
+                    
+                    // Handle change event
+                    protocolElement.addEventListener('change', (e) => {
+                        const newCapability = e.target.value;
+                        if (newCapability && newCapability !== currentCapability) {
+                            this.updateProtocolInPattern(flowIndex, edgeIndex, edge.protocol, edge.direction, newCapability);
+                        }
+                    });
+                } else {
+                    // Create regular div for valid capabilities
+                    protocolElement = document.createElement('div');
+                    protocolElement.className = 'edge-protocol';
+                    protocolElement.textContent = currentCapability;
+                }
 
                 // Line container
                 const lineContainer = document.createElement('div');
@@ -1482,11 +2303,87 @@ TESTZ <- PeSIT PULL <- CFT -> SSH PUSH -> TESTF" spellcheck="false"></textarea>
                 annotations.appendChild(postLabel);
                 annotations.appendChild(postInput);
 
-                container.appendChild(protocol);
+                container.appendChild(protocolElement);
                 container.appendChild(lineContainer);
                 container.appendChild(annotations);
 
                 return container;
+            },
+
+            updateProtocolInPattern(flowIndex, edgeIndex, oldProtocol, oldDirection, newCapability) {
+                // Parse new capability to get protocol and direction
+                const parts = newCapability.split(' ');
+                if (parts.length < 2) return;
+                
+                const newDirection = parts[parts.length - 1];
+                const newProtocol = parts.slice(0, -1).join(' ');
+                
+                // Get current pattern text
+                const patternText = UIController.elements.patternEditor.value;
+                const lines = patternText.split('\n');
+                
+                // Find the flow's line
+                const result = Parser.parseMultiple(patternText);
+                if (!result.flows || flowIndex >= result.flows.length) return;
+                
+                // Find which line contains this flow
+                let flowLineIndex = -1;
+                let currentFlowIndex = 0;
+                for (let i = 0; i < lines.length; i++) {
+                    const line = lines[i].trim();
+                    if (!line || line.startsWith('//')) continue;
+                    
+                    const lineResult = Parser.parseMultiple(line);
+                    if (lineResult.flows && lineResult.flows.length > 0) {
+                        if (currentFlowIndex === flowIndex) {
+                            flowLineIndex = i;
+                            break;
+                        }
+                        currentFlowIndex++;
+                    }
+                }
+                
+                if (flowLineIndex === -1) return;
+                
+                // Parse the line to get segments
+                const line = lines[flowLineIndex];
+                const parseResult = Parser.parseMultiple(line);
+                if (!parseResult.flows || parseResult.flows.length === 0) return;
+                
+                const flow = parseResult.flows[0];
+                if (!flow.edges || edgeIndex >= flow.edges.length) return;
+                
+                // Rebuild the line by replacing the specific edge's protocol+direction
+                const entities = flow.nodes.map(n => n.label);
+                const edges = flow.edges;
+                
+                // Rebuild the line string: Entity -> Protocol Direction -> Entity <- Protocol Direction <- Entity
+                const newLineParts = [entities[0]];
+                
+                for (let i = 0; i < edges.length; i++) {
+                    const edge = edges[i];
+                    const arrow = edge.flowDirection === 'reverse' ? '<-' : '->';
+                    const protocol = (i === edgeIndex) ? newProtocol : edge.protocol;
+                    const direction = (i === edgeIndex) ? newDirection : edge.direction;
+                    
+                    newLineParts.push(arrow);
+                    newLineParts.push(`${protocol} ${direction}`);
+                    newLineParts.push(arrow);
+                    newLineParts.push(entities[i + 1]);
+                }
+                
+                const newLine = newLineParts.join(' ');
+                
+                // Update the pattern text
+                lines[flowLineIndex] = newLine;
+                const updatedPattern = lines.join('\n');
+                
+                // Update the editor and trigger re-render
+                UIController.elements.patternEditor.value = updatedPattern;
+                UIController.updatePattern();
+                UIController.setSaveIndicator('saving');
+                Persistence.save();
+                setTimeout(() => UIController.setSaveIndicator('saved'), 500);
             },
 
             triggerSave() {
@@ -1510,6 +2407,8 @@ TESTZ <- PeSIT PULL <- CFT -> SSH PUSH -> TESTF" spellcheck="false"></textarea>
                 this.elements = {
                     workspaceSelect: document.getElementById('workspaceSelect'),
                     patternEditor: document.getElementById('patternEditor'),
+                    generalNotesField: document.getElementById('generalNotesField'),
+                    flowSelector: document.getElementById('flowSelector'),
                     errorMessage: document.getElementById('errorMessage'),
                     saveIndicator: document.getElementById('saveIndicator'),
                     saveText: document.getElementById('saveText'),
@@ -1563,6 +2462,96 @@ TESTZ <- PeSIT PULL <- CFT -> SSH PUSH -> TESTF" spellcheck="false"></textarea>
                     }
                 });
 
+                // Export workspace
+                document.getElementById('exportWorkspaceBtn').addEventListener('click', () => {
+                    const ws = StateManager.getActiveWorkspace();
+                    if (ws) {
+                        const exportData = {
+                            version: 1,
+                            exportedAt: new Date().toISOString(),
+                            workspace: {
+                                name: ws.name,
+                                patternText: ws.patternText || '',
+                                flowNotes: ws.flowNotes || {},
+                                flowDescriptions: ws.flowDescriptions || {},
+                                annotations: ws.annotations || {}
+                            }
+                        };
+                        const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = `${ws.name.replace(/[^a-z0-9]/gi, '_')}_workspace.json`;
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                        URL.revokeObjectURL(url);
+                    }
+                });
+
+                // Import workspace
+                const importFileInput = document.getElementById('importFileInput');
+                document.getElementById('importWorkspaceBtn').addEventListener('click', () => {
+                    importFileInput.click();
+                });
+
+                importFileInput.addEventListener('change', (e) => {
+                    const file = e.target.files[0];
+                    if (!file) return;
+
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        try {
+                            const data = JSON.parse(event.target.result);
+                            if (!data.workspace || !data.workspace.name) {
+                                throw new Error('Invalid workspace file format');
+                            }
+
+                            // Create new workspace with imported data
+                            const newWorkspace = WorkspaceManager.createWorkspace(data.workspace.name + ' (imported)');
+                            // Update the workspace with imported content
+                            newWorkspace.patternText = data.workspace.patternText || '';
+                            newWorkspace.flowNotes = data.workspace.flowNotes || {};
+                            newWorkspace.flowDescriptions = data.workspace.flowDescriptions || {};
+                            newWorkspace.annotations = data.workspace.annotations || {};
+                            Persistence.save();
+
+                            this.updateWorkspaceSelect();
+                            this.loadActiveWorkspace();
+                            alert(`Workspace "${data.workspace.name}" imported successfully!`);
+                        } catch (err) {
+                            alert('Failed to import workspace: ' + err.message);
+                        }
+                    };
+                    reader.readAsText(file);
+                    // Reset input so same file can be imported again
+                    importFileInput.value = '';
+                });
+
+                // Export PDF Report
+                document.getElementById('exportPdfBtn').addEventListener('click', async () => {
+                    const ws = StateManager.getActiveWorkspace();
+                    if (!ws) {
+                        alert('No workspace selected');
+                        return;
+                    }
+
+                    // Show loading indicator
+                    const originalTitle = document.title;
+                    document.title = 'Generating PDF...';
+                    this.setSaveIndicator('saving');
+
+                    try {
+                        await this.exportToPDF(ws);
+                    } catch (err) {
+                        console.error('PDF export error:', err);
+                        alert('Failed to generate PDF: ' + err.message);
+                    } finally {
+                        document.title = originalTitle;
+                        this.setSaveIndicator('saved');
+                    }
+                });
+
                 this.elements.workspaceSelect.addEventListener('change', (e) => {
                     StateManager.setActiveWorkspace(e.target.value);
                     this.loadActiveWorkspace();
@@ -1577,6 +2566,25 @@ TESTZ <- PeSIT PULL <- CFT -> SSH PUSH -> TESTF" spellcheck="false"></textarea>
                 }, 300);
 
                 this.elements.patternEditor.addEventListener('input', debouncedUpdate);
+
+                // Flow selector
+                this.elements.flowSelector.addEventListener('change', (e) => {
+                    const flowIndex = e.target.value === '' ? null : parseInt(e.target.value);
+                    DiagramRenderer.selectFlow(flowIndex);
+                });
+
+                // General notes field
+                const debouncedNotesUpdate = debounce(() => {
+                    const flowIndex = DiagramRenderer.selectedFlowIndex;
+                    if (flowIndex !== null) {
+                        StateManager.updateFlowNotes(flowIndex, this.elements.generalNotesField.value);
+                        this.setSaveIndicator('saving');
+                        Persistence.save();
+                        setTimeout(() => this.setSaveIndicator('saved'), 500);
+                    }
+                }, 300);
+
+                this.elements.generalNotesField.addEventListener('input', debouncedNotesUpdate);
 
                 // Theme toggle
                 document.getElementById('themeToggleBtn').addEventListener('click', () => {
@@ -1645,6 +2653,7 @@ TESTZ <- PeSIT PULL <- CFT -> SSH PUSH -> TESTF" spellcheck="false"></textarea>
                 const ws = StateManager.getActiveWorkspace();
                 if (ws) {
                     this.elements.patternEditor.value = ws.patternText || '';
+                    DiagramRenderer.selectedFlowIndex = null;
                     this.updatePattern();
                 }
             },
@@ -1681,6 +2690,631 @@ TESTZ <- PeSIT PULL <- CFT -> SSH PUSH -> TESTF" spellcheck="false"></textarea>
                 indicator.classList.remove('saving', 'saved');
                 indicator.classList.add(status);
                 this.elements.saveText.textContent = status === 'saving' ? 'Saving...' : 'Saved';
+            },
+
+            async exportToPDF(workspace) {
+                // Show loading overlay
+                const loadingOverlay = document.getElementById('loadingOverlay');
+                loadingOverlay.classList.add('visible');
+
+                try {
+                    await this._generatePDF(workspace);
+                } catch (error) {
+                    console.error('PDF generation failed:', error);
+                    alert('Failed to generate PDF. Please try again.');
+                } finally {
+                    // Hide loading overlay
+                    loadingOverlay.classList.remove('visible');
+                }
+            },
+
+            async _generatePDF(workspace) {
+                // Check if libraries are available
+                if (typeof html2canvas === 'undefined' || typeof window.jspdf === 'undefined') {
+                    alert('PDF libraries not loaded. Please refresh the page and try again.');
+                    return;
+                }
+
+                // Parse flows to get current state
+                const patternText = workspace.patternText || '';
+                const result = Parser.parseMultiple(patternText);
+                const flows = result.flows || [];
+
+                // Create a temporary container for PDF content
+                const pdfContainer = document.createElement('div');
+                pdfContainer.id = 'pdf-export-container';
+                // Position it absolutely off-screen but visible to html2canvas
+                pdfContainer.style.position = 'absolute';
+                pdfContainer.style.top = '0';
+                pdfContainer.style.left = '-2000px'; // Off-screen but not too far
+                pdfContainer.style.width = '794px'; // A4 width in pixels (210mm at 96 DPI)
+                pdfContainer.style.padding = '40px';
+                pdfContainer.style.backgroundColor = '#ffffff';
+                pdfContainer.style.fontFamily = 'Arial, sans-serif';
+                pdfContainer.style.color = '#333333';
+                pdfContainer.style.zIndex = '99999';
+                pdfContainer.style.boxSizing = 'border-box';
+                pdfContainer.style.overflow = 'visible';
+                pdfContainer.style.display = 'block';
+                document.body.appendChild(pdfContainer);
+
+                try {
+                    // Cover page
+                    const coverPage = document.createElement('div');
+                    coverPage.className = 'pdf-cover-page';
+                    coverPage.style.display = 'flex';
+                    coverPage.style.flexDirection = 'column';
+                    coverPage.style.alignItems = 'center';
+                    coverPage.style.justifyContent = 'center';
+                    coverPage.style.minHeight = '714px'; // A4 height minus padding in pixels (~270mm)
+                    coverPage.style.height = '714px';
+                    coverPage.style.textAlign = 'center';
+                    coverPage.style.backgroundColor = '#ffffff';
+                    coverPage.style.marginBottom = '20px';
+
+                    // Logo (using SVG data URL for better PDF compatibility)
+                    const logoContainer = document.createElement('div');
+                    logoContainer.style.marginBottom = '40px';
+                    const logoSvg = document.createElement('div');
+                    logoSvg.innerHTML = `<svg width="200" height="68" viewBox="0 0 137 47" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M76.6496 46.9993L80.5925 37.9543L73.4876 22.7627H78.5529L83.0057 32.9377L87.1186 22.7627H91.9465L81.4423 46.9993H76.6496ZM69.4101 33.1143V32.3377L65.6372 32.9377C64.4811 33.1143 63.5639 33.7843 63.5639 35.1277C63.5639 36.1527 64.2774 37.1427 65.7382 37.1427C67.6431 37.1427 69.4101 36.1893 69.4101 33.1143ZM64.0401 30.1477L68.153 29.511C69.1038 29.3693 69.4101 28.8743 69.4101 28.2743C69.4101 27.0377 68.4929 26.0127 66.5896 26.0127C64.6174 26.0127 63.5286 27.3193 63.3923 28.8393L59.3805 27.956C59.6531 25.2343 62.0663 22.2327 66.5543 22.2327C71.8585 22.2327 73.8292 25.341 73.8292 28.8393V37.3893C73.8292 38.3077 73.9318 39.546 74.0328 40.146H69.8863C69.7853 39.686 69.7163 38.7327 69.7163 38.061C68.8665 39.4393 67.2679 40.641 64.7873 40.641C61.2181 40.641 59.0422 38.1327 59.0422 35.411C59.0422 32.3027 61.2517 30.571 64.0401 30.1477ZM48.2686 22.7627L51.8716 33.9627L54.9662 22.7627H59.4511L54.2174 40.146H49.6957L45.7865 28.2743L41.9446 40.146H37.3555L32.0193 22.7627H36.7783L39.8713 33.9277L43.5096 22.7627H48.2686ZM21.4157 31.4177L15.4653 22.7627H20.8368C21.4157 23.716 23.5899 26.966 24.1688 27.921L27.4655 22.7627H32.5981L26.7519 31.2777L32.8017 40.146H27.4991L23.9972 34.811C23.3863 35.7643 21.1431 39.1927 20.5642 40.146H15.4653L21.4157 31.4177ZM10.3679 33.1143V32.3377L6.59659 32.9377C5.4405 33.1143 4.52172 33.7843 4.52172 35.1277C4.52172 36.1527 5.23526 37.1427 6.696 37.1427C8.6009 37.1427 10.3679 36.1893 10.3679 33.1143ZM4.99635 30.1477L9.11079 29.511C10.0632 29.3693 10.3679 28.8743 10.3679 28.2743C10.3679 27.0377 9.45072 26.0127 7.54583 26.0127C5.57519 26.0127 4.48805 27.3193 4.35176 28.8393L0.339931 27.956C0.612517 25.2343 3.02571 22.2327 7.51376 22.2327C12.8148 22.2327 14.787 25.341 14.787 28.8393V37.3893C14.787 38.3077 14.888 39.546 14.9922 40.146H10.8441C10.7415 39.686 10.6742 38.7327 10.6742 38.061C9.82433 39.4393 8.22569 40.641 5.74516 40.641C2.17588 40.641 0 38.1327 0 35.411C0 32.3027 2.20955 30.571 4.99635 30.1477Z" fill="#4A4F54"/><path fill-rule="evenodd" clip-rule="evenodd" d="M132.708 26.3917L99.0455 10.7197V16.3933L125.843 28.8685L132.708 26.3917ZM103.04 21.0861V26.7581L109.161 29.5933L99.3136 39.7965H105.843L117.528 27.8269L103.04 21.0861ZM132.698 15.0525L132.71 23.5661L94.4803 5.75807V0.0844727L127.93 15.6749V7.15647L136.703 11.2413V16.9181L132.698 15.0525Z" fill="#E82C2A"/></svg>`;
+                    logoContainer.appendChild(logoSvg);
+                    coverPage.appendChild(logoContainer);
+
+                    // Title
+                    const title = document.createElement('h1');
+                    title.textContent = 'MFT Flow Visualizer';
+                    title.style.fontSize = '36px';
+                    title.style.fontWeight = 'bold';
+                    title.style.color = '#2c3e50';
+                    title.style.marginBottom = '20px';
+                    title.style.marginTop = '0';
+                    coverPage.appendChild(title);
+
+                    // Subtitle
+                    const subtitle = document.createElement('h2');
+                    subtitle.textContent = 'Flow Analysis Report';
+                    subtitle.style.fontSize = '24px';
+                    subtitle.style.fontWeight = 'normal';
+                    subtitle.style.color = '#7f8c8d';
+                    subtitle.style.marginBottom = '60px';
+                    subtitle.style.marginTop = '0';
+                    coverPage.appendChild(subtitle);
+
+                    // Workspace name
+                    const workspaceName = document.createElement('div');
+                    workspaceName.style.fontSize = '28px';
+                    workspaceName.style.fontWeight = '600';
+                    workspaceName.style.color = '#34495e';
+                    workspaceName.style.marginBottom = '40px';
+                    workspaceName.textContent = workspace.name;
+                    coverPage.appendChild(workspaceName);
+
+                    // Date
+                    const date = document.createElement('div');
+                    date.style.fontSize = '14px';
+                    date.style.color = '#95a5a6';
+                    date.textContent = `Generated on ${new Date().toLocaleDateString('en-US', { 
+                        year: 'numeric', 
+                        month: 'long', 
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    })}`;
+                    coverPage.appendChild(date);
+
+                    pdfContainer.appendChild(coverPage);
+
+                    // Flow diagrams and notes
+                    if (flows.length === 0) {
+                        const noFlows = document.createElement('div');
+                        noFlows.style.padding = '40px';
+                        noFlows.style.textAlign = 'center';
+                        noFlows.style.color = '#7f8c8d';
+                        noFlows.textContent = 'No flows defined in this workspace.';
+                        pdfContainer.appendChild(noFlows);
+                    } else {
+                        flows.forEach((flow, flowIndex) => {
+                            const flowSection = document.createElement('div');
+                            flowSection.className = 'pdf-flow-section';
+                            flowSection.style.marginBottom = '40px';
+                            flowSection.style.backgroundColor = '#ffffff';
+                            flowSection.style.paddingBottom = '20px';
+
+                            // Flow header
+                            const flowHeader = document.createElement('h2');
+                            flowHeader.textContent = `Flow ${flowIndex + 1}`;
+                            flowHeader.style.fontSize = '20px';
+                            flowHeader.style.fontWeight = 'bold';
+                            flowHeader.style.color = '#2c3e50';
+                            flowHeader.style.marginBottom = '15px';
+                            flowHeader.style.borderBottom = '2px solid #3498db';
+                            flowHeader.style.paddingBottom = '10px';
+                            flowSection.appendChild(flowHeader);
+
+                            // Flow diagram (clone the rendered flow - simplified version)
+                            const canvasContainer = this.elements.canvasContainer;
+                            const flowRow = canvasContainer.querySelector(`.flow-row:nth-child(${flowIndex + 1})`);
+                            if (flowRow) {
+                                const diagramClone = flowRow.cloneNode(true);
+                                diagramClone.style.marginBottom = '20px';
+                                diagramClone.style.display = 'inline-flex';
+                                diagramClone.style.padding = '20px';
+                                diagramClone.style.backgroundColor = '#ffffff';
+                                diagramClone.style.transformOrigin = 'left top';
+                                
+                                // Remove all text fields - they are shown below as formatted text
+                                // Remove before source / after target description fields
+                                diagramClone.querySelectorAll('.flow-description-field').forEach(el => el.remove());
+                                // Remove annotation sections (pre/post processing inputs)
+                                diagramClone.querySelectorAll('.edge-annotations').forEach(el => el.remove());
+                                // Remove "Flow X" row number indicator (already shown as section title)
+                                diagramClone.querySelectorAll('.flow-row-number').forEach(el => el.remove());
+                                
+                                // Fix arrow lines - use solid dark color instead of CSS variable gradient
+                                // The gradient with CSS variables doesn't render well in html2canvas
+                                diagramClone.querySelectorAll('.edge-line').forEach(el => {
+                                    el.style.backgroundImage = 'none';
+                                    el.style.backgroundColor = '#2c3e50';
+                                    el.style.animation = 'none';
+                                });
+                                
+                                // Fix arrow heads - use solid dark color
+                                diagramClone.querySelectorAll('.edge-arrow').forEach(el => {
+                                    // Check if it's a reverse arrow
+                                    if (el.classList.contains('reverse')) {
+                                        el.style.borderRightColor = '#2c3e50';
+                                    } else {
+                                        el.style.borderLeftColor = '#2c3e50';
+                                    }
+                                });
+                                
+                                // Replace select dropdowns with simple text
+                                diagramClone.querySelectorAll('select').forEach(el => {
+                                    const text = document.createElement('span');
+                                    text.textContent = el.value || el.options[0]?.textContent || '';
+                                    text.style.fontStyle = 'italic';
+                                    text.style.color = '#e74c3c';
+                                    el.parentNode.replaceChild(text, el);
+                                });
+                                // Remove any remaining inputs and buttons
+                                diagramClone.querySelectorAll('input').forEach(el => el.remove());
+                                diagramClone.querySelectorAll('textarea').forEach(el => el.remove());
+                                diagramClone.querySelectorAll('button').forEach(el => el.remove());
+                                
+                                // Create a wrapper to handle scaling for wide diagrams
+                                const diagramWrapper = document.createElement('div');
+                                diagramWrapper.style.width = '100%';
+                                diagramWrapper.style.overflow = 'hidden';
+                                diagramWrapper.style.marginBottom = '20px';
+                                diagramWrapper.appendChild(diagramClone);
+                                flowSection.appendChild(diagramWrapper);
+                                
+                                // After adding to DOM, check if we need to scale down
+                                // We'll do this after all sections are added
+                                diagramWrapper.dataset.needsScaling = 'true';
+                            }
+
+                            // Flow descriptions (before source / after target)
+                            const beforeSource = workspace.flowDescriptions?.[`${flowIndex}-beforeSource`];
+                            const afterTarget = workspace.flowDescriptions?.[`${flowIndex}-afterTarget`];
+                            
+                            if (beforeSource || afterTarget) {
+                                const descSection = document.createElement('div');
+                                descSection.style.marginTop = '20px';
+                                descSection.style.marginBottom = '20px';
+                                descSection.style.display = 'flex';
+                                descSection.style.gap = '20px';
+                                descSection.style.flexWrap = 'wrap';
+
+                                if (beforeSource) {
+                                    const beforeDiv = document.createElement('div');
+                                    beforeDiv.style.flex = '1';
+                                    beforeDiv.style.minWidth = '200px';
+                                    
+                                    const beforeLabel = document.createElement('div');
+                                    beforeLabel.textContent = 'Before Source:';
+                                    beforeLabel.style.fontWeight = 'bold';
+                                    beforeLabel.style.marginBottom = '8px';
+                                    beforeLabel.style.color = '#27ae60';
+                                    beforeDiv.appendChild(beforeLabel);
+
+                                    const beforeContent = document.createElement('div');
+                                    beforeContent.textContent = beforeSource;
+                                    beforeContent.style.padding = '12px';
+                                    beforeContent.style.backgroundColor = '#f0fff4';
+                                    beforeContent.style.borderLeft = '4px solid #27ae60';
+                                    beforeContent.style.whiteSpace = 'pre-wrap';
+                                    beforeContent.style.lineHeight = '1.6';
+                                    beforeDiv.appendChild(beforeContent);
+
+                                    descSection.appendChild(beforeDiv);
+                                }
+
+                                if (afterTarget) {
+                                    const afterDiv = document.createElement('div');
+                                    afterDiv.style.flex = '1';
+                                    afterDiv.style.minWidth = '200px';
+                                    
+                                    const afterLabel = document.createElement('div');
+                                    afterLabel.textContent = 'After Target:';
+                                    afterLabel.style.fontWeight = 'bold';
+                                    afterLabel.style.marginBottom = '8px';
+                                    afterLabel.style.color = '#e74c3c';
+                                    afterDiv.appendChild(afterLabel);
+
+                                    const afterContent = document.createElement('div');
+                                    afterContent.textContent = afterTarget;
+                                    afterContent.style.padding = '12px';
+                                    afterContent.style.backgroundColor = '#fff5f5';
+                                    afterContent.style.borderLeft = '4px solid #e74c3c';
+                                    afterContent.style.whiteSpace = 'pre-wrap';
+                                    afterContent.style.lineHeight = '1.6';
+                                    afterDiv.appendChild(afterContent);
+
+                                    descSection.appendChild(afterDiv);
+                                }
+
+                                flowSection.appendChild(descSection);
+                            }
+
+                            // Flow notes
+                            const flowNotes = workspace.flowNotes?.[flowIndex];
+                            if (flowNotes) {
+                                const notesSection = document.createElement('div');
+                                notesSection.style.marginTop = '20px';
+                                notesSection.style.marginBottom = '20px';
+                                
+                                const notesLabel = document.createElement('div');
+                                notesLabel.textContent = 'General Notes:';
+                                notesLabel.style.fontWeight = 'bold';
+                                notesLabel.style.marginBottom = '8px';
+                                notesLabel.style.color = '#34495e';
+                                notesSection.appendChild(notesLabel);
+
+                                const notesContent = document.createElement('div');
+                                notesContent.textContent = flowNotes || '';
+                                notesContent.style.padding = '12px';
+                                notesContent.style.backgroundColor = '#f8f9fa';
+                                notesContent.style.borderLeft = '4px solid #3498db';
+                                notesContent.style.whiteSpace = 'pre-wrap';
+                                notesContent.style.lineHeight = '1.6';
+                                notesContent.style.wordWrap = 'break-word';
+                                notesSection.appendChild(notesContent);
+
+                                flowSection.appendChild(notesSection);
+                            }
+
+                            // Annotations for each edge
+                            if (flow.edges) {
+                                flow.edges.forEach((edge, edgeIndex) => {
+                                    const preAnnotation = StateManager.getAnnotation(flowIndex, edgeIndex, 'pre');
+                                    const postAnnotation = StateManager.getAnnotation(flowIndex, edgeIndex, 'post');
+                                    
+                                    if (preAnnotation || postAnnotation) {
+                                        const annotationSection = document.createElement('div');
+                                        annotationSection.style.marginTop = '15px';
+                                        annotationSection.style.marginBottom = '15px';
+
+                                        const annotationLabel = document.createElement('div');
+                                        annotationLabel.textContent = `Edge ${edgeIndex + 1}: ${edge.protocol} ${edge.direction}`;
+                                        annotationLabel.style.fontWeight = '600';
+                                        annotationLabel.style.marginBottom = '8px';
+                                        annotationLabel.style.color = '#34495e';
+                                        annotationSection.appendChild(annotationLabel);
+
+                                        if (preAnnotation) {
+                                            const preDiv = document.createElement('div');
+                                            preDiv.style.marginBottom = '8px';
+                                            const preLabel = document.createElement('strong');
+                                            preLabel.textContent = 'Pre-Processing: ';
+                                            const preText = document.createElement('span');
+                                            preText.style.color = '#555';
+                                            preText.textContent = preAnnotation;
+                                            preDiv.appendChild(preLabel);
+                                            preDiv.appendChild(preText);
+                                            annotationSection.appendChild(preDiv);
+                                        }
+
+                                        if (postAnnotation) {
+                                            const postDiv = document.createElement('div');
+                                            const postLabel = document.createElement('strong');
+                                            postLabel.textContent = 'Post-Processing: ';
+                                            const postText = document.createElement('span');
+                                            postText.style.color = '#555';
+                                            postText.textContent = postAnnotation;
+                                            postDiv.appendChild(postLabel);
+                                            postDiv.appendChild(postText);
+                                            annotationSection.appendChild(postDiv);
+                                        }
+
+                                        flowSection.appendChild(annotationSection);
+                                    }
+                                });
+                            }
+
+                            pdfContainer.appendChild(flowSection);
+                        });
+                    }
+
+                    // Debug: Check if content was added
+                    console.log('PDF container children:', pdfContainer.children.length);
+                    console.log('PDF container HTML length:', pdfContainer.innerHTML.length);
+                    
+                    // Force a reflow to ensure content is rendered
+                    pdfContainer.style.display = 'block';
+                    
+                    // Scale down wide diagrams to fit PDF page width (with more margin for safety)
+                    const maxDiagramWidth = 700;
+                    pdfContainer.querySelectorAll('[data-needs-scaling="true"]').forEach(wrapper => {
+                        const diagram = wrapper.querySelector('.flow-row');
+                        if (diagram) {
+                            // Temporarily set to auto width to measure natural size
+                            diagram.style.width = 'auto';
+                            const naturalWidth = diagram.scrollWidth;
+                            
+                            if (naturalWidth > maxDiagramWidth) {
+                                const scale = maxDiagramWidth / naturalWidth;
+                                diagram.style.transform = `scale(${scale})`;
+                                diagram.style.transformOrigin = 'left top';
+                                // Adjust wrapper height to account for scaled content
+                                wrapper.style.height = `${diagram.scrollHeight * scale}px`;
+                                console.log(`Scaled diagram from ${naturalWidth}px to fit ${maxDiagramWidth}px (scale: ${scale.toFixed(2)})`);
+                            }
+                        }
+                    });
+                    
+                    const height = pdfContainer.offsetHeight || pdfContainer.scrollHeight;
+                    const width = pdfContainer.offsetWidth || pdfContainer.scrollWidth;
+                    console.log('Container dimensions:', width, 'x', height);
+                    console.log('First child:', pdfContainer.firstElementChild?.tagName, pdfContainer.firstElementChild?.textContent?.substring(0, 50));
+
+                    // Ensure container has content
+                    if (pdfContainer.children.length === 0) {
+                        throw new Error('No content to export. PDF container is empty.');
+                    }
+
+                    if (height === 0) {
+                        console.warn('Container height is 0, but content exists. Trying to fix...');
+                        pdfContainer.style.height = 'auto';
+                        pdfContainer.style.minHeight = '100px';
+                    }
+
+                    // Wait for rendering and images to load
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                    
+                    // Re-check dimensions after wait
+                    const finalHeight = pdfContainer.offsetHeight || pdfContainer.scrollHeight;
+                    const finalWidth = pdfContainer.offsetWidth || pdfContainer.scrollWidth;
+                    console.log('Final container dimensions:', finalWidth, 'x', finalHeight);
+
+                    // Generate PDF
+                    // Calculate actual content dimensions after rendering
+                    const contentHeight = Math.max(pdfContainer.scrollHeight, pdfContainer.offsetHeight);
+                    const contentWidth = Math.max(pdfContainer.scrollWidth, pdfContainer.offsetWidth);
+                    
+                    console.log('Content dimensions:', contentWidth, 'x', contentHeight);
+                    console.log('Container innerHTML length:', pdfContainer.innerHTML.length);
+                    
+                    // Verify content exists
+                    if (contentHeight === 0) {
+                        throw new Error('No content to export. Container height is 0.');
+                    }
+                    
+                    // Temporarily move container into viewport for html2canvas to capture it
+                    // Store original position
+                    const originalLeft = pdfContainer.style.left;
+                    const originalTop = pdfContainer.style.top;
+                    const originalZIndex = pdfContainer.style.zIndex;
+                    const originalPosition = pdfContainer.style.position;
+                    
+                    // Move to top-left of viewport - keep it visible but off to the side
+                    pdfContainer.style.position = 'fixed';
+                    pdfContainer.style.left = '0';
+                    pdfContainer.style.top = '0';
+                    pdfContainer.style.zIndex = '999999';
+                    pdfContainer.style.opacity = '1';
+                    pdfContainer.style.visibility = 'visible';
+                    pdfContainer.style.display = 'block';
+                    pdfContainer.style.pointerEvents = 'none';
+                    pdfContainer.style.overflow = 'visible';
+                    pdfContainer.style.maxHeight = 'none';
+                    pdfContainer.style.height = 'auto';
+                    pdfContainer.style.width = '794px';
+                    
+                    // Ensure all text and elements are visible and have proper colors
+                    const allElements = pdfContainer.querySelectorAll('*');
+                    allElements.forEach(el => {
+                        const computed = window.getComputedStyle(el);
+                        // Force visibility
+                        if (computed.display === 'none') {
+                            el.style.display = 'block';
+                        }
+                        if (computed.visibility === 'hidden') {
+                            el.style.visibility = 'visible';
+                        }
+                        if (computed.opacity === '0') {
+                            el.style.opacity = '1';
+                        }
+                        // Ensure text is visible
+                        if (el.tagName && ['H1', 'H2', 'H3', 'P', 'DIV', 'SPAN'].includes(el.tagName)) {
+                            if (!el.style.color || el.style.color === 'transparent') {
+                                el.style.color = '#333333';
+                            }
+                        }
+                    });
+                    
+                    // Force multiple reflows to ensure rendering
+                    pdfContainer.offsetHeight;
+                    pdfContainer.scrollHeight;
+                    pdfContainer.offsetWidth;
+                    pdfContainer.scrollWidth;
+                    
+                    // Wait longer for browser to fully render everything
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                    
+                    // Verify content is actually visible and rendered
+                    const testElement = pdfContainer.querySelector('h1');
+                    if (testElement) {
+                        const rect = testElement.getBoundingClientRect();
+                        const computed = window.getComputedStyle(testElement);
+                        console.log('Test element rect:', rect.width, 'x', rect.height);
+                        console.log('Test element computed color:', computed.color);
+                        console.log('Test element computed display:', computed.display);
+                        console.log('Test element computed visibility:', computed.visibility);
+                        console.log('Test element text:', testElement.textContent?.substring(0, 50));
+                        
+                        if (rect.width === 0 || rect.height === 0) {
+                            console.error('Content elements have zero dimensions!');
+                            throw new Error('Content is not rendering properly');
+                        }
+                    }
+                    
+                    try {
+                        console.log('Starting PDF generation with direct html2canvas + jsPDF...');
+                        console.log('Container position:', pdfContainer.style.left, pdfContainer.style.top);
+                        console.log('Container dimensions:', pdfContainer.offsetWidth, 'x', pdfContainer.offsetHeight);
+                        
+                        // Create PDF using jsPDF
+                        const { jsPDF } = window.jspdf;
+                        const pdf = new jsPDF({
+                            orientation: 'portrait',
+                            unit: 'mm',
+                            format: 'a4'
+                        });
+                        
+                        // A4 dimensions
+                        const pageWidth = 210;
+                        const pageHeight = 297;
+                        const margin = 15;
+                        const contentWidth = pageWidth - (margin * 2);
+                        
+                        // Get all sections to render separately (cover page + flow sections)
+                        const sections = pdfContainer.querySelectorAll('.pdf-cover-page, .pdf-flow-section');
+                        console.log('Found sections to render:', sections.length);
+                        
+                        if (sections.length === 0) {
+                            // Fallback: render entire container but with scale limit
+                            const maxHeight = 5000; // Limit height to avoid memory issues
+                            const canvas = await html2canvas(pdfContainer, {
+                                scale: 1,
+                                useCORS: true,
+                                logging: false,
+                                backgroundColor: '#ffffff',
+                                height: Math.min(pdfContainer.scrollHeight, maxHeight)
+                            });
+                            
+                            const imgData = canvas.toDataURL('image/jpeg', 0.9);
+                            const imgWidth = contentWidth;
+                            const imgHeight = (canvas.height * imgWidth) / canvas.width;
+                            pdf.addImage(imgData, 'JPEG', margin, margin, imgWidth, imgHeight);
+                        } else {
+                            // Render each section separately
+                            let isFirstPage = true;
+                            
+                            for (let i = 0; i < sections.length; i++) {
+                                const section = sections[i];
+                                console.log(`Rendering section ${i + 1}/${sections.length}:`, section.className);
+                                
+                                // Capture this section
+                                const canvas = await html2canvas(section, {
+                                    scale: 1.5,
+                                    useCORS: true,
+                                    logging: false,
+                                    backgroundColor: '#ffffff'
+                                });
+                                
+                                console.log(`Section ${i + 1} canvas:`, canvas.width, 'x', canvas.height);
+                                
+                                if (canvas.width === 0 || canvas.height === 0) {
+                                    console.warn(`Section ${i + 1} has zero dimensions, skipping`);
+                                    continue;
+                                }
+                                
+                                const imgData = canvas.toDataURL('image/jpeg', 0.9);
+                                
+                                if (imgData.length < 100) {
+                                    console.warn(`Section ${i + 1} image data too small, skipping`);
+                                    continue;
+                                }
+                                
+                                // Calculate dimensions
+                                const imgWidth = contentWidth;
+                                const imgHeight = (canvas.height * imgWidth) / canvas.width;
+                                
+                                // Add new page if not first
+                                if (!isFirstPage) {
+                                    pdf.addPage();
+                                }
+                                isFirstPage = false;
+                                
+                                // Add image, handling multi-page sections
+                                let yPosition = margin;
+                                let remainingHeight = imgHeight;
+                                const availableHeight = pageHeight - (margin * 2);
+                                
+                                if (imgHeight <= availableHeight) {
+                                    // Fits on one page
+                                    pdf.addImage(imgData, 'JPEG', margin, yPosition, imgWidth, imgHeight);
+                                } else {
+                                    // Need to split across pages
+                                    const ratio = canvas.width / imgWidth;
+                                    let sourceY = 0;
+                                    
+                                    while (remainingHeight > 0) {
+                                        const sliceHeight = Math.min(remainingHeight, availableHeight);
+                                        const sourceSliceHeight = sliceHeight * ratio;
+                                        
+                                        // Create a slice canvas
+                                        const sliceCanvas = document.createElement('canvas');
+                                        sliceCanvas.width = canvas.width;
+                                        sliceCanvas.height = sourceSliceHeight;
+                                        const sliceCtx = sliceCanvas.getContext('2d');
+                                        sliceCtx.fillStyle = '#ffffff';
+                                        sliceCtx.fillRect(0, 0, sliceCanvas.width, sliceCanvas.height);
+                                        sliceCtx.drawImage(canvas, 0, sourceY, canvas.width, sourceSliceHeight, 0, 0, canvas.width, sourceSliceHeight);
+                                        
+                                        const sliceImgData = sliceCanvas.toDataURL('image/jpeg', 0.9);
+                                        pdf.addImage(sliceImgData, 'JPEG', margin, margin, imgWidth, sliceHeight);
+                                        
+                                        sourceY += sourceSliceHeight;
+                                        remainingHeight -= sliceHeight;
+                                        
+                                        if (remainingHeight > 0) {
+                                            pdf.addPage();
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        
+                        // Save the PDF
+                        const filename = `${workspace.name.replace(/[^a-z0-9]/gi, '_')}_report.pdf`;
+                        pdf.save(filename);
+                        console.log('PDF saved:', filename);
+                        
+                    } catch (error) {
+                        console.error('PDF generation error:', error);
+                        console.error('Error stack:', error.stack);
+                        alert('Failed to generate PDF: ' + error.message + '\n\nCheck browser console for details.');
+                        throw error;
+                    } finally {
+                        // Restore original position
+                        pdfContainer.style.left = originalLeft;
+                        pdfContainer.style.top = originalTop;
+                        pdfContainer.style.zIndex = originalZIndex;
+                        pdfContainer.style.position = originalPosition;
+                        pdfContainer.style.opacity = '1';
+                        pdfContainer.style.pointerEvents = 'auto';
+                    }
+                } finally {
+                    // Clean up
+                    setTimeout(() => {
+                        const container = document.getElementById('pdf-export-container');
+                        if (container && container.parentNode) {
+                            document.body.removeChild(container);
+                        }
+                    }, 1000);
+                }
             },
 
             showModal(title, defaultValue, confirmText, onConfirm) {
@@ -1728,6 +3362,7 @@ TESTZ <- PeSIT PULL <- CFT -> SSH PUSH -> TESTF" spellcheck="false"></textarea>
             }
         };
 
+        // ============================================
         // ============================================
         // APPLICATION INITIALIZATION
         // ============================================
