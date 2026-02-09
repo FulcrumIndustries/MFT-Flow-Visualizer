@@ -447,25 +447,60 @@
             color: var(--accent-secondary);
         }
 
-        .pattern-editor {
-            width: 100%;
-            min-height: 120px;
-            padding: 14px;
+        .pattern-editor-wrapper {
+            display: flex;
             border: 1px solid var(--border-color);
             border-radius: var(--border-radius);
             background: var(--bg-tertiary);
+            overflow: hidden;
+            transition: all var(--transition-speed);
+            height: 120px;
+            max-height: 200px;
+            resize: vertical;
+        }
+
+        .pattern-editor-wrapper:focus-within {
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+
+        .line-numbers {
+            padding: 14px 8px 14px 12px;
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border-color);
+            font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+            font-size: 14px;
+            line-height: 22.4px;
+            color: var(--text-muted);
+            text-align: right;
+            user-select: none;
+            min-width: 44px;
+            overflow-y: hidden;
+            overflow-x: hidden;
+            flex-shrink: 0;
+        }
+
+        .line-numbers span {
+            display: block;
+            height: 22.4px;
+        }
+
+        .pattern-editor {
+            flex: 1;
+            height: 100%;
+            padding: 14px;
+            border: none;
+            background: transparent;
             color: var(--text-primary);
             font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
             font-size: 14px;
-            line-height: 1.6;
-            resize: vertical;
-            transition: all var(--transition-speed);
+            line-height: 22.4px;
+            resize: none;
+            overflow-y: auto;
         }
 
         .pattern-editor:focus {
             outline: none;
-            border-color: var(--accent-primary);
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
         }
 
         .pattern-editor::placeholder {
@@ -1346,12 +1381,15 @@
                     <span id="saveText">Saved</span>
                 </span>
             </div>
-            <textarea id="patternEditor" class="pattern-editor" placeholder="Enter your MFT flow patterns here (one per line)...
+            <div class="pattern-editor-wrapper">
+                <div id="lineNumbers" class="line-numbers"><span>1</span></div>
+                <textarea id="patternEditor" class="pattern-editor" placeholder="Enter your MFT flow patterns here (one per line)...
 
 Examples:
 TESTA -> PeSIT PUSH -> ST -> SFTP PUSH -> TESTB
 TESTA -> PeSIT PUSH -> CFT -> SSH PUSH -> TESTC
 TESTZ <- PeSIT PULL <- CFT -> SSH PUSH -> TESTF" spellcheck="false"></textarea>
+            </div>
             <div id="errorMessage" class="error-message"></div>
         </section>
 
@@ -2407,6 +2445,7 @@ TESTZ <- PeSIT PULL <- CFT -> SSH PUSH -> TESTF" spellcheck="false"></textarea>
                 this.elements = {
                     workspaceSelect: document.getElementById('workspaceSelect'),
                     patternEditor: document.getElementById('patternEditor'),
+                    lineNumbers: document.getElementById('lineNumbers'),
                     generalNotesField: document.getElementById('generalNotesField'),
                     flowSelector: document.getElementById('flowSelector'),
                     errorMessage: document.getElementById('errorMessage'),
@@ -2565,7 +2604,18 @@ TESTZ <- PeSIT PULL <- CFT -> SSH PUSH -> TESTF" spellcheck="false"></textarea>
                     setTimeout(() => this.setSaveIndicator('saved'), 500);
                 }, 300);
 
-                this.elements.patternEditor.addEventListener('input', debouncedUpdate);
+                this.elements.patternEditor.addEventListener('input', () => {
+                    this.updateLineNumbers();
+                    debouncedUpdate();
+                });
+
+                // Sync line numbers scroll with textarea scroll
+                this.elements.patternEditor.addEventListener('scroll', () => {
+                    this.elements.lineNumbers.scrollTop = this.elements.patternEditor.scrollTop;
+                });
+
+                // Initial line numbers update
+                this.updateLineNumbers();
 
                 // Flow selector
                 this.elements.flowSelector.addEventListener('change', (e) => {
@@ -2654,6 +2704,7 @@ TESTZ <- PeSIT PULL <- CFT -> SSH PUSH -> TESTF" spellcheck="false"></textarea>
                 if (ws) {
                     this.elements.patternEditor.value = ws.patternText || '';
                     DiagramRenderer.selectedFlowIndex = null;
+                    this.updateLineNumbers();
                     this.updatePattern();
                 }
             },
@@ -2683,6 +2734,20 @@ TESTZ <- PeSIT PULL <- CFT -> SSH PUSH -> TESTF" spellcheck="false"></textarea>
 
             hideError() {
                 this.elements.errorMessage.classList.remove('visible');
+            },
+
+            updateLineNumbers() {
+                const text = this.elements.patternEditor.value;
+                const lines = text.split('\n');
+                const lineCount = lines.length || 1;
+                
+                // Generate line numbers HTML
+                let lineNumbersHtml = '';
+                for (let i = 1; i <= lineCount; i++) {
+                    lineNumbersHtml += `<span>${i}</span>`;
+                }
+                
+                this.elements.lineNumbers.innerHTML = lineNumbersHtml;
             },
 
             setSaveIndicator(status) {

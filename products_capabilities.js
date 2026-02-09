@@ -278,7 +278,9 @@ function isValidCapability(protocol, direction) {
 }
 
 // Helper function to determine required products based on protocol capabilities used in patterns
-// Logic: Only intermediate nodes require products.
+// Logic: 
+// - For flows with intermediate nodes: intermediate nodes require products
+// - For direct flows (source -> target): suggest products that support the protocol used
 // Arrow direction matters:
 // - Forward arrows (->): FROM node performs action, TO node receives
 // - Reverse arrows (<-): TO node performs action, FROM node receives
@@ -286,7 +288,7 @@ function isValidCapability(protocol, direction) {
 function getRequiredProducts(flows) {
     const requiredCapabilities = new Set();
     
-    // Extract required capabilities from flows, focusing on intermediate nodes
+    // Extract required capabilities from flows
     flows.forEach(flow => {
         if (!flow || !flow.edges || !flow.nodes) return;
         
@@ -295,6 +297,9 @@ function getRequiredProducts(flows) {
         flow.nodes.forEach(node => {
             nodeMap.set(node.label, node.type);
         });
+        
+        // Check if this is a direct flow (source -> target without intermediates)
+        const hasIntermediates = flow.nodes.some(node => node.type === 'intermediate');
         
         flow.edges.forEach(edge => {
             const fromType = nodeMap.get(edge.fromLabel);
@@ -326,6 +331,17 @@ function getRequiredProducts(flows) {
             
             // If the SERVER node is intermediate: require SERVER capability
             if (serverType === 'intermediate') {
+                const serverCapability = `${edge.protocol} SERVER`;
+                requiredCapabilities.add(serverCapability);
+            }
+            
+            // For direct flows (no intermediates), suggest products based on the protocol used
+            // This helps users know which products could handle this type of transfer
+            if (!hasIntermediates) {
+                // Add both CLIENT capability (for the sending side)
+                const clientCapability = `${edge.protocol} ${edge.direction}`;
+                requiredCapabilities.add(clientCapability);
+                // Add SERVER capability (for the receiving side)
                 const serverCapability = `${edge.protocol} SERVER`;
                 requiredCapabilities.add(serverCapability);
             }
