@@ -136,157 +136,248 @@
             overflow: hidden;
         }
 
-        /* Animated Noisy Gradient with Organic Waves */
+        /* Grayscale Interlacing Waves - Soft Surreal Art */
         .header-gradient {
             position: absolute;
             top: 0;
             right: 0;
-            width: 70%;
+            width: 50%;
             height: 100%;
             pointer-events: none;
             overflow: hidden;
-            mask-image: linear-gradient(to left, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.5) 50%, rgba(0,0,0,0.2) 75%, transparent 100%);
-            -webkit-mask-image: linear-gradient(to left, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.5) 50%, rgba(0,0,0,0.2) 75%, transparent 100%);
+            mask-image: linear-gradient(to left, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 80%, rgba(0,0,0,0.4) 95%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to left, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 80%, rgba(0,0,0,0.4) 95%, transparent 100%);
         }
 
-        .header-gradient-inner {
-            position: absolute;
-            top: -100%;
-            left: -100%;
-            width: 400%;
-            height: 400%;
-            background: 
-                radial-gradient(ellipse 80% 60% at 15% 40%, rgba(96, 180, 172, 0.7) 0%, transparent 50%),
-                radial-gradient(ellipse 70% 80% at 70% 30%, rgba(230, 160, 130, 0.65) 0%, transparent 45%),
-                radial-gradient(ellipse 60% 70% at 40% 70%, rgba(40, 60, 80, 0.6) 0%, transparent 50%),
-                radial-gradient(ellipse 90% 50% at 85% 60%, rgba(200, 140, 120, 0.55) 0%, transparent 55%),
-                radial-gradient(ellipse 50% 60% at 25% 80%, rgba(80, 150, 160, 0.5) 0%, transparent 45%);
-            animation: organicFlow 20s ease-in-out infinite;
-            filter: blur(40px);
-        }
-
-        .header-gradient-wave1 {
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: 
-                radial-gradient(ellipse 100% 40% at 30% 50%, rgba(96, 180, 172, 0.4) 0%, transparent 60%),
-                radial-gradient(ellipse 80% 50% at 70% 60%, rgba(40, 50, 70, 0.35) 0%, transparent 55%);
-            animation: waveFlow1 15s ease-in-out infinite;
-            filter: blur(30px);
-        }
-
-        .header-gradient-wave2 {
-            position: absolute;
-            top: -30%;
-            left: -30%;
-            width: 160%;
-            height: 160%;
-            background: 
-                radial-gradient(ellipse 70% 60% at 60% 40%, rgba(220, 150, 120, 0.45) 0%, transparent 50%),
-                radial-gradient(ellipse 60% 40% at 20% 70%, rgba(100, 170, 170, 0.35) 0%, transparent 55%);
-            animation: waveFlow2 18s ease-in-out infinite reverse;
-            filter: blur(35px);
-        }
-
-        .header-gradient-noise {
-            position: absolute;
-            top: -10%;
-            left: -10%;
-            width: 120%;
-            height: 120%;
-            opacity: 0.35;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='5' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
-            mix-blend-mode: overlay;
-            animation: noiseShift 0.5s steps(3) infinite;
-        }
-
-        .header-gradient-grain {
+        /* Soft grayscale gradient background */
+        .header-gradient-bg {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            opacity: 0.2;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='grain'%3E%3CfeTurbulence type='turbulence' baseFrequency='0.85' numOctaves='4' result='noise'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23grain)'/%3E%3C/svg%3E");
+            background: linear-gradient(165deg, #e8e8e8 0%, #d4d4d4 30%, #a8a8a8 70%, #888888 100%);
+        }
+
+        /* SVG Sine Waves Container */
+        .header-sine-waves {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .header-sine-waves svg {
+            position: absolute;
+            width: 250%;
+            height: 100%;
+            left: -75%;
+        }
+
+        /* Wave 1 - Light gray, soft */
+        .sine-wave-1 {
+            animation: sineMove1 20s ease-in-out infinite;
+        }
+        .sine-wave-1 path {
+            fill: none;
+            stroke: url(#waveGradient1);
+            stroke-width: 6;
+            filter: blur(2px);
+            opacity: 0.8;
+        }
+
+        /* Wave 2 - Mid gray */
+        .sine-wave-2 {
+            animation: sineMove2 25s ease-in-out infinite;
+        }
+        .sine-wave-2 path {
+            fill: none;
+            stroke: url(#waveGradient2);
+            stroke-width: 5;
+            filter: blur(1.5px);
+            opacity: 0.7;
+        }
+
+        /* Wave 3 - Darker gray */
+        .sine-wave-3 {
+            animation: sineMove3 30s ease-in-out infinite;
+        }
+        .sine-wave-3 path {
+            fill: none;
+            stroke: url(#waveGradient3);
+            stroke-width: 4;
+            filter: blur(1px);
+            opacity: 0.6;
+        }
+
+        /* Wave 4 - Soft white highlight */
+        .sine-wave-4 {
+            animation: sineMove4 18s ease-in-out infinite;
+        }
+        .sine-wave-4 path {
+            fill: none;
+            stroke: url(#waveGradient4);
+            stroke-width: 3;
+            filter: blur(3px);
+            opacity: 0.5;
+        }
+
+        /* Soft ambient glow - grayscale only */
+        .header-gradient-wave1 {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(ellipse 90% 60% at 60% 20%, rgba(255, 255, 255, 0.4) 0%, transparent 50%),
+                radial-gradient(ellipse 70% 50% at 30% 80%, rgba(120, 120, 120, 0.3) 0%, transparent 45%);
+            animation: softGlow1 15s ease-in-out infinite;
+        }
+
+        .header-gradient-wave2 {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(ellipse 80% 55% at 75% 60%, rgba(200, 200, 200, 0.35) 0%, transparent 50%),
+                radial-gradient(ellipse 60% 40% at 20% 40%, rgba(180, 180, 180, 0.25) 0%, transparent 45%);
+            animation: softGlow2 18s ease-in-out infinite;
+        }
+
+        /* Heavy film grain - primary layer */
+        .header-gradient-grain {
+            position: absolute;
+            top: -40%;
+            left: -40%;
+            width: 180%;
+            height: 180%;
+            opacity: 0.55;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='5' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            mix-blend-mode: multiply;
+            animation: grainDrift 0.8s steps(4) infinite;
+        }
+
+        /* Secondary fine grain layer */
+        .header-gradient-grain2 {
+            position: absolute;
+            top: -20%;
+            left: -20%;
+            width: 140%;
+            height: 140%;
+            opacity: 0.4;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='grain2'%3E%3CfeTurbulence type='turbulence' baseFrequency='1.0' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23grain2)'/%3E%3C/svg%3E");
             mix-blend-mode: soft-light;
+            animation: grainDrift2 1.2s steps(3) infinite reverse;
         }
 
-        @keyframes organicFlow {
-            0%, 100% {
-                transform: translate(0, 0) rotate(0deg) scale(1);
-            }
-            20% {
-                transform: translate(5%, 3%) rotate(2deg) scale(1.05);
-            }
-            40% {
-                transform: translate(-3%, 5%) rotate(-1deg) scale(0.98);
-            }
-            60% {
-                transform: translate(4%, -2%) rotate(1.5deg) scale(1.02);
-            }
-            80% {
-                transform: translate(-2%, -3%) rotate(-0.5deg) scale(1.03);
-            }
+        /* Remove unused elements */
+        .header-gradient-wave3,
+        .header-gradient-noise,
+        .header-gradient-inner {
+            display: none;
         }
 
-        @keyframes waveFlow1 {
-            0%, 100% {
-                transform: translate(0, 0) rotate(0deg);
-            }
-            33% {
-                transform: translate(8%, -5%) rotate(3deg);
-            }
-            66% {
-                transform: translate(-5%, 8%) rotate(-2deg);
-            }
+        /* Slow, relaxing wave animations */
+        @keyframes sineMove1 {
+            0%, 100% { transform: translateX(0) translateY(0); }
+            50% { transform: translateX(20%) translateY(2px); }
         }
 
-        @keyframes waveFlow2 {
-            0%, 100% {
-                transform: translate(0, 0) rotate(0deg);
-            }
-            50% {
-                transform: translate(-6%, 6%) rotate(-4deg);
-            }
+        @keyframes sineMove2 {
+            0%, 100% { transform: translateX(0) translateY(0); }
+            50% { transform: translateX(-15%) translateY(-1px); }
         }
 
-        @keyframes noiseShift {
+        @keyframes sineMove3 {
+            0%, 100% { transform: translateX(0) translateY(0); }
+            50% { transform: translateX(12%) translateY(3px); }
+        }
+
+        @keyframes sineMove4 {
+            0%, 100% { transform: translateX(0) translateY(0); }
+            50% { transform: translateX(-25%) translateY(-2px); }
+        }
+
+        @keyframes softGlow1 {
+            0%, 100% { opacity: 0.4; transform: scale(1) translateX(0); }
+            50% { opacity: 0.6; transform: scale(1.03) translateX(3%); }
+        }
+
+        @keyframes softGlow2 {
+            0%, 100% { opacity: 0.35; transform: scale(1.02) translateX(0); }
+            50% { opacity: 0.5; transform: scale(0.98) translateX(-2%); }
+        }
+
+        /* Slower grain animation for relaxing feel */
+        @keyframes grainDrift {
             0% { transform: translate(0, 0); }
-            33% { transform: translate(-1px, 1px); }
-            66% { transform: translate(1px, -1px); }
+            25% { transform: translate(-1px, 1px); }
+            50% { transform: translate(1px, 0); }
+            75% { transform: translate(0, -1px); }
             100% { transform: translate(0, 0); }
         }
 
-        [data-theme="dark"] .header-gradient-inner {
+        @keyframes grainDrift2 {
+            0% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(1px, 0) scale(1.01); }
+            66% { transform: translate(-1px, 1px) scale(0.99); }
+            100% { transform: translate(0, 0) scale(1); }
+        }
+
+        /* Light theme - soft ethereal feel */
+        [data-theme="light"] .header-gradient-bg {
+            background: linear-gradient(165deg, #f5f5f5 0%, #e0e0e0 30%, #c0c0c0 70%, #a0a0a0 100%);
+        }
+
+        [data-theme="light"] .header-gradient-wave1 {
             background: 
-                radial-gradient(ellipse 80% 60% at 15% 40%, rgba(80, 160, 155, 0.75) 0%, transparent 50%),
-                radial-gradient(ellipse 70% 80% at 70% 30%, rgba(210, 140, 110, 0.7) 0%, transparent 45%),
-                radial-gradient(ellipse 60% 70% at 40% 70%, rgba(30, 45, 65, 0.65) 0%, transparent 50%),
-                radial-gradient(ellipse 90% 50% at 85% 60%, rgba(190, 130, 100, 0.6) 0%, transparent 55%),
-                radial-gradient(ellipse 50% 60% at 25% 80%, rgba(70, 140, 150, 0.55) 0%, transparent 45%);
+                radial-gradient(ellipse 90% 60% at 60% 20%, rgba(255, 255, 255, 0.5) 0%, transparent 50%),
+                radial-gradient(ellipse 70% 50% at 30% 80%, rgba(140, 140, 140, 0.25) 0%, transparent 45%);
+        }
+
+        [data-theme="light"] .header-gradient-wave2 {
+            background: 
+                radial-gradient(ellipse 80% 55% at 75% 60%, rgba(220, 220, 220, 0.3) 0%, transparent 50%),
+                radial-gradient(ellipse 60% 40% at 20% 40%, rgba(200, 200, 200, 0.2) 0%, transparent 45%);
+        }
+
+        [data-theme="light"] .header-gradient-grain {
+            opacity: 0.45;
+            mix-blend-mode: multiply;
+        }
+
+        [data-theme="light"] .header-gradient-grain2 {
+            opacity: 0.35;
+        }
+
+        /* Dark theme - moody grayscale */
+        [data-theme="dark"] .header-gradient-bg {
+            background: linear-gradient(165deg, #4a4a4a 0%, #3a3a3a 30%, #2a2a2a 70%, #1a1a1a 100%);
         }
 
         [data-theme="dark"] .header-gradient-wave1 {
             background: 
-                radial-gradient(ellipse 100% 40% at 30% 50%, rgba(80, 160, 155, 0.5) 0%, transparent 60%),
-                radial-gradient(ellipse 80% 50% at 70% 60%, rgba(30, 40, 60, 0.45) 0%, transparent 55%);
+                radial-gradient(ellipse 90% 60% at 60% 20%, rgba(200, 200, 200, 0.3) 0%, transparent 50%),
+                radial-gradient(ellipse 70% 50% at 30% 80%, rgba(100, 100, 100, 0.25) 0%, transparent 45%);
         }
 
         [data-theme="dark"] .header-gradient-wave2 {
             background: 
-                radial-gradient(ellipse 70% 60% at 60% 40%, rgba(200, 130, 100, 0.5) 0%, transparent 50%),
-                radial-gradient(ellipse 60% 40% at 20% 70%, rgba(90, 155, 160, 0.4) 0%, transparent 55%);
-        }
-
-        [data-theme="dark"] .header-gradient-noise {
-            opacity: 0.4;
+                radial-gradient(ellipse 80% 55% at 75% 60%, rgba(150, 150, 150, 0.25) 0%, transparent 50%),
+                radial-gradient(ellipse 60% 40% at 20% 40%, rgba(120, 120, 120, 0.2) 0%, transparent 45%);
         }
 
         [data-theme="dark"] .header-gradient-grain {
-            opacity: 0.25;
+            opacity: 0.6;
+            mix-blend-mode: overlay;
+        }
+
+        [data-theme="dark"] .header-gradient-grain2 {
+            opacity: 0.45;
         }
 
         .header-left {
@@ -410,17 +501,173 @@
            EDITOR SECTION
            ============================================ */
         .editor-section {
-            padding: 16px 20px;
+            display: flex;
             background: var(--bg-secondary);
             border-bottom: 1px solid var(--border-color);
             flex-shrink: 0;
+        }
+
+        /* Flow Analysis Panel - Left Side */
+        .flow-analysis-panel {
+            width: 350px;
+            padding: 12px 16px;
+            border-right: 1px solid var(--border-color);
+            background: var(--bg-tertiary);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            flex-shrink: 0;
+            overflow-y: auto;
+            max-height: 180px;
+        }
+
+        .analysis-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .analysis-header svg {
+            color: var(--accent-primary);
+        }
+
+        .analysis-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
+
+        .stat-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            padding: 10px;
+            text-align: center;
+            transition: all var(--transition-speed);
+        }
+
+        .stat-card:hover {
+            border-color: var(--accent-primary);
+            transform: translateY(-1px);
+        }
+
+        .stat-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--accent-primary);
+            line-height: 1.2;
+        }
+
+        .stat-label {
+            font-size: 10px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            margin-top: 2px;
+        }
+
+        .protocol-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .protocol-tag {
+            font-size: 11px;
+            padding: 4px 8px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all var(--transition-speed);
+        }
+
+        .protocol-tag:hover {
+            background: var(--accent-primary);
+            color: white;
+            border-color: var(--accent-primary);
+        }
+
+        .protocol-tag .tag-count {
+            background: var(--bg-tertiary);
+            color: var(--text-muted);
+            padding: 1px 5px;
+            border-radius: 8px;
+            font-size: 10px;
+            margin-left: 4px;
+        }
+
+        .protocol-tag:hover .tag-count {
+            background: rgba(255,255,255,0.2);
+            color: white;
+        }
+
+        .flow-nav-list {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            max-height: 80px;
+            overflow-y: auto;
+        }
+
+        .flow-nav-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 10px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            font-size: 12px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all var(--transition-speed);
+        }
+
+        .flow-nav-item:hover {
+            border-color: var(--accent-primary);
+            color: var(--text-primary);
+        }
+
+        .flow-nav-item.selected {
+            background: var(--accent-primary);
+            border-color: var(--accent-primary);
+            color: white;
+        }
+
+        .flow-nav-item .flow-num {
+            font-weight: 600;
+            min-width: 20px;
+        }
+
+        .flow-nav-item .flow-preview {
+            flex: 1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-family: 'SF Mono', 'Fira Code', monospace;
+            font-size: 11px;
+        }
+
+        /* Pattern Editor - Right Side */
+        .pattern-editor-section {
+            flex: 1;
+            padding: 12px 16px;
+            display: flex;
+            flex-direction: column;
         }
 
         .editor-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
 
         .editor-title {
@@ -1225,6 +1472,16 @@
         /* ============================================
            RESPONSIVE
            ============================================ */
+        @media (max-width: 1024px) {
+            .flow-analysis-panel {
+                width: 280px;
+            }
+
+            .analysis-stats {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
         @media (max-width: 768px) {
             .header {
                 flex-wrap: wrap;
@@ -1253,6 +1510,21 @@
                 overflow-x: auto;
             }
 
+            .editor-section {
+                flex-direction: column;
+            }
+
+            .flow-analysis-panel {
+                width: 100%;
+                max-height: 150px;
+                border-right: none;
+                border-bottom: 1px solid var(--border-color);
+            }
+
+            .analysis-stats {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
             .canvas-wrapper {
                 flex-direction: column;
             }
@@ -1269,13 +1541,66 @@
     <div class="app-container">
         <!-- Header -->
         <header class="header">
-            <!-- Animated Organic Wavy Gradient with Grain -->
+            <!-- Animated Sine Wave with Subtle Colors -->
             <div class="header-gradient">
-                <div class="header-gradient-inner"></div>
+                <div class="header-gradient-bg"></div>
                 <div class="header-gradient-wave1"></div>
                 <div class="header-gradient-wave2"></div>
-                <div class="header-gradient-noise"></div>
+                
+                <!-- SVG Sine Waves - Grayscale -->
+                <div class="header-sine-waves">
+                    <svg viewBox="0 0 1200 60" preserveAspectRatio="none">
+                        <defs>
+                            <!-- Light gray gradient -->
+                            <linearGradient id="waveGradient1" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" style="stop-color:#ffffff;stop-opacity:0.9" />
+                                <stop offset="50%" style="stop-color:#e0e0e0;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#f5f5f5;stop-opacity:0.7" />
+                            </linearGradient>
+                            <!-- Mid gray gradient -->
+                            <linearGradient id="waveGradient2" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" style="stop-color:#b0b0b0;stop-opacity:0.8" />
+                                <stop offset="50%" style="stop-color:#909090;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#c0c0c0;stop-opacity:0.6" />
+                            </linearGradient>
+                            <!-- Dark gray gradient -->
+                            <linearGradient id="waveGradient3" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" style="stop-color:#707070;stop-opacity:0.7" />
+                                <stop offset="50%" style="stop-color:#505050;stop-opacity:0.9" />
+                                <stop offset="100%" style="stop-color:#606060;stop-opacity:0.5" />
+                            </linearGradient>
+                            <!-- Soft white highlight -->
+                            <linearGradient id="waveGradient4" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" style="stop-color:#ffffff;stop-opacity:0.6" />
+                                <stop offset="50%" style="stop-color:#f8f8f8;stop-opacity:0.8" />
+                                <stop offset="100%" style="stop-color:#ffffff;stop-opacity:0.4" />
+                            </linearGradient>
+                        </defs>
+                        
+                        <!-- Wave 1 - Light, wide amplitude, slow -->
+                        <g class="sine-wave-1">
+                            <path d="M0,30 C75,15 150,15 225,30 C300,45 375,45 450,30 C525,15 600,15 675,30 C750,45 825,45 900,30 C975,15 1050,15 1125,30 C1200,45 1275,45 1350,30 C1425,15 1500,15 1575,30" />
+                        </g>
+                        
+                        <!-- Wave 2 - Mid gray, different frequency -->
+                        <g class="sine-wave-2">
+                            <path d="M0,35 C60,22 120,22 180,35 C240,48 300,48 360,35 C420,22 480,22 540,35 C600,48 660,48 720,35 C780,22 840,22 900,35 C960,48 1020,48 1080,35 C1140,22 1200,22 1260,35 C1320,48 1380,48 1440,35" />
+                        </g>
+                        
+                        <!-- Wave 3 - Dark, tighter frequency -->
+                        <g class="sine-wave-3">
+                            <path d="M0,28 C45,38 90,38 135,28 C180,18 225,18 270,28 C315,38 360,38 405,28 C450,18 495,18 540,28 C585,38 630,38 675,28 C720,18 765,18 810,28 C855,38 900,38 945,28 C990,18 1035,18 1080,28 C1125,38 1170,38 1215,28" />
+                        </g>
+                        
+                        <!-- Wave 4 - White highlight, very soft -->
+                        <g class="sine-wave-4">
+                            <path d="M0,32 C90,20 180,20 270,32 C360,44 450,44 540,32 C630,20 720,20 810,32 C900,44 990,44 1080,32 C1170,20 1260,20 1350,32 C1440,44 1530,44 1620,32" />
+                        </g>
+                    </svg>
+                </div>
+                
                 <div class="header-gradient-grain"></div>
+                <div class="header-gradient-grain2"></div>
             </div>
             
             <div class="header-left">
@@ -1372,25 +1697,60 @@
 
         <!-- Editor Section -->
         <section class="editor-section">
-            <div class="editor-header">
-                <span class="editor-title">Flow Patterns (one per line)</span>
-                <span id="saveIndicator" class="save-indicator saved">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <polyline points="20 6 9 17 4 12"></polyline>
+            <!-- Flow Analysis Panel - Left Side -->
+            <div class="flow-analysis-panel">
+                <div class="analysis-header">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                        <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                        <line x1="12" y1="22.08" x2="12" y2="12"></line>
                     </svg>
-                    <span id="saveText">Saved</span>
-                </span>
+                    Flow Analysis
+                </div>
+                <div class="analysis-stats">
+                    <div class="stat-card">
+                        <div class="stat-value" id="statFlowCount">0</div>
+                        <div class="stat-label">Flows</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="statNodeCount">0</div>
+                        <div class="stat-label">Nodes</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="statProtocolCount">0</div>
+                        <div class="stat-label">Protocols</div>
+                    </div>
+                </div>
+                <div class="protocol-tags" id="protocolTags">
+                    <!-- Protocol tags will be populated dynamically -->
+                </div>
+                <div class="flow-nav-list" id="flowNavList">
+                    <!-- Flow navigation items will be populated dynamically -->
+                </div>
             </div>
-            <div class="pattern-editor-wrapper">
-                <div id="lineNumbers" class="line-numbers"><span>1</span></div>
-                <textarea id="patternEditor" class="pattern-editor" placeholder="Enter your MFT flow patterns here (one per line)...
+
+            <!-- Pattern Editor - Right Side -->
+            <div class="pattern-editor-section">
+                <div class="editor-header">
+                    <span class="editor-title">Flow Patterns (one per line)</span>
+                    <span id="saveIndicator" class="save-indicator saved">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        <span id="saveText">Saved</span>
+                    </span>
+                </div>
+                <div class="pattern-editor-wrapper">
+                    <div id="lineNumbers" class="line-numbers"><span>1</span></div>
+                    <textarea id="patternEditor" class="pattern-editor" placeholder="Enter your MFT flow patterns here (one per line)...
 
 Examples:
 TESTA -> PeSIT PUSH -> ST -> SFTP PUSH -> TESTB
 TESTA -> PeSIT PUSH -> CFT -> SSH PUSH -> TESTC
 TESTZ <- PeSIT PULL <- CFT -> SSH PUSH -> TESTF" spellcheck="false"></textarea>
+                </div>
+                <div id="errorMessage" class="error-message"></div>
             </div>
-            <div id="errorMessage" class="error-message"></div>
         </section>
 
         <!-- Canvas Section -->
@@ -2059,6 +2419,16 @@ TESTZ <- PeSIT PULL <- CFT -> SSH PUSH -> TESTF" spellcheck="false"></textarea>
                     selector.value = flowIndex;
                 }
 
+                // Update flow navigation items selection
+                const flowNavItems = document.querySelectorAll('.flow-nav-item');
+                flowNavItems.forEach((item, index) => {
+                    if (index === flowIndex) {
+                        item.classList.add('selected');
+                    } else {
+                        item.classList.remove('selected');
+                    }
+                });
+
                 // Update notes and products for selected flow
                 if (flowIndex !== null && this.flows[flowIndex]) {
                     this.updateNotesField(flowIndex);
@@ -2722,6 +3092,116 @@ TESTZ <- PeSIT PULL <- CFT -> SSH PUSH -> TESTF" spellcheck="false"></textarea>
                 }
 
                 DiagramRenderer.render(result.flows, this.elements.canvasContainer);
+                
+                // Update flow analysis panel
+                this.updateFlowAnalysis(result.flows, text);
+            },
+
+            updateFlowAnalysis(flows, text) {
+                // Update stats
+                const flowCount = flows.length;
+                let nodeCount = 0;
+                const protocolsUsed = new Map();
+                
+                flows.forEach(flow => {
+                    if (flow && flow.nodes) {
+                        nodeCount += flow.nodes.length;
+                    }
+                    if (flow && flow.edges) {
+                        flow.edges.forEach(edge => {
+                            const protocol = edge.protocol;
+                            if (protocol) {
+                                protocolsUsed.set(protocol, (protocolsUsed.get(protocol) || 0) + 1);
+                            }
+                        });
+                    }
+                });
+
+                document.getElementById('statFlowCount').textContent = flowCount;
+                document.getElementById('statNodeCount').textContent = nodeCount;
+                document.getElementById('statProtocolCount').textContent = protocolsUsed.size;
+
+                // Update protocol tags
+                const protocolTags = document.getElementById('protocolTags');
+                if (protocolsUsed.size > 0) {
+                    protocolTags.innerHTML = Array.from(protocolsUsed.entries())
+                        .sort((a, b) => b[1] - a[1])
+                        .map(([protocol, count]) => 
+                            `<span class="protocol-tag" data-protocol="${protocol}">${protocol}<span class="tag-count">${count}</span></span>`
+                        ).join('');
+                    
+                    // Add click handlers for protocol tags
+                    protocolTags.querySelectorAll('.protocol-tag').forEach(tag => {
+                        tag.addEventListener('click', () => {
+                            const protocol = tag.dataset.protocol;
+                            this.highlightProtocolInEditor(protocol);
+                        });
+                    });
+                } else {
+                    protocolTags.innerHTML = '<span style="color: var(--text-muted); font-size: 11px; font-style: italic;">No protocols detected</span>';
+                }
+
+                // Update flow navigation list
+                const flowNavList = document.getElementById('flowNavList');
+                const lines = text.split('\n');
+                
+                if (flowCount > 0) {
+                    let flowLineIndex = 0;
+                    flowNavList.innerHTML = flows.map((flow, index) => {
+                        // Find the line for this flow
+                        while (flowLineIndex < lines.length && lines[flowLineIndex].trim() === '') {
+                            flowLineIndex++;
+                        }
+                        const lineNum = flowLineIndex + 1;
+                        flowLineIndex++;
+                        
+                        // Create preview from nodes
+                        const preview = flow.nodes ? flow.nodes.map(n => n.label).join(' → ') : 'Flow ' + (index + 1);
+                        const isSelected = DiagramRenderer.selectedFlowIndex === index;
+                        
+                        return `<div class="flow-nav-item${isSelected ? ' selected' : ''}" data-flow-index="${index}" data-line="${lineNum}">
+                            <span class="flow-num">${lineNum}</span>
+                            <span class="flow-preview" title="${preview}">${preview}</span>
+                        </div>`;
+                    }).join('');
+                    
+                    // Add click handlers
+                    flowNavList.querySelectorAll('.flow-nav-item').forEach(item => {
+                        item.addEventListener('click', () => {
+                            const flowIndex = parseInt(item.dataset.flowIndex);
+                            const lineNum = parseInt(item.dataset.line);
+                            DiagramRenderer.selectFlow(flowIndex);
+                            this.scrollToLine(lineNum);
+                        });
+                    });
+                } else {
+                    flowNavList.innerHTML = '<span style="color: var(--text-muted); font-size: 11px; font-style: italic;">No flows defined</span>';
+                }
+            },
+
+            highlightProtocolInEditor(protocol) {
+                const editor = this.elements.patternEditor;
+                const text = editor.value;
+                const regex = new RegExp(protocol, 'gi');
+                const match = regex.exec(text);
+                
+                if (match) {
+                    editor.focus();
+                    editor.setSelectionRange(match.index, match.index + match[0].length);
+                    
+                    // Calculate approximate line and scroll
+                    const textBefore = text.substring(0, match.index);
+                    const lineNum = textBefore.split('\n').length;
+                    this.scrollToLine(lineNum);
+                }
+            },
+
+            scrollToLine(lineNum) {
+                const editor = this.elements.patternEditor;
+                const lineHeight = 22.4; // matches CSS
+                const scrollTop = (lineNum - 1) * lineHeight;
+                editor.scrollTop = scrollTop;
+                this.elements.lineNumbers.scrollTop = scrollTop;
             },
 
             showErrors(errors) {
