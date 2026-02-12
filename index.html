@@ -1505,6 +1505,147 @@
         }
 
         /* ============================================
+           KROKI MODAL STYLES
+           ============================================ */
+        .kroki-modal-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .kroki-modal-actions .btn-sm {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            font-size: 12px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all var(--transition-speed);
+        }
+
+        .kroki-modal-actions .btn-sm:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            border-color: var(--accent-primary);
+        }
+
+        .kroki-modal-actions .btn-icon-only {
+            padding: 6px 8px;
+        }
+
+        .kroki-zoom-controls {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            background: var(--bg-tertiary);
+            border-radius: var(--border-radius);
+            padding: 2px;
+        }
+
+        .kroki-zoom-level {
+            min-width: 50px;
+            text-align: center;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            padding: 0 4px;
+        }
+
+        .kroki-actions-divider {
+            width: 1px;
+            height: 24px;
+            background: var(--border-color);
+            margin: 0 4px;
+        }
+
+        .kroki-modal-body {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .kroki-canvas-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--canvas-bg);
+            overflow: auto;
+        }
+
+        .kroki-loading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            color: var(--text-secondary);
+        }
+
+        .kroki-loading.hidden {
+            display: none;
+        }
+
+        .kroki-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--border-color);
+            border-top-color: var(--accent-primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        .kroki-image {
+            display: none;
+            cursor: grab;
+        }
+
+        .kroki-image.visible {
+            display: block;
+        }
+
+        .kroki-image.dragging {
+            cursor: grabbing;
+        }
+
+        .kroki-canvas-container {
+            overflow: auto;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+        }
+
+        .kroki-image-wrapper {
+            display: block;
+            /* Extra padding to allow scrolling beyond image edges on all sides */
+            padding: 200px;
+        }
+
+        .kroki-legend {
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .kroki-error {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            color: var(--error-color, #e74c3c);
+            padding: 20px;
+            text-align: center;
+        }
+
+        .kroki-error.hidden {
+            display: none;
+        }
+
+        /* ============================================
            LOADING OVERLAY
            ============================================ */
         .loading-overlay {
@@ -1991,6 +2132,13 @@
                         <path d="M6.5 10v4"></path>
                     </svg>
                 </button>
+                <button id="krokiBtn" class="btn btn-icon" title="Generate Kroki Diagram (D2)">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+                        <path d="M2 17l10 5 10-5"></path>
+                        <path d="M2 12l10 5 10-5"></path>
+                    </svg>
+                </button>
                 <button id="themeToggleBtn" class="btn btn-icon" title="Toggle Theme">
                     <svg id="themeIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                         stroke-width="2">
@@ -2241,9 +2389,102 @@ TESTZ <- PeSIT PULL <- CFT -> SSH PUSH -> TESTF" spellcheck="false"></textarea>
             </div>
         </div>
 
+        <!-- Kroki Diagram Modal -->
+        <div id="krokiModal" class="architecture-modal">
+            <div class="architecture-modal-content">
+                <div class="architecture-modal-header">
+                    <div class="architecture-modal-title">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+                            <path d="M2 17l10 5 10-5"></path>
+                            <path d="M2 12l10 5 10-5"></path>
+                        </svg>
+                        Kroki Diagram (D2)
+                    </div>
+                    <div class="kroki-modal-actions">
+                        <div class="kroki-zoom-controls">
+                            <button id="krokiZoomOutBtn" class="btn btn-sm btn-icon-only" title="Zoom Out (-)">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="11" cy="11" r="8"></circle>
+                                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                                    <line x1="8" y1="11" x2="14" y2="11"></line>
+                                </svg>
+                            </button>
+                            <span id="krokiZoomLevel" class="kroki-zoom-level">100%</span>
+                            <button id="krokiZoomInBtn" class="btn btn-sm btn-icon-only" title="Zoom In (+)">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="11" cy="11" r="8"></circle>
+                                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                                    <line x1="11" y1="8" x2="11" y2="14"></line>
+                                    <line x1="8" y1="11" x2="14" y2="11"></line>
+                                </svg>
+                            </button>
+                            <button id="krokiZoomResetBtn" class="btn btn-sm" title="Reset Zoom">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+                                    <path d="M3 3v5h5"></path>
+                                </svg>
+                                Fit
+                            </button>
+                        </div>
+                        <div class="kroki-actions-divider"></div>
+                        <button id="krokiCopyCodeBtn" class="btn btn-sm" title="Copy D2 Code">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                            </svg>
+                            Copy Code
+                        </button>
+                        <button id="krokiOpenExternalBtn" class="btn btn-sm" title="Open in Kroki">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                                <polyline points="15 3 21 3 21 9"></polyline>
+                                <line x1="10" y1="14" x2="21" y2="3"></line>
+                            </svg>
+                            Open External
+                        </button>
+                        <button id="closeKrokiBtn" class="architecture-modal-close" title="Close">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="architecture-modal-body kroki-modal-body">
+                    <div id="krokiCanvasContainer" class="architecture-canvas-container kroki-canvas-container">
+                        <div id="krokiLoading" class="kroki-loading">
+                            <div class="kroki-spinner"></div>
+                            <span>Generating diagram...</span>
+                        </div>
+                        <div id="krokiImageWrapper" class="kroki-image-wrapper">
+                            <img id="krokiImage" class="kroki-image" alt="Kroki D2 Diagram" />
+                        </div>
+                    </div>
+                    <div class="architecture-legend kroki-legend">
+                        <div class="arch-stat-row">
+                            <span class="arch-stat-label">Nodes:</span>
+                            <span class="arch-stat-value" id="krokiStatNodes">0</span>
+                        </div>
+                        <div class="arch-stat-row">
+                            <span class="arch-stat-label">Connections:</span>
+                            <span class="arch-stat-value" id="krokiStatConnections">0</span>
+                        </div>
+                        <div class="arch-stat-row">
+                            <span class="arch-stat-label">Format:</span>
+                            <span class="arch-stat-value">D2</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <script src="products_capabilities.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js"></script>
         <script>
             // ============================================
             // UTILITY FUNCTIONS
@@ -3427,6 +3668,99 @@ TESTZ <- PeSIT PULL <- CFT -> SSH PUSH -> TESTF" spellcheck="false"></textarea>
                         }
                     });
 
+                    // Kroki diagram modal
+                    document.getElementById('krokiBtn').addEventListener('click', () => {
+                        this.showKrokiDiagram();
+                    });
+
+                    document.getElementById('closeKrokiBtn').addEventListener('click', () => {
+                        this.hideKrokiDiagram();
+                    });
+
+                    document.getElementById('krokiModal').addEventListener('click', (e) => {
+                        if (e.target.id === 'krokiModal') {
+                            this.hideKrokiDiagram();
+                        }
+                    });
+
+                    document.getElementById('krokiCopyCodeBtn').addEventListener('click', () => {
+                        if (this.currentKrokiCode) {
+                            navigator.clipboard.writeText(this.currentKrokiCode).then(() => {
+                                const btn = document.getElementById('krokiCopyCodeBtn');
+                                const originalText = btn.innerHTML;
+                                btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Copied!`;
+                                setTimeout(() => {
+                                    btn.innerHTML = originalText;
+                                }, 2000);
+                            });
+                        }
+                    });
+
+                    document.getElementById('krokiOpenExternalBtn').addEventListener('click', () => {
+                        if (this.currentKrokiUrl) {
+                            window.open(this.currentKrokiUrl, '_blank');
+                        }
+                    });
+
+                    // Kroki zoom controls
+                    document.getElementById('krokiZoomInBtn').addEventListener('click', () => {
+                        this.krokiZoom(0.25);
+                    });
+
+                    document.getElementById('krokiZoomOutBtn').addEventListener('click', () => {
+                        this.krokiZoom(-0.25);
+                    });
+
+                    document.getElementById('krokiZoomResetBtn').addEventListener('click', () => {
+                        this.krokiZoomReset();
+                    });
+
+                    // Kroki mouse wheel zoom
+                    const krokiContainer = document.getElementById('krokiCanvasContainer');
+                    krokiContainer.addEventListener('wheel', (e) => {
+                        if (e.ctrlKey || e.metaKey) {
+                            e.preventDefault();
+                            const delta = e.deltaY > 0 ? -0.1 : 0.1;
+                            this.krokiZoom(delta);
+                        }
+                    }, { passive: false });
+
+                    // Kroki image drag/pan
+                    const krokiImage = document.getElementById('krokiImage');
+                    let krokiIsDragging = false;
+                    let krokiStartX = 0;
+                    let krokiStartY = 0;
+                    let krokiScrollLeft = 0;
+                    let krokiScrollTop = 0;
+
+                    krokiImage.addEventListener('mousedown', (e) => {
+                        if (e.button !== 0) return;
+                        krokiIsDragging = true;
+                        krokiImage.classList.add('dragging');
+                        krokiStartX = e.pageX - krokiContainer.offsetLeft;
+                        krokiStartY = e.pageY - krokiContainer.offsetTop;
+                        krokiScrollLeft = krokiContainer.scrollLeft;
+                        krokiScrollTop = krokiContainer.scrollTop;
+                        e.preventDefault();
+                    });
+
+                    document.addEventListener('mousemove', (e) => {
+                        if (!krokiIsDragging) return;
+                        const x = e.pageX - krokiContainer.offsetLeft;
+                        const y = e.pageY - krokiContainer.offsetTop;
+                        const walkX = (x - krokiStartX) * 1.5;
+                        const walkY = (y - krokiStartY) * 1.5;
+                        krokiContainer.scrollLeft = krokiScrollLeft - walkX;
+                        krokiContainer.scrollTop = krokiScrollTop - walkY;
+                    });
+
+                    document.addEventListener('mouseup', () => {
+                        if (krokiIsDragging) {
+                            krokiIsDragging = false;
+                            krokiImage.classList.remove('dragging');
+                        }
+                    });
+
                     // Architecture canvas panning
                     const archCanvasContainer = document.getElementById('architectureCanvasContainer');
                     let isPanning = false;
@@ -3488,6 +3822,12 @@ TESTZ <- PeSIT PULL <- CFT -> SSH PUSH -> TESTF" spellcheck="false"></textarea>
                     // Keyboard shortcuts
                     document.addEventListener('keydown', (e) => {
                         if (e.key === 'Escape') {
+                            // Close kroki modal if open
+                            const krokiModal = document.getElementById('krokiModal');
+                            if (krokiModal.classList.contains('visible')) {
+                                this.hideKrokiDiagram();
+                                return;
+                            }
                             // Close architecture modal if open
                             const archModal = document.getElementById('architectureModal');
                             if (archModal.classList.contains('visible')) {
@@ -4412,6 +4752,264 @@ TESTZ <- PeSIT PULL <- CFT -> SSH PUSH -> TESTF" spellcheck="false"></textarea>
 
                 hideArchitectureDiagram() {
                     document.getElementById('architectureModal').classList.remove('visible');
+                },
+
+                // Kroki diagram state
+                currentKrokiCode: null,
+                currentKrokiUrl: null,
+                krokiZoomLevel: 4.5,
+                krokiMinZoom: 0.5,
+                krokiMaxZoom: 10,
+                krokiBaseWidth: null,
+                krokiBaseHeight: null,
+
+                krokiZoom(delta) {
+                    const newZoom = Math.max(this.krokiMinZoom, Math.min(this.krokiMaxZoom, this.krokiZoomLevel + delta));
+                    if (newZoom !== this.krokiZoomLevel) {
+                        this.krokiZoomLevel = newZoom;
+                        this.applyKrokiZoom();
+                    }
+                },
+
+                krokiZoomReset() {
+                    this.krokiZoomLevel = 1;
+                    this.applyKrokiZoom();
+                    // Also reset scroll position to center
+                    const container = document.getElementById('krokiCanvasContainer');
+                    const wrapper = document.getElementById('krokiImageWrapper');
+                    setTimeout(() => {
+                        container.scrollLeft = (wrapper.scrollWidth - container.clientWidth) / 2;
+                        container.scrollTop = (wrapper.scrollHeight - container.clientHeight) / 2;
+                    }, 50);
+                },
+
+                applyKrokiZoom() {
+                    const image = document.getElementById('krokiImage');
+                    const zoomLabel = document.getElementById('krokiZoomLevel');
+                    
+                    if (this.krokiBaseWidth && this.krokiBaseHeight) {
+                        image.style.width = `${this.krokiBaseWidth * this.krokiZoomLevel}px`;
+                        image.style.height = `${this.krokiBaseHeight * this.krokiZoomLevel}px`;
+                    }
+                    zoomLabel.textContent = `${Math.round(this.krokiZoomLevel * 100)}%`;
+                },
+
+                async showKrokiDiagram() {
+                    const modal = document.getElementById('krokiModal');
+                    const loading = document.getElementById('krokiLoading');
+                    const image = document.getElementById('krokiImage');
+
+                    // Get current flows
+                    const text = this.elements.patternEditor.value;
+                    const result = Parser.parseMultiple(text);
+                    const flows = result.flows;
+
+                    if (flows.length === 0) {
+                        alert('No flows defined. Add some flow patterns first.');
+                        return;
+                    }
+
+                    // Show modal with loading state
+                    modal.classList.add('visible');
+                    loading.classList.remove('hidden');
+                    image.classList.remove('visible');
+
+                    // Build unique nodes and connections
+                    const uniqueNodes = new Map();
+                    const uniqueConnections = new Map();
+
+                    flows.forEach(flow => {
+                        if (!flow || !flow.nodes || !flow.edges) return;
+
+                        flow.nodes.forEach(node => {
+                            if (!uniqueNodes.has(node.label)) {
+                                uniqueNodes.set(node.label, {
+                                    label: node.label,
+                                    type: node.type
+                                });
+                            }
+                        });
+
+                        flow.edges.forEach(edge => {
+                            const connectionKey = `${edge.fromLabel}|${edge.toLabel}|${edge.protocol}|${edge.direction}`;
+                            if (!uniqueConnections.has(connectionKey)) {
+                                uniqueConnections.set(connectionKey, {
+                                    from: edge.fromLabel,
+                                    to: edge.toLabel,
+                                    protocol: edge.protocol,
+                                    direction: edge.direction,
+                                    flowDirection: edge.flowDirection
+                                });
+                            }
+                        });
+                    });
+
+                    // Update stats
+                    document.getElementById('krokiStatNodes').textContent = uniqueNodes.size;
+                    document.getElementById('krokiStatConnections').textContent = uniqueConnections.size;
+
+                    // Generate D2 code
+                    const d2Code = this.generateD2Code(uniqueNodes, uniqueConnections);
+                    this.currentKrokiCode = d2Code;
+
+                    try {
+                        // Encode D2 code for Kroki API
+                        const encoded = this.encodeKrokiDiagram(d2Code);
+                        const krokiUrl = `https://kroki.io/d2/svg/${encoded}`;
+                        this.currentKrokiUrl = krokiUrl;
+
+                        // Fetch the diagram
+                        const response = await fetch(krokiUrl);
+                        if (!response.ok) {
+                            throw new Error(`Kroki API error: ${response.status}`);
+                        }
+
+                        const svgText = await response.text();
+                        
+                        // Convert SVG to data URL for the image
+                        const svgBlob = new Blob([svgText], { type: 'image/svg+xml' });
+                        const svgUrl = URL.createObjectURL(svgBlob);
+
+                        image.onload = () => {
+                            // Store the natural dimensions as base for zoom
+                            this.krokiBaseWidth = image.naturalWidth;
+                            this.krokiBaseHeight = image.naturalHeight;
+                            
+                            // Set initial zoom to 450%
+                            this.krokiZoomLevel = 4.5;
+                            image.style.width = `${this.krokiBaseWidth * this.krokiZoomLevel}px`;
+                            image.style.height = `${this.krokiBaseHeight * this.krokiZoomLevel}px`;
+                            document.getElementById('krokiZoomLevel').textContent = '450%';
+                            
+                            loading.classList.add('hidden');
+                            image.classList.add('visible');
+                            URL.revokeObjectURL(svgUrl);
+                            
+                            // Center the view after image loads
+                            const container = document.getElementById('krokiCanvasContainer');
+                            const wrapper = document.getElementById('krokiImageWrapper');
+                            setTimeout(() => {
+                                container.scrollLeft = Math.max(0, (wrapper.scrollWidth - container.clientWidth) / 2);
+                                container.scrollTop = Math.max(0, (wrapper.scrollHeight - container.clientHeight) / 2);
+                            }, 50);
+                        };
+
+                        image.onerror = () => {
+                            loading.innerHTML = `<div class="kroki-error"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg><span>Failed to load diagram</span></div>`;
+                        };
+
+                        image.src = svgUrl;
+                    } catch (error) {
+                        console.error('Kroki diagram error:', error);
+                        loading.innerHTML = `<div class="kroki-error"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg><span>Failed to generate diagram: ${error.message}</span></div>`;
+                    }
+                },
+
+                hideKrokiDiagram() {
+                    const modal = document.getElementById('krokiModal');
+                    const loading = document.getElementById('krokiLoading');
+                    const image = document.getElementById('krokiImage');
+                    
+                    modal.classList.remove('visible');
+                    
+                    // Reset state for next time
+                    loading.classList.remove('hidden');
+                    loading.innerHTML = `<div class="kroki-spinner"></div><span>Generating diagram...</span>`;
+                    image.classList.remove('visible');
+                    image.src = '';
+                    
+                    // Reset zoom
+                    this.krokiZoomLevel = 1;
+                    this.krokiBaseWidth = null;
+                    this.krokiBaseHeight = null;
+                    image.style.width = '';
+                    image.style.height = '';
+                    document.getElementById('krokiZoomLevel').textContent = '100%';
+                },
+
+                generateD2Code(nodes, connections) {
+                    const lines = [];
+                    
+                    // Add title
+                    lines.push('# MFT Flow Architecture');
+                    lines.push('');
+
+                    // Define node styles based on type
+                    const nodeStyles = {
+                        source: 'style.fill: "#e8f5e9"\nstyle.stroke: "#2e7d32"\nstyle.font-color: "#1b5e20"',
+                        intermediate: 'style.fill: "#e3f2fd"\nstyle.stroke: "#1565c0"\nstyle.font-color: "#0d47a1"',
+                        target: 'style.fill: "#fce4ec"\nstyle.stroke: "#c2185b"\nstyle.font-color: "#880e4f"'
+                    };
+
+                    // Helper to create safe D2 identifiers
+                    const safeId = (label) => {
+                        return label.replace(/[^a-zA-Z0-9_]/g, '_').replace(/^[0-9]/, '_$&');
+                    };
+
+                    // Declare nodes with their styles
+                    const nodeArray = Array.from(nodes.values());
+                    nodeArray.forEach(node => {
+                        const id = safeId(node.label);
+                        const style = nodeStyles[node.type] || nodeStyles.intermediate;
+                        lines.push(`${id}: "${node.label}" {`);
+                        lines.push(`  shape: rectangle`);
+                        style.split('\n').forEach(s => lines.push(`  ${s}`));
+                        lines.push(`}`);
+                        lines.push('');
+                    });
+
+                    // Add connections with protocol labels
+                    const connectionArray = Array.from(connections.values());
+                    connectionArray.forEach(conn => {
+                        const fromId = safeId(conn.from);
+                        const toId = safeId(conn.to);
+                        const label = `${conn.protocol} (${conn.direction})`;
+                        
+                        // Use different arrow styles based on direction
+                        const arrow = conn.direction === 'PUSH' ? '->' : '<-';
+                        lines.push(`${fromId} ${arrow} ${toId}: "${label}" {`);
+                        lines.push(`  style.stroke: "#546e7a"`);
+                        lines.push(`  style.font-size: 12`);
+                        lines.push(`}`);
+                    });
+
+                    // Add legend
+                    lines.push('');
+                    lines.push('legend: "Legend" {');
+                    lines.push('  Source: "Source" {');
+                    lines.push('    style.fill: "#e8f5e9"');
+                    lines.push('    style.stroke: "#2e7d32"');
+                    lines.push('  }');
+                    lines.push('  Intermediate: "MFT Hub" {');
+                    lines.push('    style.fill: "#e3f2fd"');
+                    lines.push('    style.stroke: "#1565c0"');
+                    lines.push('  }');
+                    lines.push('  Target: "Target" {');
+                    lines.push('    style.fill: "#fce4ec"');
+                    lines.push('    style.stroke: "#c2185b"');
+                    lines.push('  }');
+                    lines.push('}');
+
+                    return lines.join('\n');
+                },
+
+                encodeKrokiDiagram(source) {
+                    // Kroki uses zlib deflate + base64url encoding
+                    // pako.deflate (without raw:true) produces zlib format which is what Kroki expects
+                    const data = new TextEncoder().encode(source);
+                    const compressed = pako.deflate(data, { level: 9 });
+                    return this.base64UrlEncode(compressed);
+                },
+
+                base64UrlEncode(data) {
+                    // Convert Uint8Array to base64url
+                    let binary = '';
+                    for (let i = 0; i < data.length; i++) {
+                        binary += String.fromCharCode(data[i]);
+                    }
+                    const base64 = btoa(binary);
+                    // Convert to base64url
+                    return base64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
                 },
 
                 generateArchitectureSVG(svg, nodes, connections) {
