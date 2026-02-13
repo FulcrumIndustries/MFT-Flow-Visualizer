@@ -80,14 +80,14 @@ const PRODUCT_CAPABILITIES = {
             "SWIFTNET INTERACT SEND",
             "SWIFTNET INTERACT RECEIVE",
         ],
-        server: []
+        server: ["JMS SERVER", "XML SERVER"]
     },
     "Electronic Signature": {
         name: "Electronic Signature",
         client: [
             "EBICS TS PUSH",
             "EBICS TS PULL",
-            ],
+        ],
         server: []
     },
     "API Gateway": {
@@ -172,15 +172,15 @@ function normalizeProtocolName(protocol) {
         'SMB CONNECTOR': 'SMB Connector',
         'HADOOP CONNECTOR': 'Hadoop Connector'
     };
-    
+
     // Normalize input to uppercase for matching
     const upperProtocol = protocol.toUpperCase().trim();
-    
+
     // Try exact match
     if (protocolMap[upperProtocol]) {
         return protocolMap[upperProtocol];
     }
-    
+
     // If no match found, return original protocol (might be a new protocol)
     // Try to preserve original case if it looks reasonable
     return protocol;
@@ -196,17 +196,17 @@ function getAllCapabilities(productName) {
 // Helper function to find products that support a given protocol capability
 function findProductsForCapability(capability) {
     const matchingProducts = [];
-    
+
     // Parse the capability string (format: "PROTOCOL DIRECTION")
     const parts = capability.split(' ');
     if (parts.length >= 2) {
         const protocol = parts.slice(0, -1).join(' ').trim();
         const direction = parts[parts.length - 1].trim().toUpperCase();
-        
+
         // Normalize protocol name for matching
         const normalizedProtocol = normalizeProtocolName(protocol);
         const normalizedCapability = `${normalizedProtocol} ${direction}`;
-        
+
         for (const [productName, product] of Object.entries(PRODUCT_CAPABILITIES)) {
             const allCaps = getAllCapabilities(productName);
             // Try exact match first
@@ -221,7 +221,7 @@ function findProductsForCapability(capability) {
             }
         }
     }
-    
+
     return matchingProducts;
 }
 
@@ -238,34 +238,34 @@ function getAllAvailableCapabilities() {
 // Helper function to check if a protocol+direction combination exists in capabilities
 function isValidCapability(protocol, direction) {
     if (!protocol || !direction) return false;
-    
+
     // Trim whitespace
     protocol = String(protocol).trim();
     direction = String(direction).trim();
-    
+
     if (!protocol || !direction) return false;
-    
+
     const dirUpper = direction.toUpperCase();
     const normalizedProtocol = normalizeProtocolName(protocol);
-    
+
     // Build capability strings to check
     const capabilitiesToCheck = [
         `${normalizedProtocol} ${dirUpper}`,  // Normalized version
         `${protocol} ${dirUpper}`,            // Original version
         `${protocol} ${direction}`            // Original with original case
     ];
-    
+
     // Check all products for this capability
     for (const [productName, product] of Object.entries(PRODUCT_CAPABILITIES)) {
         const allCaps = getAllCapabilities(productName);
-        
+
         // Try exact matches first
         for (const capToCheck of capabilitiesToCheck) {
             if (allCaps.includes(capToCheck)) {
                 return true;
             }
         }
-        
+
         // Try case-insensitive match for all variations
         for (const capToCheck of capabilitiesToCheck) {
             const capUpper = capToCheck.toUpperCase();
@@ -287,28 +287,28 @@ function isValidCapability(protocol, direction) {
 // The performing node needs CLIENT capability, the receiving node needs SERVER capability
 function getRequiredProducts(flows) {
     const requiredCapabilities = new Set();
-    
+
     // Extract required capabilities from flows
     flows.forEach(flow => {
         if (!flow || !flow.edges || !flow.nodes) return;
-        
+
         // Create a map of node labels to node types for quick lookup
         const nodeMap = new Map();
         flow.nodes.forEach(node => {
             nodeMap.set(node.label, node.type);
         });
-        
+
         // Check if this is a direct flow (source -> target without intermediates)
         const hasIntermediates = flow.nodes.some(node => node.type === 'intermediate');
-        
+
         flow.edges.forEach(edge => {
             const fromType = nodeMap.get(edge.fromLabel);
             const toType = nodeMap.get(edge.toLabel);
-            
+
             // Determine which node is the client (performing action) and which is the server (receiving)
             // based on arrow direction (flowDirection)
             let clientNode, serverNode, clientType, serverType;
-            
+
             if (edge.flowDirection === 'reverse') {
                 // For <- arrows: TO node is client (performing action), FROM node is server
                 clientNode = edge.toLabel;
@@ -322,19 +322,19 @@ function getRequiredProducts(flows) {
                 clientType = fromType;
                 serverType = toType;
             }
-            
+
             // If the CLIENT node is intermediate: require CLIENT capability (PUSH or PULL)
             if (clientType === 'intermediate') {
                 const clientCapability = `${edge.protocol} ${edge.direction}`;
                 requiredCapabilities.add(clientCapability);
             }
-            
+
             // If the SERVER node is intermediate: require SERVER capability
             if (serverType === 'intermediate') {
                 const serverCapability = `${edge.protocol} SERVER`;
                 requiredCapabilities.add(serverCapability);
             }
-            
+
             // For direct flows (no intermediates), suggest products based on the protocol used
             // This helps users know which products could handle this type of transfer
             if (!hasIntermediates) {
@@ -347,7 +347,7 @@ function getRequiredProducts(flows) {
             }
         });
     });
-    
+
     // Find products that support these capabilities
     const productSupport = {};
     requiredCapabilities.forEach(capability => {
@@ -359,7 +359,7 @@ function getRequiredProducts(flows) {
             productSupport[product].add(capability);
         });
     });
-    
+
     // Return products sorted by name
     return Object.keys(productSupport).sort().map(productName => ({
         name: productName,

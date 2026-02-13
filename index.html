@@ -933,16 +933,47 @@
             margin-bottom: 0;
         }
 
-        .flow-row-number {
+        .flow-row-header {
             position: absolute;
             top: -10px;
             left: 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .flow-row-number {
             background: var(--accent-primary);
             color: white;
             font-size: 11px;
             font-weight: 600;
             padding: 2px 8px;
             border-radius: 10px;
+        }
+
+        .flow-copy-btn {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: 3px 6px;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--transition-speed);
+        }
+
+        .flow-copy-btn:hover {
+            background: var(--accent-primary);
+            color: white;
+            border-color: var(--accent-primary);
+        }
+
+        .flow-copy-btn.copied {
+            background: var(--accent-success, #22c55e);
+            border-color: var(--accent-success, #22c55e);
+            color: white;
         }
 
         .flow-node {
@@ -1032,6 +1063,15 @@
             }
         }
 
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .spinning {
+            animation: spin 1s linear infinite;
+        }
+
         .edge-arrow {
             width: 0;
             height: 0;
@@ -1047,13 +1087,13 @@
         }
 
         .edge-protocol {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
+            background: linear-gradient(135deg, var(--bg-secondary) 0%, rgba(var(--accent-primary-rgb, 59, 130, 246), 0.1) 100%);
+            border: 1px solid var(--accent-primary);
             padding: 4px 10px;
             border-radius: 4px;
             font-size: 11px;
             font-weight: 600;
-            color: var(--text-secondary);
+            color: var(--accent-primary);
             position: absolute;
             top: -22px;
             left: 50%;
@@ -1070,6 +1110,216 @@
         .edge-protocol.invalid::before {
             content: '⚠ ';
             margin-right: 2px;
+        }
+
+        /* Parallel steps styling */
+        .flow-edge.parallel-edges {
+            min-width: 180px;
+            padding: 8px 10px;
+            gap: 8px;
+        }
+
+        .parallel-arrows-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            width: 100%;
+        }
+
+        .parallel-step-row {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            width: 100%;
+        }
+
+        .parallel-step-row .edge-protocol {
+            position: relative;
+            top: auto;
+            left: auto;
+            transform: none;
+            font-size: 10px;
+            padding: 3px 10px;
+            margin: 0;
+        }
+
+
+        .parallel-step-row .edge-line-container {
+            width: 100%;
+        }
+
+        .parallel-step-text-fields {
+            display: flex;
+            gap: 8px;
+            width: 100%;
+            margin-top: 4px;
+        }
+
+        .parallel-step-text-fields .edge-notes-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .parallel-step-text-fields .edge-notes-label {
+            font-size: 9px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .parallel-step-text-fields .edge-notes-input {
+            width: 100%;
+            padding: 6px 8px;
+            border: 1px dashed var(--annotation-border);
+            border-radius: 4px;
+            background: var(--annotation-bg);
+            color: var(--text-primary);
+            font-size: 11px;
+            outline: none;
+            text-align: center;
+            transition: all var(--transition-speed);
+        }
+
+        .parallel-step-text-fields .edge-notes-input::placeholder {
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        .parallel-step-text-fields .edge-notes-input:focus {
+            border-style: solid;
+            border-color: var(--accent-warning);
+            box-shadow: 0 0 0 2px rgba(251, 191, 36, 0.2);
+        }
+
+        .parallel-text-fields {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            width: 100%;
+            margin-top: 4px;
+        }
+
+        .parallel-text-fields .edge-notes-label {
+            font-size: 9px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .parallel-text-fields .edge-notes-input {
+            width: 100%;
+            padding: 6px 8px;
+            border: 1px dashed var(--annotation-border);
+            border-radius: 4px;
+            background: var(--annotation-bg);
+            color: var(--text-primary);
+            font-size: 11px;
+            outline: none;
+            text-align: center;
+            transition: all var(--transition-speed);
+        }
+
+        .parallel-text-fields .edge-notes-input::placeholder {
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        .parallel-text-fields .edge-notes-input:focus {
+            border-style: solid;
+            border-color: var(--accent-warning);
+            box-shadow: 0 0 0 2px rgba(251, 191, 36, 0.2);
+        }
+
+        /* Parallel outputs styling (branching to multiple targets) */
+        .parallel-outputs-container {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            padding: 8px 0;
+        }
+
+        .parallel-output-branch {
+            display: flex;
+            align-items: center;
+            gap: 0;
+        }
+
+        .parallel-output-branch .flow-edge {
+            min-width: 140px;
+        }
+
+        .parallel-output-branch .flow-node {
+            min-width: 100px;
+        }
+
+        .parallel-output-branch .edge-protocol.parallel-step {
+            position: relative;
+            top: auto;
+            left: auto;
+            transform: none;
+            font-size: 10px;
+            padding: 3px 10px;
+            margin-bottom: 4px;
+            /* Inherits blue gradient styling from .edge-protocol */
+        }
+
+        .parallel-output-branch .flow-edge {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 160px;
+        }
+
+        .parallel-output-branch .edge-text-fields {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            width: 100%;
+            margin-top: 4px;
+        }
+
+        .parallel-output-branch .edge-notes-container {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .parallel-output-branch .edge-notes-label {
+            font-size: 9px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .parallel-output-branch .edge-notes-input {
+            width: 100%;
+            padding: 6px 8px;
+            border: 1px dashed var(--annotation-border);
+            border-radius: 4px;
+            background: var(--annotation-bg);
+            color: var(--text-primary);
+            font-size: 11px;
+            outline: none;
+            text-align: center;
+            transition: all var(--transition-speed);
+        }
+
+        .parallel-output-branch .edge-notes-input::placeholder {
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        .parallel-output-branch .edge-notes-input:focus {
+            border-style: solid;
+            border-color: var(--accent-warning);
+            box-shadow: 0 0 0 2px rgba(251, 191, 36, 0.2);
+        }
+
+        .parallel-output-branch .flow-description-field {
+            min-width: 120px;
         }
 
         .edge-protocol-select {
@@ -2106,16 +2356,6 @@
                             <line x1="12" y1="3" x2="12" y2="15"></line>
                         </svg>
                     </button>
-                    <button id="exportPdfBtn" class="btn btn-icon" title="Export PDF Report">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2">
-                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                            <polyline points="14 2 14 8 20 8"></polyline>
-                            <line x1="16" y1="13" x2="8" y2="13"></line>
-                            <line x1="16" y1="17" x2="8" y2="17"></line>
-                            <polyline points="10 9 9 9 8 9"></polyline>
-                        </svg>
-                    </button>
                     <input type="file" id="importFileInput" accept=".json" style="display: none;">
                 </div>
             </div>
@@ -2308,13 +2548,6 @@ TESTZ <- PeSIT PULL <- CFT -> SSH PUSH -> TESTF" spellcheck="false"></textarea>
             </div>
         </div>
 
-        <!-- Loading Overlay for PDF Generation -->
-        <div id="loadingOverlay" class="loading-overlay">
-            <div class="loading-spinner"></div>
-            <div class="loading-text">Generating PDF Report</div>
-            <div class="loading-subtext">Please wait...</div>
-        </div>
-
         <!-- Modal for Rename/New Workspace -->
         <div id="modalOverlay" class="modal-overlay">
             <div class="modal">
@@ -2483,7 +2716,6 @@ TESTZ <- PeSIT PULL <- CFT -> SSH PUSH -> TESTF" spellcheck="false"></textarea>
 
         <script src="products_capabilities.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js"></script>
         <script>
             // ============================================
@@ -2613,6 +2845,30 @@ TESTZ <- PeSIT PULL <- CFT -> SSH PUSH -> TESTF" spellcheck="false"></textarea>
                     return '';
                 },
 
+                updateEdgeNotes(flowIndex, edgeIndex, type, text) {
+                    // type is 'pre' or 'post' for parallel steps
+                    const workspace = this.getActiveWorkspace();
+                    if (workspace) {
+                        if (!workspace.edgeNotes) {
+                            workspace.edgeNotes = {};
+                        }
+                        const key = `${flowIndex}-${edgeIndex}-${type}`;
+                        workspace.edgeNotes[key] = text;
+                        workspace.metadata.updatedAt = Date.now();
+                        this.notify({ type: 'EDGE_NOTES_UPDATED', workspaceId: workspace.id, flowIndex, edgeIndex });
+                    }
+                },
+
+                getEdgeNotes(flowIndex, edgeIndex, type) {
+                    // type is 'pre' or 'post' for parallel steps
+                    const workspace = this.getActiveWorkspace();
+                    if (workspace && workspace.edgeNotes) {
+                        const key = `${flowIndex}-${edgeIndex}-${type}`;
+                        return workspace.edgeNotes[key] || '';
+                    }
+                    return '';
+                },
+
                 setTheme(theme) {
                     this.state.theme = theme;
                     this.notify({ type: 'THEME_CHANGED', theme });
@@ -2639,6 +2895,7 @@ TESTZ <- PeSIT PULL <- CFT -> SSH PUSH -> TESTF" spellcheck="false"></textarea>
                                 flowNotes: ws.flowNotes || {},
                                 flowDescriptions: ws.flowDescriptions || {},
                                 annotations: ws.annotations || {},
+                                edgeNotes: ws.edgeNotes || {},
                                 metadata: ws.metadata
                             }))
                         };
@@ -2665,7 +2922,8 @@ TESTZ <- PeSIT PULL <- CFT -> SSH PUSH -> TESTF" spellcheck="false"></textarea>
                                     ...ws,
                                     flowNotes: ws.flowNotes || {},
                                     flowDescriptions: ws.flowDescriptions || {},
-                                    annotations: ws.annotations || {}
+                                    annotations: ws.annotations || {},
+                                    edgeNotes: ws.edgeNotes || {}
                                 });
                             });
                         }
@@ -2842,74 +3100,177 @@ TESTZ <- PeSIT PULL <- CFT -> SSH PUSH -> TESTF" spellcheck="false"></textarea>
                 tokenize(text) {
                     const segments = [];
 
+                    // Protect content inside parentheses from arrow splitting
+                    // Replace parenthesized content with placeholders
+                    const placeholders = [];
+                    let protectedText = text.replace(/\([^)]+\)/g, (match) => {
+                        const idx = placeholders.length;
+                        placeholders.push(match);
+                        return `__PARALLEL_${idx}__`;
+                    });
+
                     // Split by arrows while keeping track of direction
                     const arrowPattern = /(<-|->)/g;
-                    const parts = text.split(arrowPattern).map(p => p.trim()).filter(p => p);
+                    const parts = protectedText.split(arrowPattern).map(p => p.trim()).filter(p => p);
+                    
+                    // Restore placeholders
+                    const restoredParts = parts.map(p => {
+                        return p.replace(/__PARALLEL_(\d+)__/g, (match, idx) => placeholders[parseInt(idx)]);
+                    });
 
-                    if (parts.length < 5) {
+                    if (restoredParts.length < 5) {
                         return { error: 'Invalid pattern. Expected: Entity -> PROTOCOL DIRECTION -> Entity' };
                     }
 
                     let currentIndex = 0;
 
                     // First entity - accept any string (no validation)
-                    const firstEntity = parts[currentIndex];
+                    const firstEntity = restoredParts[currentIndex];
                     segments.push({ type: 'entity', value: firstEntity });
                     currentIndex++;
 
-                    while (currentIndex < parts.length) {
+                    while (currentIndex < restoredParts.length) {
                         // Expect arrow
-                        const arrow1 = parts[currentIndex];
+                        const arrow1 = restoredParts[currentIndex];
                         if (arrow1 !== '<-' && arrow1 !== '->') {
                             return { error: `Expected arrow (<- or ->), got: "${arrow1}"` };
                         }
                         currentIndex++;
 
-                        // Expect PROTOCOL DIRECTION
-                        if (currentIndex >= parts.length) {
+                        // Expect PROTOCOL DIRECTION or parallel syntax
+                        if (currentIndex >= restoredParts.length) {
                             return { error: 'Unexpected end of pattern after arrow' };
                         }
-                        const protocolDir = parts[currentIndex];
-                        // Match protocol (can contain spaces, letters, numbers, underscores) followed by PULL or PUSH
-                        const pdMatch = protocolDir.match(/^(.+?)\s+(PULL|PUSH)$/i);
-                        if (!pdMatch) {
-                            return { error: `Invalid protocol/direction: "${protocolDir}". Expected: PROTOCOL PULL/PUSH` };
-                        }
-                        currentIndex++;
+                        const protocolDir = restoredParts[currentIndex];
+                        
+                        // Check for parallel syntax: (...)
+                        const parallelMatch = protocolDir.match(/^\((.+)\)$/);
+                        
+                        if (parallelMatch) {
+                            const innerContent = parallelMatch[1];
+                            const steps = innerContent.split('&').map(s => s.trim());
+                            
+                            // Check if this is parallel OUTPUTS (contains ->) or parallel INPUTS (no ->)
+                            const hasArrowInSteps = steps.some(s => s.includes('->') || s.includes('<-'));
+                            
+                            if (hasArrowInSteps) {
+                                // PARALLEL OUTPUTS: (PROTO DIR -> TARGET & PROTO DIR -> TARGET)
+                                // This is terminal - no more parsing after this
+                                for (let i = 0; i < steps.length; i++) {
+                                    // Parse: "SOAP PUSH -> E" or "EBICS PUSH -> F"
+                                    const outputMatch = steps[i].match(/^(.+?)\s+(PULL|PUSH)\s*(->|<-)\s*(.+)$/i);
+                                    if (!outputMatch) {
+                                        return { error: `Invalid parallel output: "${steps[i]}". Expected: PROTOCOL DIRECTION -> TARGET` };
+                                    }
+                                    const protocol = outputMatch[1].trim();
+                                    const direction = outputMatch[2].toUpperCase();
+                                    const arrow = outputMatch[3];
+                                    const target = outputMatch[4].trim();
+                                    
+                                    segments.push({
+                                        type: 'connection',
+                                        arrow: arrow,
+                                        protocol: protocol,
+                                        direction: direction,
+                                        toEntity: target,
+                                        stepNumber: i + 1,
+                                        isParallelOutput: true
+                                    });
+                                    segments.push({ type: 'entity', value: target });
+                                }
+                                // Move past the parallel block - this ends the pattern
+                                currentIndex++;
+                                continue;
+                            } else {
+                                // PARALLEL INPUTS: (FTP PUSH & JMS PUSH) -> TARGET
+                                let protocolSteps = [];
+                                for (let i = 0; i < steps.length; i++) {
+                                    const stepMatch = steps[i].match(/^(.+?)\s+(PULL|PUSH)$/i);
+                                    if (!stepMatch) {
+                                        return { error: `Invalid protocol in parallel steps: "${steps[i]}". Expected: PROTOCOL PULL/PUSH` };
+                                    }
+                                    protocolSteps.push({
+                                        protocol: stepMatch[1].trim(),
+                                        direction: stepMatch[2].toUpperCase(),
+                                        stepNumber: i + 1
+                                    });
+                                }
+                                currentIndex++;
 
-                        // Expect second arrow (should match the first in direction sense)
-                        if (currentIndex >= parts.length) {
-                            return { error: 'Unexpected end of pattern, expected arrow' };
-                        }
-                        const arrow2 = parts[currentIndex];
-                        if (arrow2 !== '<-' && arrow2 !== '->') {
-                            return { error: `Expected arrow (<- or ->), got: "${arrow2}"` };
-                        }
+                                // Expect second arrow
+                                if (currentIndex >= restoredParts.length) {
+                                    return { error: 'Unexpected end of pattern, expected arrow after parallel inputs' };
+                                }
+                                const arrow2 = restoredParts[currentIndex];
+                                if (arrow2 !== '<-' && arrow2 !== '->') {
+                                    return { error: `Expected arrow (<- or ->), got: "${arrow2}"` };
+                                }
+                                if (arrow1 !== arrow2) {
+                                    return { error: `Inconsistent arrows: ${arrow1} and ${arrow2}. Both should match.` };
+                                }
+                                currentIndex++;
 
-                        // Validate arrow consistency
-                        if (arrow1 !== arrow2) {
-                            return { error: `Inconsistent arrows: ${arrow1} and ${arrow2}. Both should match.` };
+                                // Expect entity
+                                if (currentIndex >= restoredParts.length) {
+                                    return { error: 'Unexpected end of pattern, expected entity' };
+                                }
+                                const entity = restoredParts[currentIndex];
+
+                                // Add connection segments for parallel inputs
+                                protocolSteps.forEach(step => {
+                                    segments.push({
+                                        type: 'connection',
+                                        arrow: arrow1,
+                                        protocol: step.protocol,
+                                        direction: step.direction,
+                                        toEntity: entity,
+                                        stepNumber: step.stepNumber,
+                                        isParallelInput: true
+                                    });
+                                });
+
+                                segments.push({ type: 'entity', value: entity });
+                                currentIndex++;
+                            }
+                        } else {
+                            // Single protocol direction
+                            const pdMatch = protocolDir.match(/^(.+?)\s+(PULL|PUSH)$/i);
+                            if (!pdMatch) {
+                                return { error: `Invalid protocol/direction: "${protocolDir}". Expected: PROTOCOL PULL/PUSH` };
+                            }
+                            currentIndex++;
+
+                            // Expect second arrow
+                            if (currentIndex >= restoredParts.length) {
+                                return { error: 'Unexpected end of pattern, expected arrow' };
+                            }
+                            const arrow2 = restoredParts[currentIndex];
+                            if (arrow2 !== '<-' && arrow2 !== '->') {
+                                return { error: `Expected arrow (<- or ->), got: "${arrow2}"` };
+                            }
+                            if (arrow1 !== arrow2) {
+                                return { error: `Inconsistent arrows: ${arrow1} and ${arrow2}. Both should match.` };
+                            }
+                            currentIndex++;
+
+                            // Expect entity
+                            if (currentIndex >= restoredParts.length) {
+                                return { error: 'Unexpected end of pattern, expected entity' };
+                            }
+                            const entity = restoredParts[currentIndex];
+
+                            segments.push({
+                                type: 'connection',
+                                arrow: arrow1,
+                                protocol: pdMatch[1].trim(),
+                                direction: pdMatch[2].toUpperCase(),
+                                toEntity: entity,
+                                stepNumber: null
+                            });
+
+                            segments.push({ type: 'entity', value: entity });
+                            currentIndex++;
                         }
-                        currentIndex++;
-
-                        // Expect entity - accept any string (no validation)
-                        if (currentIndex >= parts.length) {
-                            return { error: 'Unexpected end of pattern, expected entity' };
-                        }
-                        const entity = parts[currentIndex];
-
-                        // Preserve original protocol name case for matching (e.g., "Amazon S3" not "AMAZON S3")
-                        const protocolName = pdMatch[1].trim();
-                        segments.push({
-                            type: 'connection',
-                            arrow: arrow1,
-                            protocol: protocolName,
-                            direction: pdMatch[2].toUpperCase(),
-                            toEntity: entity
-                        });
-
-                        segments.push({ type: 'entity', value: entity });
-                        currentIndex++;
                     }
 
                     return { segments };
@@ -2931,7 +3292,16 @@ TESTZ <- PeSIT PULL <- CFT -> SSH PUSH -> TESTF" spellcheck="false"></textarea>
                     });
 
                     // Determine node types based on position
-                    const entityList = segments.filter(s => s.type === 'entity').map(s => s.value);
+                    // Get unique entity list in order (filter duplicates but keep first occurrence)
+                    const seenEntities = new Set();
+                    const entityList = segments
+                        .filter(s => s.type === 'entity')
+                        .map(s => s.value)
+                        .filter(entity => {
+                            if (seenEntities.has(entity)) return false;
+                            seenEntities.add(entity);
+                            return true;
+                        });
 
                     entityList.forEach((entity, idx) => {
                         let type = 'intermediate';
@@ -2948,12 +3318,29 @@ TESTZ <- PeSIT PULL <- CFT -> SSH PUSH -> TESTF" spellcheck="false"></textarea>
 
                     // Second pass: build edges
                     let lastEntity = null;
+                    let parallelOutputSourceEntity = null; // Track the source for parallel outputs
                     let edgeIndex = 0;
                     segments.forEach(seg => {
                         if (seg.type === 'entity') {
-                            lastEntity = seg.value;
+                            // If this entity is a target of a parallel output, don't update lastEntity
+                            // (parallel outputs all share the same source)
+                            if (!seg.isParallelOutputTarget) {
+                                lastEntity = seg.value;
+                            }
                         } else if (seg.type === 'connection' && lastEntity) {
-                            const fromEntity = lastEntity;
+                            let fromEntity;
+                            
+                            if (seg.isParallelOutput) {
+                                // For parallel outputs, use the source entity (set before first parallel output)
+                                if (parallelOutputSourceEntity === null) {
+                                    parallelOutputSourceEntity = lastEntity;
+                                }
+                                fromEntity = parallelOutputSourceEntity;
+                            } else {
+                                fromEntity = lastEntity;
+                                parallelOutputSourceEntity = null; // Reset when we're not in parallel output mode
+                            }
+                            
                             const toEntity = seg.toEntity;
 
                             // Determine actual from/to based on arrow direction
@@ -2966,6 +3353,9 @@ TESTZ <- PeSIT PULL <- CFT -> SSH PUSH -> TESTF" spellcheck="false"></textarea>
                                 protocol: seg.protocol,
                                 direction: seg.direction,
                                 flowDirection: flowDirection,
+                                stepNumber: seg.stepNumber,
+                                isParallelOutput: seg.isParallelOutput || false,
+                                isParallelInput: seg.isParallelInput || false,
                                 index: edgeIndex
                             });
                             edgeIndex++;
@@ -3123,14 +3513,60 @@ TESTZ <- PeSIT PULL <- CFT -> SSH PUSH -> TESTF" spellcheck="false"></textarea>
                         this.selectFlow(flowIndex);
                     });
 
-                    // Row number indicator
+                    // Row header with number and copy button
+                    const rowHeader = document.createElement('div');
+                    rowHeader.className = 'flow-row-header';
+
                     const rowNumber = document.createElement('div');
                     rowNumber.className = 'flow-row-number';
                     rowNumber.textContent = `Flow ${flowIndex + 1}`;
-                    row.appendChild(rowNumber);
+
+                    const copyBtn = document.createElement('button');
+                    copyBtn.className = 'flow-copy-btn';
+                    copyBtn.title = 'Copy flow as PNG';
+                    copyBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                    </svg>`;
+                    copyBtn.addEventListener('click', async (e) => {
+                        e.stopPropagation();
+                        await UIController.copyFlowAsPng(row, flowIndex);
+                    });
+
+                    rowHeader.appendChild(rowNumber);
+                    rowHeader.appendChild(copyBtn);
+                    row.appendChild(rowHeader);
+
+                    // Group edges by their from->to pair to handle parallel steps
+                    // Build a map: nodeLabel -> [edges leaving this node]
+                    const edgesByFromNode = new Map();
+                    flow.edges.forEach((edge, edgeIndex) => {
+                        const key = edge.fromLabel;
+                        if (!edgesByFromNode.has(key)) {
+                            edgesByFromNode.set(key, []);
+                        }
+                        edgesByFromNode.get(key).push({ edge, edgeIndex });
+                    });
+
+                    // Track which edges we've rendered
+                    const renderedEdgeIndices = new Set();
+                    // Track nodes that are rendered as part of parallel outputs (so we don't duplicate them)
+                    const renderedAsParallelOutputTarget = new Set();
+
+                    // First pass: identify nodes that will be rendered as parallel output targets
+                    flow.edges.forEach(edge => {
+                        if (edge.isParallelOutput) {
+                            renderedAsParallelOutputTarget.add(edge.toLabel);
+                        }
+                    });
 
                     // Render nodes and edges
                     flow.nodes.forEach((node, nodeIndex) => {
+                        // Skip nodes that are rendered as part of parallel outputs
+                        if (renderedAsParallelOutputTarget.has(node.label)) {
+                            return;
+                        }
+
                         // Add "Before Source" description field before the first node (source)
                         if (nodeIndex === 0 && node.type === 'source') {
                             const beforeSourceField = this.createDescriptionField(flowIndex, 'beforeSource', 'Before Source');
@@ -3141,11 +3577,51 @@ TESTZ <- PeSIT PULL <- CFT -> SSH PUSH -> TESTF" spellcheck="false"></textarea>
                         const nodeElement = this.createNodeElement(node);
                         row.appendChild(nodeElement);
 
-                        // Add edge after node (except for last node)
-                        if (nodeIndex < flow.edges.length) {
-                            const edge = flow.edges[nodeIndex];
-                            const edgeElement = this.createEdgeElement(edge, flowIndex, nodeIndex);
-                            row.appendChild(edgeElement);
+                        // Get all edges leaving this node
+                        const edgesFromThisNode = edgesByFromNode.get(node.label) || [];
+                        
+                        // Filter out already rendered edges
+                        const unrenderedEdges = edgesFromThisNode.filter(({ edgeIndex }) => !renderedEdgeIndices.has(edgeIndex));
+                        
+                        if (unrenderedEdges.length === 0) {
+                            // No edges to render from this node
+                        } else {
+                            // Check if these are parallel outputs (different targets) or parallel inputs (same target)
+                            const uniqueTargets = new Set(unrenderedEdges.map(({ edge }) => edge.toLabel));
+                            const hasParallelOutputs = unrenderedEdges.some(({ edge }) => edge.isParallelOutput);
+                            
+                            if (hasParallelOutputs && uniqueTargets.size > 1) {
+                                // PARALLEL OUTPUTS: one source branching to multiple targets
+                                const parallelOutputContainer = this.createParallelOutputsElement(unrenderedEdges, flowIndex);
+                                row.appendChild(parallelOutputContainer);
+                                unrenderedEdges.forEach(({ edgeIndex }) => renderedEdgeIndices.add(edgeIndex));
+                            } else {
+                                // Group edges by their target (toLabel) to identify parallel inputs
+                                const edgesByTarget = new Map();
+                                unrenderedEdges.forEach(({ edge, edgeIndex }) => {
+                                    const targetKey = edge.toLabel;
+                                    if (!edgesByTarget.has(targetKey)) {
+                                        edgesByTarget.set(targetKey, []);
+                                    }
+                                    edgesByTarget.get(targetKey).push({ edge, edgeIndex });
+                                });
+
+                                // Render edges grouped by target
+                                edgesByTarget.forEach((targetEdges, targetLabel) => {
+                                    if (targetEdges.length === 1) {
+                                        // Single edge - render normally
+                                        const { edge, edgeIndex } = targetEdges[0];
+                                        const edgeElement = this.createEdgeElement(edge, flowIndex, edgeIndex);
+                                        row.appendChild(edgeElement);
+                                        renderedEdgeIndices.add(edgeIndex);
+                                    } else {
+                                        // Multiple edges to same target (parallel inputs) - render as stacked edges
+                                        const parallelContainer = this.createParallelEdgesElement(targetEdges, flowIndex);
+                                        row.appendChild(parallelContainer);
+                                        targetEdges.forEach(({ edgeIndex }) => renderedEdgeIndices.add(edgeIndex));
+                                    }
+                                });
+                            }
                         }
 
                         // Add "After Target" description field after the last node (target)
@@ -3156,6 +3632,241 @@ TESTZ <- PeSIT PULL <- CFT -> SSH PUSH -> TESTF" spellcheck="false"></textarea>
                     });
 
                     return row;
+                },
+
+                createParallelEdgesElement(edges, flowIndex) {
+                    const container = document.createElement('div');
+                    container.className = 'flow-edge parallel-edges';
+
+                    // Create stacked arrows - each step gets its own arrow line with its own text fields
+                    const arrowsStack = document.createElement('div');
+                    arrowsStack.className = 'parallel-arrows-stack';
+
+                    edges.forEach(({ edge, edgeIndex }) => {
+                        const stepPrefix = edge.stepNumber ? `${edge.stepNumber}: ` : '';
+                        const displayCapability = `${stepPrefix}${edge.protocol} ${edge.direction}`;
+
+                        // Create a row for this step with label + arrow + text fields
+                        const stepRow = document.createElement('div');
+                        stepRow.className = 'parallel-step-row';
+
+                        // Protocol label
+                        const protocolLabel = document.createElement('div');
+                        protocolLabel.className = 'edge-protocol parallel-step';
+                        protocolLabel.textContent = displayCapability;
+
+                        // Arrow line
+                        const lineContainer = document.createElement('div');
+                        lineContainer.className = 'edge-line-container';
+
+                        if (edge.flowDirection === 'reverse') {
+                            const arrowStart = document.createElement('div');
+                            arrowStart.className = 'edge-arrow reverse';
+                            lineContainer.appendChild(arrowStart);
+                        }
+
+                        const line = document.createElement('div');
+                        line.className = 'edge-line';
+                        lineContainer.appendChild(line);
+
+                        if (edge.flowDirection === 'forward') {
+                            const arrowEnd = document.createElement('div');
+                            arrowEnd.className = 'edge-arrow';
+                            lineContainer.appendChild(arrowEnd);
+                        }
+
+                        // Text fields for this specific edge
+                        const edgeTextFields = document.createElement('div');
+                        edgeTextFields.className = 'parallel-step-text-fields';
+
+                        // PRE-PROCESSING
+                        const preContainer = document.createElement('div');
+                        preContainer.className = 'edge-notes-container';
+                        const preLabel = document.createElement('div');
+                        preLabel.className = 'edge-notes-label';
+                        preLabel.textContent = 'PRE-PROCESSING';
+                        const preInput = document.createElement('input');
+                        preInput.type = 'text';
+                        preInput.className = 'edge-notes-input';
+                        preInput.placeholder = 'Add notes...';
+                        preInput.value = StateManager.getAnnotation(flowIndex, edgeIndex, 'pre') || '';
+                        preInput.addEventListener('click', (e) => e.stopPropagation());
+                        preInput.addEventListener('input', debounce(() => {
+                            StateManager.updateAnnotation(flowIndex, edgeIndex, 'pre', preInput.value);
+                            Persistence.save();
+                        }, 300));
+                        preContainer.appendChild(preLabel);
+                        preContainer.appendChild(preInput);
+
+                        // POST-PROCESSING
+                        const postContainer = document.createElement('div');
+                        postContainer.className = 'edge-notes-container';
+                        const postLabel = document.createElement('div');
+                        postLabel.className = 'edge-notes-label';
+                        postLabel.textContent = 'POST-PROCESSING';
+                        const postInput = document.createElement('input');
+                        postInput.type = 'text';
+                        postInput.className = 'edge-notes-input';
+                        postInput.placeholder = 'Add notes...';
+                        postInput.value = StateManager.getAnnotation(flowIndex, edgeIndex, 'post') || '';
+                        postInput.addEventListener('click', (e) => e.stopPropagation());
+                        postInput.addEventListener('input', debounce(() => {
+                            StateManager.updateAnnotation(flowIndex, edgeIndex, 'post', postInput.value);
+                            Persistence.save();
+                        }, 300));
+                        postContainer.appendChild(postLabel);
+                        postContainer.appendChild(postInput);
+
+                        edgeTextFields.appendChild(preContainer);
+                        edgeTextFields.appendChild(postContainer);
+
+                        stepRow.appendChild(protocolLabel);
+                        stepRow.appendChild(lineContainer);
+                        stepRow.appendChild(edgeTextFields);
+                        arrowsStack.appendChild(stepRow);
+                    });
+
+                    container.appendChild(arrowsStack);
+
+                    return container;
+                },
+
+                createParallelOutputsElement(edges, flowIndex) {
+                    // Container for branching outputs (one source to multiple targets)
+                    const container = document.createElement('div');
+                    container.className = 'parallel-outputs-container';
+
+                    // Create each branch (arrow + target node + text fields)
+                    edges.forEach(({ edge, edgeIndex }) => {
+                        const branchRow = document.createElement('div');
+                        branchRow.className = 'parallel-output-branch';
+
+                        // Create the edge element with text fields
+                        const edgeContainer = document.createElement('div');
+                        edgeContainer.className = 'flow-edge';
+
+                        const stepPrefix = edge.stepNumber ? `${edge.stepNumber}: ` : '';
+                        const displayCapability = `${stepPrefix}${edge.protocol} ${edge.direction}`;
+
+                        // Protocol label
+                        const protocolLabel = document.createElement('div');
+                        protocolLabel.className = 'edge-protocol parallel-step';
+                        protocolLabel.textContent = displayCapability;
+
+                        // Line container with arrow
+                        const lineContainer = document.createElement('div');
+                        lineContainer.className = 'edge-line-container';
+
+                        if (edge.flowDirection === 'reverse') {
+                            const arrowStart = document.createElement('div');
+                            arrowStart.className = 'edge-arrow reverse';
+                            lineContainer.appendChild(arrowStart);
+                        }
+
+                        const line = document.createElement('div');
+                        line.className = 'edge-line';
+                        lineContainer.appendChild(line);
+
+                        if (edge.flowDirection === 'forward' || !edge.flowDirection) {
+                            const arrowEnd = document.createElement('div');
+                            arrowEnd.className = 'edge-arrow';
+                            lineContainer.appendChild(arrowEnd);
+                        }
+
+                        edgeContainer.appendChild(protocolLabel);
+                        edgeContainer.appendChild(lineContainer);
+
+                        // Add PRE/POST processing fields for this edge
+                        const edgeTextFields = document.createElement('div');
+                        edgeTextFields.className = 'edge-text-fields';
+
+                        // PRE-PROCESSING
+                        const preContainer = document.createElement('div');
+                        preContainer.className = 'edge-notes-container';
+                        const preLabel = document.createElement('div');
+                        preLabel.className = 'edge-notes-label';
+                        preLabel.textContent = 'PRE-PROCESSING';
+                        const preInput = document.createElement('input');
+                        preInput.type = 'text';
+                        preInput.className = 'edge-notes-input';
+                        preInput.placeholder = 'Add notes...';
+                        preInput.value = StateManager.getAnnotation(flowIndex, edgeIndex, 'pre') || '';
+                        preInput.addEventListener('click', (e) => e.stopPropagation());
+                        preInput.addEventListener('input', debounce(() => {
+                            StateManager.updateAnnotation(flowIndex, edgeIndex, 'pre', preInput.value);
+                            Persistence.save();
+                        }, 300));
+                        preContainer.appendChild(preLabel);
+                        preContainer.appendChild(preInput);
+
+                        // POST-PROCESSING
+                        const postContainer = document.createElement('div');
+                        postContainer.className = 'edge-notes-container';
+                        const postLabel = document.createElement('div');
+                        postLabel.className = 'edge-notes-label';
+                        postLabel.textContent = 'POST-PROCESSING';
+                        const postInput = document.createElement('input');
+                        postInput.type = 'text';
+                        postInput.className = 'edge-notes-input';
+                        postInput.placeholder = 'Add notes...';
+                        postInput.value = StateManager.getAnnotation(flowIndex, edgeIndex, 'post') || '';
+                        postInput.addEventListener('click', (e) => e.stopPropagation());
+                        postInput.addEventListener('input', debounce(() => {
+                            StateManager.updateAnnotation(flowIndex, edgeIndex, 'post', postInput.value);
+                            Persistence.save();
+                        }, 300));
+                        postContainer.appendChild(postLabel);
+                        postContainer.appendChild(postInput);
+
+                        edgeTextFields.appendChild(preContainer);
+                        edgeTextFields.appendChild(postContainer);
+                        edgeContainer.appendChild(edgeTextFields);
+
+                        // Create target node (properly styled like node-box)
+                        const targetNode = document.createElement('div');
+                        targetNode.className = 'flow-node';
+                        
+                        const nodeBox = document.createElement('div');
+                        nodeBox.className = 'node-box target';
+                        nodeBox.textContent = edge.toLabel;
+                        
+                        const nodeType = document.createElement('div');
+                        nodeType.className = 'node-type';
+                        nodeType.textContent = 'TARGET';
+                        
+                        targetNode.appendChild(nodeBox);
+                        targetNode.appendChild(nodeType);
+
+                        // After Target description field
+                        const afterTargetField = document.createElement('div');
+                        afterTargetField.className = 'flow-description-field after-target';
+                        
+                        const afterTargetLabel = document.createElement('div');
+                        afterTargetLabel.className = 'flow-description-label';
+                        afterTargetLabel.textContent = 'After Target';
+                        
+                        const afterTargetTextarea = document.createElement('textarea');
+                        afterTargetTextarea.className = 'flow-description-input';
+                        afterTargetTextarea.placeholder = 'Describe post-target steps...';
+                        // Use a unique key for each parallel output target
+                        const afterTargetKey = `${flowIndex}-afterTarget-${edge.toLabel}`;
+                        afterTargetTextarea.value = StateManager.getFlowDescription(flowIndex, `afterTarget-${edge.toLabel}`) || '';
+                        afterTargetTextarea.addEventListener('click', (e) => e.stopPropagation());
+                        afterTargetTextarea.addEventListener('input', debounce(() => {
+                            StateManager.updateFlowDescription(flowIndex, `afterTarget-${edge.toLabel}`, afterTargetTextarea.value);
+                            Persistence.save();
+                        }, 300));
+                        
+                        afterTargetField.appendChild(afterTargetLabel);
+                        afterTargetField.appendChild(afterTargetTextarea);
+
+                        branchRow.appendChild(edgeContainer);
+                        branchRow.appendChild(targetNode);
+                        branchRow.appendChild(afterTargetField);
+                        container.appendChild(branchRow);
+                    });
+
+                    return container;
                 },
 
                 createDescriptionField(flowIndex, type, label) {
@@ -3216,6 +3927,10 @@ TESTZ <- PeSIT PULL <- CFT -> SSH PUSH -> TESTF" spellcheck="false"></textarea>
 
                     // Check if protocol+direction is valid
                     const currentCapability = `${edge.protocol} ${edge.direction}`;
+                    // Build display text with step number if present
+                    const stepPrefix = edge.stepNumber ? `${edge.stepNumber}: ` : '';
+                    const displayCapability = `${stepPrefix}${edge.protocol} ${edge.direction}`;
+                    
                     // Ensure functions are available (defensive check)
                     // If function doesn't exist, default to invalid (show dropdown) to be safe
                     let isValid = false;
@@ -3246,7 +3961,7 @@ TESTZ <- PeSIT PULL <- CFT -> SSH PUSH -> TESTF" spellcheck="false"></textarea>
                         // Add current (invalid) value as first option
                         const currentOption = document.createElement('option');
                         currentOption.value = currentCapability;
-                        currentOption.textContent = `${edge.protocol} ${edge.direction} ⚠`;
+                        currentOption.textContent = `${displayCapability} ⚠`;
                         currentOption.selected = true;
                         protocolElement.appendChild(currentOption);
 
@@ -3275,7 +3990,7 @@ TESTZ <- PeSIT PULL <- CFT -> SSH PUSH -> TESTF" spellcheck="false"></textarea>
                         // Create regular div for valid capabilities
                         protocolElement = document.createElement('div');
                         protocolElement.className = 'edge-protocol';
-                        protocolElement.textContent = currentCapability;
+                        protocolElement.textContent = displayCapability;
                     }
 
                     // Line container
@@ -3564,30 +4279,6 @@ TESTZ <- PeSIT PULL <- CFT -> SSH PUSH -> TESTF" spellcheck="false"></textarea>
                         reader.readAsText(file);
                         // Reset input so same file can be imported again
                         importFileInput.value = '';
-                    });
-
-                    // Export PDF Report
-                    document.getElementById('exportPdfBtn').addEventListener('click', async () => {
-                        const ws = StateManager.getActiveWorkspace();
-                        if (!ws) {
-                            alert('No workspace selected');
-                            return;
-                        }
-
-                        // Show loading indicator
-                        const originalTitle = document.title;
-                        document.title = 'Generating PDF...';
-                        this.setSaveIndicator('saving');
-
-                        try {
-                            await this.exportToPDF(ws);
-                        } catch (err) {
-                            console.error('PDF export error:', err);
-                            alert('Failed to generate PDF: ' + err.message);
-                        } finally {
-                            document.title = originalTitle;
-                            this.setSaveIndicator('saved');
-                        }
                     });
 
                     this.elements.workspaceSelect.addEventListener('change', (e) => {
@@ -4030,628 +4721,199 @@ TESTZ <- PeSIT PULL <- CFT -> SSH PUSH -> TESTF" spellcheck="false"></textarea>
                     this.elements.saveText.textContent = status === 'saving' ? 'Saving...' : 'Saved';
                 },
 
-                async exportToPDF(workspace) {
-                    // Show loading overlay
-                    const loadingOverlay = document.getElementById('loadingOverlay');
-                    loadingOverlay.classList.add('visible');
-
-                    try {
-                        await this._generatePDF(workspace);
-                    } catch (error) {
-                        console.error('PDF generation failed:', error);
-                        alert('Failed to generate PDF. Please try again.');
-                    } finally {
-                        // Hide loading overlay
-                        loadingOverlay.classList.remove('visible');
-                    }
-                },
-
-                async _generatePDF(workspace) {
-                    // Check if libraries are available
-                    if (typeof html2canvas === 'undefined' || typeof window.jspdf === 'undefined') {
-                        alert('PDF libraries not loaded. Please refresh the page and try again.');
+                async copyFlowAsPng(flowRow, flowIndex) {
+                    if (typeof html2canvas === 'undefined') {
+                        alert('PNG export library not loaded. Please refresh the page.');
                         return;
                     }
 
-                    // Parse flows to get current state
-                    const patternText = workspace.patternText || '';
-                    const result = Parser.parseMultiple(patternText);
-                    const flows = result.flows || [];
-
-                    // Create a temporary container for PDF content
-                    const pdfContainer = document.createElement('div');
-                    pdfContainer.id = 'pdf-export-container';
-                    // Position it absolutely off-screen but visible to html2canvas
-                    pdfContainer.style.position = 'absolute';
-                    pdfContainer.style.top = '0';
-                    pdfContainer.style.left = '-2000px'; // Off-screen but not too far
-                    pdfContainer.style.width = '794px'; // A4 width in pixels (210mm at 96 DPI)
-                    pdfContainer.style.padding = '40px';
-                    pdfContainer.style.backgroundColor = '#ffffff';
-                    pdfContainer.style.fontFamily = 'Arial, sans-serif';
-                    pdfContainer.style.color = '#333333';
-                    pdfContainer.style.zIndex = '99999';
-                    pdfContainer.style.boxSizing = 'border-box';
-                    pdfContainer.style.overflow = 'visible';
-                    pdfContainer.style.display = 'block';
-                    document.body.appendChild(pdfContainer);
+                    const copyBtn = flowRow.querySelector('.flow-copy-btn');
+                    const originalHtml = copyBtn.innerHTML;
 
                     try {
-                        // Cover page
-                        const coverPage = document.createElement('div');
-                        coverPage.className = 'pdf-cover-page';
-                        coverPage.style.display = 'flex';
-                        coverPage.style.flexDirection = 'column';
-                        coverPage.style.alignItems = 'center';
-                        coverPage.style.justifyContent = 'center';
-                        coverPage.style.minHeight = '714px'; // A4 height minus padding in pixels (~270mm)
-                        coverPage.style.height = '714px';
-                        coverPage.style.textAlign = 'center';
-                        coverPage.style.backgroundColor = '#ffffff';
-                        coverPage.style.marginBottom = '20px';
+                        // Show loading state
+                        copyBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="spinning">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <path d="M12 6v6l4 2"></path>
+                        </svg>`;
 
-                        // Logo (using SVG data URL for better PDF compatibility)
-                        const logoContainer = document.createElement('div');
-                        logoContainer.style.marginBottom = '40px';
-                        const logoSvg = document.createElement('div');
-                        logoSvg.innerHTML = `<svg width="200" height="68" viewBox="0 0 137 47" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M76.6496 46.9993L80.5925 37.9543L73.4876 22.7627H78.5529L83.0057 32.9377L87.1186 22.7627H91.9465L81.4423 46.9993H76.6496ZM69.4101 33.1143V32.3377L65.6372 32.9377C64.4811 33.1143 63.5639 33.7843 63.5639 35.1277C63.5639 36.1527 64.2774 37.1427 65.7382 37.1427C67.6431 37.1427 69.4101 36.1893 69.4101 33.1143ZM64.0401 30.1477L68.153 29.511C69.1038 29.3693 69.4101 28.8743 69.4101 28.2743C69.4101 27.0377 68.4929 26.0127 66.5896 26.0127C64.6174 26.0127 63.5286 27.3193 63.3923 28.8393L59.3805 27.956C59.6531 25.2343 62.0663 22.2327 66.5543 22.2327C71.8585 22.2327 73.8292 25.341 73.8292 28.8393V37.3893C73.8292 38.3077 73.9318 39.546 74.0328 40.146H69.8863C69.7853 39.686 69.7163 38.7327 69.7163 38.061C68.8665 39.4393 67.2679 40.641 64.7873 40.641C61.2181 40.641 59.0422 38.1327 59.0422 35.411C59.0422 32.3027 61.2517 30.571 64.0401 30.1477ZM48.2686 22.7627L51.8716 33.9627L54.9662 22.7627H59.4511L54.2174 40.146H49.6957L45.7865 28.2743L41.9446 40.146H37.3555L32.0193 22.7627H36.7783L39.8713 33.9277L43.5096 22.7627H48.2686ZM21.4157 31.4177L15.4653 22.7627H20.8368C21.4157 23.716 23.5899 26.966 24.1688 27.921L27.4655 22.7627H32.5981L26.7519 31.2777L32.8017 40.146H27.4991L23.9972 34.811C23.3863 35.7643 21.1431 39.1927 20.5642 40.146H15.4653L21.4157 31.4177ZM10.3679 33.1143V32.3377L6.59659 32.9377C5.4405 33.1143 4.52172 33.7843 4.52172 35.1277C4.52172 36.1527 5.23526 37.1427 6.696 37.1427C8.6009 37.1427 10.3679 36.1893 10.3679 33.1143ZM4.99635 30.1477L9.11079 29.511C10.0632 29.3693 10.3679 28.8743 10.3679 28.2743C10.3679 27.0377 9.45072 26.0127 7.54583 26.0127C5.57519 26.0127 4.48805 27.3193 4.35176 28.8393L0.339931 27.956C0.612517 25.2343 3.02571 22.2327 7.51376 22.2327C12.8148 22.2327 14.787 25.341 14.787 28.8393V37.3893C14.787 38.3077 14.888 39.546 14.9922 40.146H10.8441C10.7415 39.686 10.6742 38.7327 10.6742 38.061C9.82433 39.4393 8.22569 40.641 5.74516 40.641C2.17588 40.641 0 38.1327 0 35.411C0 32.3027 2.20955 30.571 4.99635 30.1477Z" fill="#4A4F54"/><path fill-rule="evenodd" clip-rule="evenodd" d="M132.708 26.3917L99.0455 10.7197V16.3933L125.843 28.8685L132.708 26.3917ZM103.04 21.0861V26.7581L109.161 29.5933L99.3136 39.7965H105.843L117.528 27.8269L103.04 21.0861ZM132.698 15.0525L132.71 23.5661L94.4803 5.75807V0.0844727L127.93 15.6749V7.15647L136.703 11.2413V16.9181L132.698 15.0525Z" fill="#E82C2A"/></svg>`;
-                        logoContainer.appendChild(logoSvg);
-                        coverPage.appendChild(logoContainer);
+                        // Create a wrapper container for the entire export
+                        const wrapper = document.createElement('div');
+                        wrapper.style.position = 'absolute';
+                        wrapper.style.left = '-9999px';
+                        wrapper.style.top = '0';
+                        wrapper.style.backgroundColor = '#ffffff';
+                        wrapper.style.padding = '24px';
+                        wrapper.style.borderRadius = '8px';
+                        wrapper.style.display = 'flex';
+                        wrapper.style.flexDirection = 'column';
+                        wrapper.style.gap = '16px';
+                        wrapper.style.fontFamily = 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
 
-                        // Title
-                        const title = document.createElement('h1');
-                        title.textContent = 'MFT Flow Visualizer';
-                        title.style.fontSize = '36px';
-                        title.style.fontWeight = 'bold';
-                        title.style.color = '#2c3e50';
-                        title.style.marginBottom = '20px';
-                        title.style.marginTop = '0';
-                        coverPage.appendChild(title);
+                        // Add flow title
+                        const title = document.createElement('div');
+                        title.style.fontSize = '16px';
+                        title.style.fontWeight = '600';
+                        title.style.color = '#1e293b';
+                        title.style.borderBottom = '2px solid #e2e8f0';
+                        title.style.paddingBottom = '8px';
+                        title.textContent = `Flow ${flowIndex + 1}`;
+                        wrapper.appendChild(title);
 
-                        // Subtitle
-                        const subtitle = document.createElement('h2');
-                        subtitle.textContent = 'Flow Analysis Report';
-                        subtitle.style.fontSize = '24px';
-                        subtitle.style.fontWeight = 'normal';
-                        subtitle.style.color = '#7f8c8d';
-                        subtitle.style.marginBottom = '60px';
-                        subtitle.style.marginTop = '0';
-                        coverPage.appendChild(subtitle);
+                        // Clone the flow row for rendering
+                        const clone = flowRow.cloneNode(true);
+                        clone.style.backgroundColor = 'transparent';
+                        clone.style.display = 'inline-flex';
+                        clone.style.border = 'none';
+                        clone.style.boxShadow = 'none';
+                        
+                        // Remove the copy button and row header from clone
+                        clone.querySelectorAll('.flow-row-header').forEach(el => el.remove());
+                        clone.querySelectorAll('.flow-copy-btn').forEach(el => el.remove());
 
-                        // Workspace name
-                        const workspaceName = document.createElement('div');
-                        workspaceName.style.fontSize = '28px';
-                        workspaceName.style.fontWeight = '600';
-                        workspaceName.style.color = '#34495e';
-                        workspaceName.style.marginBottom = '40px';
-                        workspaceName.textContent = workspace.name;
-                        coverPage.appendChild(workspaceName);
-
-                        // Date
-                        const date = document.createElement('div');
-                        date.style.fontSize = '14px';
-                        date.style.color = '#95a5a6';
-                        date.textContent = `Generated on ${new Date().toLocaleDateString('en-US', {
-                            year: 'numeric',
-                            month: 'long',
-                            day: 'numeric',
-                            hour: '2-digit',
-                            minute: '2-digit'
-                        })}`;
-                        coverPage.appendChild(date);
-
-                        pdfContainer.appendChild(coverPage);
-
-                        // Flow diagrams and notes
-                        if (flows.length === 0) {
-                            const noFlows = document.createElement('div');
-                            noFlows.style.padding = '40px';
-                            noFlows.style.textAlign = 'center';
-                            noFlows.style.color = '#7f8c8d';
-                            noFlows.textContent = 'No flows defined in this workspace.';
-                            pdfContainer.appendChild(noFlows);
-                        } else {
-                            flows.forEach((flow, flowIndex) => {
-                                const flowSection = document.createElement('div');
-                                flowSection.className = 'pdf-flow-section';
-                                flowSection.style.marginBottom = '40px';
-                                flowSection.style.backgroundColor = '#ffffff';
-                                flowSection.style.paddingBottom = '20px';
-
-                                // Flow header
-                                const flowHeader = document.createElement('h2');
-                                flowHeader.textContent = `Flow ${flowIndex + 1}`;
-                                flowHeader.style.fontSize = '20px';
-                                flowHeader.style.fontWeight = 'bold';
-                                flowHeader.style.color = '#2c3e50';
-                                flowHeader.style.marginBottom = '15px';
-                                flowHeader.style.borderBottom = '2px solid #3498db';
-                                flowHeader.style.paddingBottom = '10px';
-                                flowSection.appendChild(flowHeader);
-
-                                // Flow diagram (clone the rendered flow - simplified version)
-                                const canvasContainer = this.elements.canvasContainer;
-                                const flowRow = canvasContainer.querySelector(`.flow-row:nth-child(${flowIndex + 1})`);
-                                if (flowRow) {
-                                    const diagramClone = flowRow.cloneNode(true);
-                                    diagramClone.style.marginBottom = '20px';
-                                    diagramClone.style.display = 'inline-flex';
-                                    diagramClone.style.padding = '20px';
-                                    diagramClone.style.backgroundColor = '#ffffff';
-                                    diagramClone.style.transformOrigin = 'left top';
-
-                                    // Remove all text fields - they are shown below as formatted text
-                                    // Remove before source / after target description fields
-                                    diagramClone.querySelectorAll('.flow-description-field').forEach(el => el.remove());
-                                    // Remove annotation sections (pre/post processing inputs)
-                                    diagramClone.querySelectorAll('.edge-annotations').forEach(el => el.remove());
-                                    // Remove "Flow X" row number indicator (already shown as section title)
-                                    diagramClone.querySelectorAll('.flow-row-number').forEach(el => el.remove());
-
-                                    // Fix arrow lines - use solid dark color instead of CSS variable gradient
-                                    // The gradient with CSS variables doesn't render well in html2canvas
-                                    diagramClone.querySelectorAll('.edge-line').forEach(el => {
-                                        el.style.backgroundImage = 'none';
-                                        el.style.backgroundColor = '#2c3e50';
-                                        el.style.animation = 'none';
-                                    });
-
-                                    // Fix arrow heads - use solid dark color
-                                    diagramClone.querySelectorAll('.edge-arrow').forEach(el => {
-                                        // Check if it's a reverse arrow
-                                        if (el.classList.contains('reverse')) {
-                                            el.style.borderRightColor = '#2c3e50';
-                                        } else {
-                                            el.style.borderLeftColor = '#2c3e50';
-                                        }
-                                    });
-
-                                    // Replace select dropdowns with simple text
-                                    diagramClone.querySelectorAll('select').forEach(el => {
-                                        const text = document.createElement('span');
-                                        text.textContent = el.value || el.options[0]?.textContent || '';
-                                        text.style.fontStyle = 'italic';
-                                        text.style.color = '#e74c3c';
-                                        el.parentNode.replaceChild(text, el);
-                                    });
-                                    // Remove any remaining inputs and buttons
-                                    diagramClone.querySelectorAll('input').forEach(el => el.remove());
-                                    diagramClone.querySelectorAll('textarea').forEach(el => el.remove());
-                                    diagramClone.querySelectorAll('button').forEach(el => el.remove());
-
-                                    // Create a wrapper to handle scaling for wide diagrams
-                                    const diagramWrapper = document.createElement('div');
-                                    diagramWrapper.style.width = '100%';
-                                    diagramWrapper.style.overflow = 'hidden';
-                                    diagramWrapper.style.marginBottom = '20px';
-                                    diagramWrapper.appendChild(diagramClone);
-                                    flowSection.appendChild(diagramWrapper);
-
-                                    // After adding to DOM, check if we need to scale down
-                                    // We'll do this after all sections are added
-                                    diagramWrapper.dataset.needsScaling = 'true';
-                                }
-
-                                // Flow descriptions (before source / after target)
-                                const beforeSource = workspace.flowDescriptions?.[`${flowIndex}-beforeSource`];
-                                const afterTarget = workspace.flowDescriptions?.[`${flowIndex}-afterTarget`];
-
-                                if (beforeSource || afterTarget) {
-                                    const descSection = document.createElement('div');
-                                    descSection.style.marginTop = '20px';
-                                    descSection.style.marginBottom = '20px';
-                                    descSection.style.display = 'flex';
-                                    descSection.style.gap = '20px';
-                                    descSection.style.flexWrap = 'wrap';
-
-                                    if (beforeSource) {
-                                        const beforeDiv = document.createElement('div');
-                                        beforeDiv.style.flex = '1';
-                                        beforeDiv.style.minWidth = '200px';
-
-                                        const beforeLabel = document.createElement('div');
-                                        beforeLabel.textContent = 'Before Source:';
-                                        beforeLabel.style.fontWeight = 'bold';
-                                        beforeLabel.style.marginBottom = '8px';
-                                        beforeLabel.style.color = '#27ae60';
-                                        beforeDiv.appendChild(beforeLabel);
-
-                                        const beforeContent = document.createElement('div');
-                                        beforeContent.textContent = beforeSource;
-                                        beforeContent.style.padding = '12px';
-                                        beforeContent.style.backgroundColor = '#f0fff4';
-                                        beforeContent.style.borderLeft = '4px solid #27ae60';
-                                        beforeContent.style.whiteSpace = 'pre-wrap';
-                                        beforeContent.style.lineHeight = '1.6';
-                                        beforeDiv.appendChild(beforeContent);
-
-                                        descSection.appendChild(beforeDiv);
-                                    }
-
-                                    if (afterTarget) {
-                                        const afterDiv = document.createElement('div');
-                                        afterDiv.style.flex = '1';
-                                        afterDiv.style.minWidth = '200px';
-
-                                        const afterLabel = document.createElement('div');
-                                        afterLabel.textContent = 'After Target:';
-                                        afterLabel.style.fontWeight = 'bold';
-                                        afterLabel.style.marginBottom = '8px';
-                                        afterLabel.style.color = '#e74c3c';
-                                        afterDiv.appendChild(afterLabel);
-
-                                        const afterContent = document.createElement('div');
-                                        afterContent.textContent = afterTarget;
-                                        afterContent.style.padding = '12px';
-                                        afterContent.style.backgroundColor = '#fff5f5';
-                                        afterContent.style.borderLeft = '4px solid #e74c3c';
-                                        afterContent.style.whiteSpace = 'pre-wrap';
-                                        afterContent.style.lineHeight = '1.6';
-                                        afterDiv.appendChild(afterContent);
-
-                                        descSection.appendChild(afterDiv);
-                                    }
-
-                                    flowSection.appendChild(descSection);
-                                }
-
-                                // Flow notes
-                                const flowNotes = workspace.flowNotes?.[flowIndex];
-                                if (flowNotes) {
-                                    const notesSection = document.createElement('div');
-                                    notesSection.style.marginTop = '20px';
-                                    notesSection.style.marginBottom = '20px';
-
-                                    const notesLabel = document.createElement('div');
-                                    notesLabel.textContent = 'General Notes:';
-                                    notesLabel.style.fontWeight = 'bold';
-                                    notesLabel.style.marginBottom = '8px';
-                                    notesLabel.style.color = '#34495e';
-                                    notesSection.appendChild(notesLabel);
-
-                                    const notesContent = document.createElement('div');
-                                    notesContent.textContent = flowNotes || '';
-                                    notesContent.style.padding = '12px';
-                                    notesContent.style.backgroundColor = '#f8f9fa';
-                                    notesContent.style.borderLeft = '4px solid #3498db';
-                                    notesContent.style.whiteSpace = 'pre-wrap';
-                                    notesContent.style.lineHeight = '1.6';
-                                    notesContent.style.wordWrap = 'break-word';
-                                    notesSection.appendChild(notesContent);
-
-                                    flowSection.appendChild(notesSection);
-                                }
-
-                                // Annotations for each edge
-                                if (flow.edges) {
-                                    flow.edges.forEach((edge, edgeIndex) => {
-                                        const preAnnotation = StateManager.getAnnotation(flowIndex, edgeIndex, 'pre');
-                                        const postAnnotation = StateManager.getAnnotation(flowIndex, edgeIndex, 'post');
-
-                                        if (preAnnotation || postAnnotation) {
-                                            const annotationSection = document.createElement('div');
-                                            annotationSection.style.marginTop = '15px';
-                                            annotationSection.style.marginBottom = '15px';
-
-                                            const annotationLabel = document.createElement('div');
-                                            annotationLabel.textContent = `Edge ${edgeIndex + 1}: ${edge.protocol} ${edge.direction}`;
-                                            annotationLabel.style.fontWeight = '600';
-                                            annotationLabel.style.marginBottom = '8px';
-                                            annotationLabel.style.color = '#34495e';
-                                            annotationSection.appendChild(annotationLabel);
-
-                                            if (preAnnotation) {
-                                                const preDiv = document.createElement('div');
-                                                preDiv.style.marginBottom = '8px';
-                                                const preLabel = document.createElement('strong');
-                                                preLabel.textContent = 'Pre-Processing: ';
-                                                const preText = document.createElement('span');
-                                                preText.style.color = '#555';
-                                                preText.textContent = preAnnotation;
-                                                preDiv.appendChild(preLabel);
-                                                preDiv.appendChild(preText);
-                                                annotationSection.appendChild(preDiv);
-                                            }
-
-                                            if (postAnnotation) {
-                                                const postDiv = document.createElement('div');
-                                                const postLabel = document.createElement('strong');
-                                                postLabel.textContent = 'Post-Processing: ';
-                                                const postText = document.createElement('span');
-                                                postText.style.color = '#555';
-                                                postText.textContent = postAnnotation;
-                                                postDiv.appendChild(postLabel);
-                                                postDiv.appendChild(postText);
-                                                annotationSection.appendChild(postDiv);
-                                            }
-
-                                            flowSection.appendChild(annotationSection);
-                                        }
-                                    });
-                                }
-
-                                pdfContainer.appendChild(flowSection);
-                            });
-                        }
-
-                        // Debug: Check if content was added
-                        console.log('PDF container children:', pdfContainer.children.length);
-                        console.log('PDF container HTML length:', pdfContainer.innerHTML.length);
-
-                        // Force a reflow to ensure content is rendered
-                        pdfContainer.style.display = 'block';
-
-                        // Scale down wide diagrams to fit PDF page width (with more margin for safety)
-                        const maxDiagramWidth = 700;
-                        pdfContainer.querySelectorAll('[data-needs-scaling="true"]').forEach(wrapper => {
-                            const diagram = wrapper.querySelector('.flow-row');
-                            if (diagram) {
-                                // Temporarily set to auto width to measure natural size
-                                diagram.style.width = 'auto';
-                                const naturalWidth = diagram.scrollWidth;
-
-                                if (naturalWidth > maxDiagramWidth) {
-                                    const scale = maxDiagramWidth / naturalWidth;
-                                    diagram.style.transform = `scale(${scale})`;
-                                    diagram.style.transformOrigin = 'left top';
-                                    // Adjust wrapper height to account for scaled content
-                                    wrapper.style.height = `${diagram.scrollHeight * scale}px`;
-                                    console.log(`Scaled diagram from ${naturalWidth}px to fit ${maxDiagramWidth}px (scale: ${scale.toFixed(2)})`);
-                                }
+                        // Replace inputs/textareas with static text divs to preserve values
+                        clone.querySelectorAll('input, textarea').forEach(el => {
+                            const value = el.value || el.placeholder || '';
+                            const staticDiv = document.createElement('div');
+                            staticDiv.textContent = value;
+                            staticDiv.style.padding = '6px 8px';
+                            staticDiv.style.fontSize = '11px';
+                            staticDiv.style.color = value === el.placeholder ? '#94a3b8' : '#334155';
+                            staticDiv.style.fontStyle = value === el.placeholder ? 'italic' : 'normal';
+                            staticDiv.style.background = '#fffbeb';
+                            staticDiv.style.border = '1px dashed #fcd34d';
+                            staticDiv.style.borderRadius = '4px';
+                            staticDiv.style.textAlign = 'center';
+                            staticDiv.style.minHeight = el.tagName === 'TEXTAREA' ? '40px' : 'auto';
+                            staticDiv.style.whiteSpace = el.tagName === 'TEXTAREA' ? 'pre-wrap' : 'nowrap';
+                            if (el.parentNode) {
+                                el.parentNode.replaceChild(staticDiv, el);
                             }
                         });
-
-                        const height = pdfContainer.offsetHeight || pdfContainer.scrollHeight;
-                        const width = pdfContainer.offsetWidth || pdfContainer.scrollWidth;
-                        console.log('Container dimensions:', width, 'x', height);
-                        console.log('First child:', pdfContainer.firstElementChild?.tagName, pdfContainer.firstElementChild?.textContent?.substring(0, 50));
-
-                        // Ensure container has content
-                        if (pdfContainer.children.length === 0) {
-                            throw new Error('No content to export. PDF container is empty.');
-                        }
-
-                        if (height === 0) {
-                            console.warn('Container height is 0, but content exists. Trying to fix...');
-                            pdfContainer.style.height = 'auto';
-                            pdfContainer.style.minHeight = '100px';
-                        }
-
-                        // Wait for rendering and images to load
-                        await new Promise(resolve => setTimeout(resolve, 500));
-
-                        // Re-check dimensions after wait
-                        const finalHeight = pdfContainer.offsetHeight || pdfContainer.scrollHeight;
-                        const finalWidth = pdfContainer.offsetWidth || pdfContainer.scrollWidth;
-                        console.log('Final container dimensions:', finalWidth, 'x', finalHeight);
-
-                        // Generate PDF
-                        // Calculate actual content dimensions after rendering
-                        const contentHeight = Math.max(pdfContainer.scrollHeight, pdfContainer.offsetHeight);
-                        const contentWidth = Math.max(pdfContainer.scrollWidth, pdfContainer.offsetWidth);
-
-                        console.log('Content dimensions:', contentWidth, 'x', contentHeight);
-                        console.log('Container innerHTML length:', pdfContainer.innerHTML.length);
-
-                        // Verify content exists
-                        if (contentHeight === 0) {
-                            throw new Error('No content to export. Container height is 0.');
-                        }
-
-                        // Temporarily move container into viewport for html2canvas to capture it
-                        // Store original position
-                        const originalLeft = pdfContainer.style.left;
-                        const originalTop = pdfContainer.style.top;
-                        const originalZIndex = pdfContainer.style.zIndex;
-                        const originalPosition = pdfContainer.style.position;
-
-                        // Move to top-left of viewport - keep it visible but off to the side
-                        pdfContainer.style.position = 'fixed';
-                        pdfContainer.style.left = '0';
-                        pdfContainer.style.top = '0';
-                        pdfContainer.style.zIndex = '999999';
-                        pdfContainer.style.opacity = '1';
-                        pdfContainer.style.visibility = 'visible';
-                        pdfContainer.style.display = 'block';
-                        pdfContainer.style.pointerEvents = 'none';
-                        pdfContainer.style.overflow = 'visible';
-                        pdfContainer.style.maxHeight = 'none';
-                        pdfContainer.style.height = 'auto';
-                        pdfContainer.style.width = '794px';
-
-                        // Ensure all text and elements are visible and have proper colors
-                        const allElements = pdfContainer.querySelectorAll('*');
-                        allElements.forEach(el => {
-                            const computed = window.getComputedStyle(el);
-                            // Force visibility
-                            if (computed.display === 'none') {
-                                el.style.display = 'block';
-                            }
-                            if (computed.visibility === 'hidden') {
-                                el.style.visibility = 'visible';
-                            }
-                            if (computed.opacity === '0') {
-                                el.style.opacity = '1';
-                            }
-                            // Ensure text is visible
-                            if (el.tagName && ['H1', 'H2', 'H3', 'P', 'DIV', 'SPAN'].includes(el.tagName)) {
-                                if (!el.style.color || el.style.color === 'transparent') {
-                                    el.style.color = '#333333';
-                                }
-                            }
+                        
+                        // Fix arrow lines for rendering
+                        clone.querySelectorAll('.edge-line').forEach(el => {
+                            el.style.backgroundImage = 'none';
+                            el.style.backgroundColor = '#64748b';
+                            el.style.animation = 'none';
                         });
-
-                        // Force multiple reflows to ensure rendering
-                        pdfContainer.offsetHeight;
-                        pdfContainer.scrollHeight;
-                        pdfContainer.offsetWidth;
-                        pdfContainer.scrollWidth;
-
-                        // Wait longer for browser to fully render everything
-                        await new Promise(resolve => setTimeout(resolve, 500));
-
-                        // Verify content is actually visible and rendered
-                        const testElement = pdfContainer.querySelector('h1');
-                        if (testElement) {
-                            const rect = testElement.getBoundingClientRect();
-                            const computed = window.getComputedStyle(testElement);
-                            console.log('Test element rect:', rect.width, 'x', rect.height);
-                            console.log('Test element computed color:', computed.color);
-                            console.log('Test element computed display:', computed.display);
-                            console.log('Test element computed visibility:', computed.visibility);
-                            console.log('Test element text:', testElement.textContent?.substring(0, 50));
-
-                            if (rect.width === 0 || rect.height === 0) {
-                                console.error('Content elements have zero dimensions!');
-                                throw new Error('Content is not rendering properly');
-                            }
-                        }
-
-                        try {
-                            console.log('Starting PDF generation with direct html2canvas + jsPDF...');
-                            console.log('Container position:', pdfContainer.style.left, pdfContainer.style.top);
-                            console.log('Container dimensions:', pdfContainer.offsetWidth, 'x', pdfContainer.offsetHeight);
-
-                            // Create PDF using jsPDF
-                            const { jsPDF } = window.jspdf;
-                            const pdf = new jsPDF({
-                                orientation: 'portrait',
-                                unit: 'mm',
-                                format: 'a4'
-                            });
-
-                            // A4 dimensions
-                            const pageWidth = 210;
-                            const pageHeight = 297;
-                            const margin = 15;
-                            const contentWidth = pageWidth - (margin * 2);
-
-                            // Get all sections to render separately (cover page + flow sections)
-                            const sections = pdfContainer.querySelectorAll('.pdf-cover-page, .pdf-flow-section');
-                            console.log('Found sections to render:', sections.length);
-
-                            if (sections.length === 0) {
-                                // Fallback: render entire container but with scale limit
-                                const maxHeight = 5000; // Limit height to avoid memory issues
-                                const canvas = await html2canvas(pdfContainer, {
-                                    scale: 1,
-                                    useCORS: true,
-                                    logging: false,
-                                    backgroundColor: '#ffffff',
-                                    height: Math.min(pdfContainer.scrollHeight, maxHeight)
-                                });
-
-                                const imgData = canvas.toDataURL('image/jpeg', 0.9);
-                                const imgWidth = contentWidth;
-                                const imgHeight = (canvas.height * imgWidth) / canvas.width;
-                                pdf.addImage(imgData, 'JPEG', margin, margin, imgWidth, imgHeight);
+                        clone.querySelectorAll('.edge-arrow').forEach(el => {
+                            if (el.classList.contains('reverse')) {
+                                el.style.borderRightColor = '#64748b';
                             } else {
-                                // Render each section separately
-                                let isFirstPage = true;
-
-                                for (let i = 0; i < sections.length; i++) {
-                                    const section = sections[i];
-                                    console.log(`Rendering section ${i + 1}/${sections.length}:`, section.className);
-
-                                    // Capture this section
-                                    const canvas = await html2canvas(section, {
-                                        scale: 1.5,
-                                        useCORS: true,
-                                        logging: false,
-                                        backgroundColor: '#ffffff'
-                                    });
-
-                                    console.log(`Section ${i + 1} canvas:`, canvas.width, 'x', canvas.height);
-
-                                    if (canvas.width === 0 || canvas.height === 0) {
-                                        console.warn(`Section ${i + 1} has zero dimensions, skipping`);
-                                        continue;
-                                    }
-
-                                    const imgData = canvas.toDataURL('image/jpeg', 0.9);
-
-                                    if (imgData.length < 100) {
-                                        console.warn(`Section ${i + 1} image data too small, skipping`);
-                                        continue;
-                                    }
-
-                                    // Calculate dimensions
-                                    const imgWidth = contentWidth;
-                                    const imgHeight = (canvas.height * imgWidth) / canvas.width;
-
-                                    // Add new page if not first
-                                    if (!isFirstPage) {
-                                        pdf.addPage();
-                                    }
-                                    isFirstPage = false;
-
-                                    // Add image, handling multi-page sections
-                                    let yPosition = margin;
-                                    let remainingHeight = imgHeight;
-                                    const availableHeight = pageHeight - (margin * 2);
-
-                                    if (imgHeight <= availableHeight) {
-                                        // Fits on one page
-                                        pdf.addImage(imgData, 'JPEG', margin, yPosition, imgWidth, imgHeight);
-                                    } else {
-                                        // Need to split across pages
-                                        const ratio = canvas.width / imgWidth;
-                                        let sourceY = 0;
-
-                                        while (remainingHeight > 0) {
-                                            const sliceHeight = Math.min(remainingHeight, availableHeight);
-                                            const sourceSliceHeight = sliceHeight * ratio;
-
-                                            // Create a slice canvas
-                                            const sliceCanvas = document.createElement('canvas');
-                                            sliceCanvas.width = canvas.width;
-                                            sliceCanvas.height = sourceSliceHeight;
-                                            const sliceCtx = sliceCanvas.getContext('2d');
-                                            sliceCtx.fillStyle = '#ffffff';
-                                            sliceCtx.fillRect(0, 0, sliceCanvas.width, sliceCanvas.height);
-                                            sliceCtx.drawImage(canvas, 0, sourceY, canvas.width, sourceSliceHeight, 0, 0, canvas.width, sourceSliceHeight);
-
-                                            const sliceImgData = sliceCanvas.toDataURL('image/jpeg', 0.9);
-                                            pdf.addImage(sliceImgData, 'JPEG', margin, margin, imgWidth, sliceHeight);
-
-                                            sourceY += sourceSliceHeight;
-                                            remainingHeight -= sliceHeight;
-
-                                            if (remainingHeight > 0) {
-                                                pdf.addPage();
-                                            }
-                                        }
-                                    }
-                                }
+                                el.style.borderLeftColor = '#64748b';
                             }
+                        });
 
-                            // Save the PDF
-                            const filename = `${workspace.name.replace(/[^a-z0-9]/gi, '_')}_report.pdf`;
-                            pdf.save(filename);
-                            console.log('PDF saved:', filename);
+                        // Fix node colors for light background
+                        clone.querySelectorAll('.node-box.source').forEach(el => {
+                            el.style.background = '#dbeafe';
+                            el.style.borderColor = '#3b82f6';
+                            el.style.color = '#1e40af';
+                        });
+                        clone.querySelectorAll('.node-box.intermediate').forEach(el => {
+                            el.style.background = '#fef9c3';
+                            el.style.borderColor = '#eab308';
+                            el.style.color = '#713f12';
+                        });
+                        clone.querySelectorAll('.node-box.target').forEach(el => {
+                            el.style.background = '#dcfce7';
+                            el.style.borderColor = '#22c55e';
+                            el.style.color = '#166534';
+                        });
 
-                        } catch (error) {
-                            console.error('PDF generation error:', error);
-                            console.error('Error stack:', error.stack);
-                            alert('Failed to generate PDF: ' + error.message + '\n\nCheck browser console for details.');
-                            throw error;
-                        } finally {
-                            // Restore original position
-                            pdfContainer.style.left = originalLeft;
-                            pdfContainer.style.top = originalTop;
-                            pdfContainer.style.zIndex = originalZIndex;
-                            pdfContainer.style.position = originalPosition;
-                            pdfContainer.style.opacity = '1';
-                            pdfContainer.style.pointerEvents = 'auto';
+                        // Fix text colors
+                        clone.querySelectorAll('.node-type, .flow-description-label, .edge-notes-label, .annotation-label').forEach(el => {
+                            el.style.color = '#64748b';
+                        });
+                        clone.querySelectorAll('.edge-protocol').forEach(el => {
+                            el.style.background = '#eff6ff';
+                            el.style.borderColor = '#3b82f6';
+                            el.style.color = '#1d4ed8';
+                        });
+
+                        wrapper.appendChild(clone);
+
+                        // Add General Notes section if there are notes
+                        const generalNotes = StateManager.getFlowNotes(flowIndex);
+                        if (generalNotes && generalNotes.trim()) {
+                            const notesSection = document.createElement('div');
+                            notesSection.style.marginTop = '8px';
+                            notesSection.style.padding = '12px';
+                            notesSection.style.background = '#f8fafc';
+                            notesSection.style.borderRadius = '6px';
+                            notesSection.style.border = '1px solid #e2e8f0';
+
+                            const notesLabel = document.createElement('div');
+                            notesLabel.style.fontSize = '10px';
+                            notesLabel.style.fontWeight = '600';
+                            notesLabel.style.color = '#64748b';
+                            notesLabel.style.textTransform = 'uppercase';
+                            notesLabel.style.letterSpacing = '0.5px';
+                            notesLabel.style.marginBottom = '6px';
+                            notesLabel.textContent = 'GENERAL NOTES';
+                            notesSection.appendChild(notesLabel);
+
+                            const notesContent = document.createElement('div');
+                            notesContent.style.fontSize = '12px';
+                            notesContent.style.color = '#334155';
+                            notesContent.style.whiteSpace = 'pre-wrap';
+                            notesContent.style.lineHeight = '1.5';
+                            notesContent.textContent = generalNotes;
+                            notesSection.appendChild(notesContent);
+
+                            wrapper.appendChild(notesSection);
                         }
-                    } finally {
-                        // Clean up
-                        setTimeout(() => {
-                            const container = document.getElementById('pdf-export-container');
-                            if (container && container.parentNode) {
-                                document.body.removeChild(container);
+
+                        document.body.appendChild(wrapper);
+
+                        // Wait for rendering
+                        await new Promise(resolve => setTimeout(resolve, 100));
+
+                        // Capture as canvas
+                        const canvas = await html2canvas(wrapper, {
+                            scale: 2,
+                            backgroundColor: '#ffffff',
+                            useCORS: true,
+                            logging: false
+                        });
+
+                        // Clean up wrapper
+                        document.body.removeChild(wrapper);
+
+                        // Convert to blob and copy to clipboard
+                        canvas.toBlob(async (blob) => {
+                            try {
+                                await navigator.clipboard.write([
+                                    new ClipboardItem({ 'image/png': blob })
+                                ]);
+                                
+                                // Show success
+                                copyBtn.classList.add('copied');
+                                copyBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg>`;
+                                
+                                setTimeout(() => {
+                                    copyBtn.classList.remove('copied');
+                                    copyBtn.innerHTML = originalHtml;
+                                }, 2000);
+                            } catch (err) {
+                                console.error('Failed to copy to clipboard:', err);
+                                // Fallback: download the image
+                                const link = document.createElement('a');
+                                link.download = `flow_${flowIndex + 1}.png`;
+                                link.href = canvas.toDataURL('image/png');
+                                link.click();
+                                
+                                copyBtn.innerHTML = originalHtml;
                             }
-                        }, 1000);
+                        }, 'image/png');
+
+                    } catch (error) {
+                        console.error('Failed to generate PNG:', error);
+                        alert('Failed to generate PNG: ' + error.message);
+                        copyBtn.innerHTML = originalHtml;
                     }
                 },
 
