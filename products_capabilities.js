@@ -54,7 +54,12 @@ const PRODUCT_CAPABILITIES = {
             "FTPS SERVER",
             "AS2 SERVER",
             "SSH SERVER",
-        ]
+            "FILE SERVER"
+        ],
+        scripting: {
+            preProcessing: true,
+            postProcessing: true
+        }
     },
     "Transfer CFT": {
         name: "Transfer CFT",
@@ -67,8 +72,13 @@ const PRODUCT_CAPABILITIES = {
         server: [
             "SFTP SERVER",
             "PeSIT SERVER",
-            "PeSIT SSL SERVER"
-        ]
+            "PeSIT SSL SERVER",
+            "FILE SERVER"
+        ],
+        scripting: {
+            preProcessing: true,
+            postProcessing: true
+        }
     },
     "Secure Financial Client": {
         name: "Secure Financial Client",
@@ -80,7 +90,15 @@ const PRODUCT_CAPABILITIES = {
             "SWIFTNET INTERACT SEND",
             "SWIFTNET INTERACT RECEIVE",
         ],
-        server: ["JMS SERVER", "XML SERVER"]
+        server: [
+            "JMS SERVER",
+            "XML SERVER",
+            "FILE SERVER"
+        ],
+        scripting: {
+            preProcessing: false,  // SFC only has post-processing
+            postProcessing: true
+        }
     },
     "Electronic Signature": {
         name: "Electronic Signature",
@@ -88,7 +106,44 @@ const PRODUCT_CAPABILITIES = {
             "EBICS TS PUSH",
             "EBICS TS PULL",
         ],
-        server: []
+        server: [],
+        scripting: {
+            preProcessing: true,
+            postProcessing: true
+        }
+    },
+    "Script": {
+        name: "Script",
+        // Script product defines what ANY script can achieve
+        // Other products with scripting capability can inherit these
+        client: [
+            "FILE PUSH",
+            "FILE PULL",
+            "JMS PUSH",
+            "JMS PULL",
+            "HTTP PUSH",
+            "HTTP PULL",
+            "HTTPS PUSH",
+            "HTTPS PULL",
+            "KAFKA PUSH",
+            "KAFKA PULL",
+            "AMQP PUSH",
+            "AMQP PULL",
+            "IBM MQ PUSH",
+            "IBM MQ PULL",
+            "SMTP PUSH",
+            "CMD PUSH",
+            "API PUSH",
+            "API PULL",
+        ],
+        server: [
+            "FILE SERVER",  // folder monitors
+        ],
+        scripting: {
+            preProcessing: false,  // Script IS the script, no meta-scripting
+            postProcessing: false
+        },
+        isScriptProduct: true  // Marker to identify this as the script capability source
     },
     "API Gateway": {
         name: "API Gateway",
@@ -116,7 +171,11 @@ const PRODUCT_CAPABILITIES = {
             "HTTPS SERVER",
             "SOAP SERVER",
             "AMQP SERVER",
-        ]
+        ],
+        scripting: {
+            preProcessing: true,
+            postProcessing: true
+        }
     },
     "Amplify Fusion": {
         name: "Amplify Fusion",
@@ -141,9 +200,60 @@ const PRODUCT_CAPABILITIES = {
             "HTTP SERVER",
             "HTTPS SERVER",
             "MCP SERVER",
-        ]
+        ],
+        scripting: {
+            preProcessing: true,
+            postProcessing: true
+        }
     }
 };
+
+// Get Script capabilities (used for products with scripting)
+function getScriptCapabilities() {
+    const scriptProduct = PRODUCT_CAPABILITIES["Script"];
+    if (!scriptProduct) return { client: [], server: [] };
+    return {
+        client: scriptProduct.client || [],
+        server: scriptProduct.server || []
+    };
+}
+
+// Check if a product has scripting capability
+function hasScriptingCapability(productName, type = 'any') {
+    const product = PRODUCT_CAPABILITIES[productName];
+    if (!product || !product.scripting) return false;
+    
+    if (type === 'pre') return product.scripting.preProcessing === true;
+    if (type === 'post') return product.scripting.postProcessing === true;
+    return product.scripting.preProcessing === true || product.scripting.postProcessing === true;
+}
+
+// Get extended capabilities (native + script if available)
+// Returns { native: [...], scripted: [...] }
+function getExtendedCapabilities(productName, capabilityType = 'client') {
+    const product = PRODUCT_CAPABILITIES[productName];
+    if (!product) return { native: [], scripted: [] };
+    
+    const native = capabilityType === 'client' ? (product.client || []) : (product.server || []);
+    const scripted = [];
+    
+    // If product has scripting, add Script capabilities as extended
+    if (product.scripting && (product.scripting.preProcessing || product.scripting.postProcessing)) {
+        const scriptCaps = getScriptCapabilities();
+        const scriptList = capabilityType === 'client' ? scriptCaps.client : scriptCaps.server;
+        
+        // Add script capabilities that aren't already native
+        scriptList.forEach(cap => {
+            const capUpper = cap.toUpperCase();
+            const isNative = native.some(n => n.toUpperCase() === capUpper);
+            if (!isNative) {
+                scripted.push(cap);
+            }
+        });
+    }
+    
+    return { native, scripted };
+}
 
 // Helper function to normalize protocol names for matching
 // Converts protocol names (any case) to the format used in capabilities

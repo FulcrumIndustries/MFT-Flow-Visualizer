@@ -687,44 +687,6 @@
             color: white;
         }
 
-        .flow-nav-select {
-            width: 100%;
-            padding: 8px 12px;
-            border: 1px solid var(--border-color);
-            border-radius: var(--border-radius);
-            background: var(--bg-secondary);
-            color: var(--text-primary);
-            font-size: 12px;
-            font-family: 'SF Mono', 'Fira Code', monospace;
-            cursor: pointer;
-            transition: all var(--transition-speed);
-            appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 10px center;
-            padding-right: 32px;
-        }
-
-        .flow-nav-select:hover {
-            border-color: var(--accent-primary);
-        }
-
-        .flow-nav-select:focus {
-            outline: none;
-            border-color: var(--accent-primary);
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
-        }
-
-        .flow-nav-select option {
-            padding: 8px;
-            background: var(--bg-secondary);
-            color: var(--text-primary);
-        }
-
-        [data-theme="dark"] .flow-nav-select {
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-        }
-
         /* Pattern Editor - Right Side */
         .pattern-editor-section {
             flex: 1;
@@ -974,6 +936,17 @@
             background: var(--accent-success, #22c55e);
             border-color: var(--accent-success, #22c55e);
             color: white;
+        }
+
+        .flow-action-btn {
+            gap: 5px;
+            padding: 4px 10px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        .flow-btn-label {
+            white-space: nowrap;
         }
 
         .flow-node {
@@ -1622,56 +1595,6 @@
             cursor: grabbing;
         }
 
-        .architecture-canvas {
-            position: absolute;
-            min-width: 100%;
-            min-height: 100%;
-            padding: 40px;
-        }
-
-        .architecture-legend {
-            position: absolute;
-            bottom: 20px;
-            left: 20px;
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: var(--border-radius);
-            padding: 12px 16px;
-            font-size: 12px;
-            display: flex;
-            gap: 20px;
-            box-shadow: var(--shadow-md);
-        }
-
-        .legend-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: var(--text-secondary);
-        }
-
-        .legend-dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            border: 2px solid;
-        }
-
-        .legend-dot.source {
-            background: var(--node-source);
-            border-color: var(--node-source-border);
-        }
-
-        .legend-dot.intermediate {
-            background: var(--node-intermediate);
-            border-color: var(--node-intermediate-border);
-        }
-
-        .legend-dot.target {
-            background: var(--node-target);
-            border-color: var(--node-target-border);
-        }
-
         .architecture-stats {
             position: absolute;
             top: 20px;
@@ -1893,6 +1816,441 @@
 
         .kroki-error.hidden {
             display: none;
+        }
+
+        /* ============================================
+           MIGRATION MODAL
+           ============================================ */
+        .migration-modal-content {
+            max-width: 1200px;
+            width: 95vw;
+            max-height: 85vh;
+        }
+
+        .migration-modal-body {
+            padding: 20px;
+            overflow-y: auto;
+            max-height: calc(85vh - 60px);
+        }
+
+        .migration-content {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .migration-empty {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-muted);
+        }
+
+        .migration-empty-icon {
+            width: 48px;
+            height: 48px;
+            margin: 0 auto 16px;
+            color: var(--text-muted);
+            opacity: 0.5;
+        }
+
+        .migration-empty h3 {
+            margin: 0 0 8px;
+            font-size: 16px;
+            color: var(--text-secondary);
+        }
+
+        .migration-empty p {
+            margin: 0;
+            font-size: 13px;
+        }
+
+        .migration-option {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+        }
+
+        .migration-option-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .migration-option-title {
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .migration-option-title svg {
+            color: var(--accent-success, #10b981);
+        }
+
+        .migration-option-badge {
+            padding: 4px 10px;
+            background: var(--accent-primary);
+            color: white;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        .migration-diagram {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .migration-flow-row {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 4px;
+        }
+
+        .migration-node {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .migration-node-box {
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            border: 2px solid;
+            min-width: 80px;
+            text-align: center;
+        }
+
+        .migration-node-box.source {
+            background: var(--node-source);
+            border-color: var(--node-source-border);
+            color: var(--node-source-border);
+        }
+
+        .migration-node-box.target {
+            background: var(--node-target);
+            border-color: var(--node-target-border);
+            color: var(--node-target-border);
+        }
+
+        .migration-node-box.intermediate {
+            background: var(--node-intermediate);
+            border-color: var(--node-intermediate-border);
+            color: var(--text-primary);
+        }
+
+        .migration-product-label {
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--accent-success, #10b981);
+            background: rgba(16, 185, 129, 0.1);
+            padding: 2px 8px;
+            border-radius: 10px;
+            max-width: 120px;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        .migration-edge {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            padding: 0 8px;
+        }
+
+        .migration-edge-line {
+            width: 30px;
+            height: 2px;
+            background: var(--edge-color, #64748b);
+        }
+
+        .migration-edge-arrow {
+            width: 0;
+            height: 0;
+            border-top: 5px solid transparent;
+            border-bottom: 5px solid transparent;
+            border-left: 8px solid var(--edge-color, #64748b);
+        }
+
+        .migration-edge-arrow.reverse {
+            border-left: none;
+            border-right: 8px solid var(--edge-color, #64748b);
+        }
+
+        .migration-edge-label {
+            font-size: 10px;
+            color: var(--text-secondary);
+            background: var(--bg-secondary);
+            padding: 2px 6px;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+            white-space: nowrap;
+        }
+
+        .migration-edge-label.parallel-label {
+            background: var(--bg-tertiary);
+            border-color: var(--accent-primary);
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .migration-edge.parallel {
+            flex-wrap: nowrap;
+        }
+
+        .migration-summary {
+            padding: 12px 16px;
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border-color);
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .migration-summary-title {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .migration-summary-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .migration-summary-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            background: var(--bg-tertiary);
+            border-radius: 4px;
+        }
+
+        .migration-summary-item .product-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--accent-success, #10b981);
+        }
+
+        .flow-migration-btn {
+            margin-left: 4px;
+        }
+
+        /* Migration Toggle */
+        .migration-toggle-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            margin-bottom: 16px;
+        }
+
+        .migration-toggle {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .migration-toggle input {
+            display: none;
+        }
+
+        .migration-toggle-slider {
+            width: 40px;
+            height: 22px;
+            background: var(--border-color);
+            border-radius: 11px;
+            position: relative;
+            transition: background 0.2s;
+        }
+
+        .migration-toggle-slider::after {
+            content: '';
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            background: white;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: transform 0.2s;
+        }
+
+        .migration-toggle input:checked + .migration-toggle-slider {
+            background: var(--accent-primary);
+        }
+
+        .migration-toggle input:checked + .migration-toggle-slider::after {
+            transform: translateX(18px);
+        }
+
+        .migration-toggle-label {
+            font-size: 13px;
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .migration-stats {
+            display: flex;
+            gap: 12px;
+        }
+
+        .migration-stat {
+            font-size: 12px;
+            padding: 4px 10px;
+            border-radius: 12px;
+        }
+
+        .migration-stat.native {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--accent-success, #10b981);
+        }
+
+        .migration-stat.scripted {
+            background: rgba(245, 158, 11, 0.1);
+            color: #f59e0b;
+        }
+
+        /* Scripting indicators */
+        .migration-option.has-scripting {
+            border-color: #f59e0b;
+        }
+
+        .migration-option.has-scripting .migration-option-header {
+            background: rgba(245, 158, 11, 0.05);
+        }
+
+        .option-native-badge {
+            font-size: 10px;
+            padding: 2px 8px;
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--accent-success, #10b981);
+            border-radius: 10px;
+            margin-left: 8px;
+        }
+
+        .option-scripting-badge {
+            font-size: 10px;
+            padding: 2px 8px;
+            background: rgba(245, 158, 11, 0.15);
+            color: #f59e0b;
+            border-radius: 10px;
+            margin-left: 8px;
+        }
+
+        .migration-option-badge.scripted {
+            background: #f59e0b;
+        }
+
+        .migration-product-label.has-scripting {
+            background: rgba(245, 158, 11, 0.15);
+            color: #d97706;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .scripting-indicator {
+            font-size: 8px;
+            background: #f59e0b;
+            color: white;
+            padding: 1px 4px;
+            border-radius: 3px;
+            font-weight: 600;
+        }
+
+        .migration-scripted-note {
+            padding: 12px 16px;
+            background: rgba(245, 158, 11, 0.08);
+            border-top: 1px solid rgba(245, 158, 11, 0.2);
+            font-size: 12px;
+        }
+
+        .scripted-note-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #d97706;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .scripted-note-header svg {
+            color: #f59e0b;
+        }
+
+        .scripted-note-content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .scripted-detail {
+            display: inline-block;
+            padding: 4px 8px;
+            background: rgba(245, 158, 11, 0.1);
+            border-radius: 4px;
+            color: var(--text-secondary);
+        }
+
+        .scripted-detail strong {
+            color: var(--text-primary);
+        }
+
+        /* Migration copy button */
+        .migration-option-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .migration-copy-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            color: var(--text-secondary);
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .migration-copy-btn:hover {
+            background: var(--accent-primary);
+            border-color: var(--accent-primary);
+            color: white;
+        }
+
+        .migration-copy-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .migration-copy-btn svg.spinning {
+            animation: spin 1s linear infinite;
         }
 
         /* ============================================
@@ -2127,6 +2485,8 @@
             border: 1px solid var(--border-color);
             border-radius: var(--border-radius);
             transition: all var(--transition-speed);
+            cursor: pointer;
+            position: relative;
         }
 
         .product-item:hover {
@@ -2134,17 +2494,77 @@
             box-shadow: var(--shadow-sm);
         }
 
+        .product-item.selected {
+            border-color: var(--accent-success, #10b981);
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.08), rgba(16, 185, 129, 0.02));
+            box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.15);
+        }
+
+        .product-item.selected::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--accent-success, #10b981);
+            border-radius: var(--border-radius) 0 0 var(--border-radius);
+        }
+
+        .product-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+
+        .product-checkbox {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--border-color);
+            border-radius: 4px;
+            background: var(--bg-secondary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .product-checkbox:hover {
+            border-color: var(--accent-primary);
+        }
+
+        .product-checkbox:checked {
+            background: var(--accent-success, #10b981);
+            border-color: var(--accent-success, #10b981);
+        }
+
+        .product-checkbox:checked::after {
+            content: '';
+            position: absolute;
+            left: 6px;
+            top: 2px;
+            width: 5px;
+            height: 10px;
+            border: solid white;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+        }
+
         .product-name {
             font-size: 14px;
             font-weight: 600;
             color: var(--text-primary);
-            margin-bottom: 8px;
+            flex: 1;
         }
 
         .product-capabilities {
             display: flex;
             flex-wrap: wrap;
             gap: 6px;
+            margin-left: 30px;
         }
 
         .capability-badge {
@@ -2154,6 +2574,10 @@
             border-radius: 4px;
             font-size: 11px;
             font-weight: 500;
+        }
+
+        .product-item.selected .capability-badge {
+            background: var(--accent-success, #10b981);
         }
 
         .no-products-message {
@@ -2360,18 +2784,6 @@
                 </div>
             </div>
             <div class="header-right">
-                <button id="architectureBtn" class="btn btn-icon" title="View Full Architecture">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <rect x="3" y="3" width="7" height="7" rx="1"></rect>
-                        <rect x="14" y="3" width="7" height="7" rx="1"></rect>
-                        <rect x="14" y="14" width="7" height="7" rx="1"></rect>
-                        <rect x="3" y="14" width="7" height="7" rx="1"></rect>
-                        <path d="M10 6.5h4"></path>
-                        <path d="M17.5 10v4"></path>
-                        <path d="M10 17.5h4"></path>
-                        <path d="M6.5 10v4"></path>
-                    </svg>
-                </button>
                 <button id="krokiBtn" class="btn btn-icon" title="Generate Kroki Diagram (D2)">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
@@ -2434,9 +2846,6 @@
                 <div class="protocol-tags" id="protocolTags">
                     <!-- Protocol tags will be populated dynamically -->
                 </div>
-                <select class="flow-nav-select" id="flowNavSelect">
-                    <option value="">-- Select a flow --</option>
-                </select>
             </div>
 
             <!-- Pattern Editor - Right Side -->
@@ -2560,68 +2969,6 @@ TESTZ <- PeSIT PULL <- CFT -> SSH PUSH -> TESTF" spellcheck="false"></textarea>
             </div>
         </div>
 
-        <!-- Architecture Diagram Modal -->
-        <div id="architectureModal" class="architecture-modal">
-            <div class="architecture-modal-content">
-                <div class="architecture-modal-header">
-                    <div class="architecture-modal-title">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2">
-                            <rect x="3" y="3" width="7" height="7" rx="1"></rect>
-                            <rect x="14" y="3" width="7" height="7" rx="1"></rect>
-                            <rect x="14" y="14" width="7" height="7" rx="1"></rect>
-                            <rect x="3" y="14" width="7" height="7" rx="1"></rect>
-                            <path d="M10 6.5h4"></path>
-                            <path d="M17.5 10v4"></path>
-                            <path d="M10 17.5h4"></path>
-                            <path d="M6.5 10v4"></path>
-                        </svg>
-                        Full Architecture Diagram
-                    </div>
-                    <button id="closeArchitectureBtn" class="architecture-modal-close" title="Close">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2">
-                            <line x1="18" y1="6" x2="6" y2="18"></line>
-                            <line x1="6" y1="6" x2="18" y2="18"></line>
-                        </svg>
-                    </button>
-                </div>
-                <div class="architecture-modal-body">
-                    <div id="architectureCanvasContainer" class="architecture-canvas-container">
-                        <svg id="architectureCanvas" class="architecture-canvas"></svg>
-                    </div>
-                    <div class="architecture-legend">
-                        <div class="legend-item">
-                            <div class="legend-dot source"></div>
-                            <span>Source</span>
-                        </div>
-                        <div class="legend-item">
-                            <div class="legend-dot intermediate"></div>
-                            <span>Intermediate</span>
-                        </div>
-                        <div class="legend-item">
-                            <div class="legend-dot target"></div>
-                            <span>Target</span>
-                        </div>
-                    </div>
-                    <div id="architectureStats" class="architecture-stats">
-                        <div class="arch-stat-row">
-                            <span class="arch-stat-label">Unique Nodes:</span>
-                            <span class="arch-stat-value" id="archStatNodes">0</span>
-                        </div>
-                        <div class="arch-stat-row">
-                            <span class="arch-stat-label">Connections:</span>
-                            <span class="arch-stat-value" id="archStatConnections">0</span>
-                        </div>
-                        <div class="arch-stat-row">
-                            <span class="arch-stat-label">Protocols:</span>
-                            <span class="arch-stat-value" id="archStatProtocols">0</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
         <!-- Kroki Diagram Modal -->
         <div id="krokiModal" class="architecture-modal">
             <div class="architecture-modal-content">
@@ -2709,6 +3056,34 @@ TESTZ <- PeSIT PULL <- CFT -> SSH PUSH -> TESTF" spellcheck="false"></textarea>
                             <span class="arch-stat-label">Format:</span>
                             <span class="arch-stat-value">D2</span>
                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Migration Options Modal -->
+        <div id="migrationModal" class="architecture-modal">
+            <div class="architecture-modal-content migration-modal-content">
+                <div class="architecture-modal-header">
+                    <div class="architecture-modal-title">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <path d="M12 18v-6"></path>
+                            <path d="M9 15l3 3 3-3"></path>
+                        </svg>
+                        Migration Options
+                    </div>
+                    <button id="closeMigrationBtn" class="architecture-modal-close" title="Close">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                    </button>
+                </div>
+                <div class="architecture-modal-body migration-modal-body">
+                    <div id="migrationContent" class="migration-content">
+                        <!-- Migration options will be populated here -->
                     </div>
                 </div>
             </div>
@@ -2869,6 +3244,38 @@ TESTZ <- PeSIT PULL <- CFT -> SSH PUSH -> TESTF" spellcheck="false"></textarea>
                     return '';
                 },
 
+                toggleSelectedProduct(flowIndex, productName, isSelected) {
+                    const workspace = this.getActiveWorkspace();
+                    if (workspace) {
+                        if (!workspace.selectedProducts) {
+                            workspace.selectedProducts = {};
+                        }
+                        if (!workspace.selectedProducts[flowIndex]) {
+                            workspace.selectedProducts[flowIndex] = [];
+                        }
+                        
+                        const products = workspace.selectedProducts[flowIndex];
+                        const index = products.indexOf(productName);
+                        
+                        if (isSelected && index === -1) {
+                            products.push(productName);
+                        } else if (!isSelected && index !== -1) {
+                            products.splice(index, 1);
+                        }
+                        
+                        workspace.metadata.updatedAt = Date.now();
+                        this.notify({ type: 'SELECTED_PRODUCTS_UPDATED', workspaceId: workspace.id, flowIndex });
+                    }
+                },
+
+                getSelectedProducts(flowIndex) {
+                    const workspace = this.getActiveWorkspace();
+                    if (workspace && workspace.selectedProducts && workspace.selectedProducts[flowIndex]) {
+                        return workspace.selectedProducts[flowIndex];
+                    }
+                    return [];
+                },
+
                 setTheme(theme) {
                     this.state.theme = theme;
                     this.notify({ type: 'THEME_CHANGED', theme });
@@ -2896,6 +3303,7 @@ TESTZ <- PeSIT PULL <- CFT -> SSH PUSH -> TESTF" spellcheck="false"></textarea>
                                 flowDescriptions: ws.flowDescriptions || {},
                                 annotations: ws.annotations || {},
                                 edgeNotes: ws.edgeNotes || {},
+                                selectedProducts: ws.selectedProducts || {},
                                 metadata: ws.metadata
                             }))
                         };
@@ -2923,7 +3331,8 @@ TESTZ <- PeSIT PULL <- CFT -> SSH PUSH -> TESTF" spellcheck="false"></textarea>
                                     flowNotes: ws.flowNotes || {},
                                     flowDescriptions: ws.flowDescriptions || {},
                                     annotations: ws.annotations || {},
-                                    edgeNotes: ws.edgeNotes || {}
+                                    edgeNotes: ws.edgeNotes || {},
+                                    selectedProducts: ws.selectedProducts || {}
                                 });
                             });
                         }
@@ -3475,17 +3884,59 @@ TESTZ <- PeSIT PULL <- CFT -> SSH PUSH -> TESTF" spellcheck="false"></textarea>
                         return;
                     }
 
+                    // Get currently selected products for this flow
+                    const selectedProducts = StateManager.getSelectedProducts(flowIndex);
+
                     productsList.innerHTML = requiredProducts.map(product => {
+                        const isSelected = selectedProducts.includes(product.name);
                         const capabilitiesHtml = product.supportedCapabilities
                             .map(cap => `<span class="capability-badge">${cap}</span>`)
                             .join('');
                         return `
-                        <div class="product-item">
-                            <div class="product-name">${product.name}</div>
+                        <div class="product-item${isSelected ? ' selected' : ''}" data-product="${product.name}" data-flow-index="${flowIndex}">
+                            <div class="product-header">
+                                <input type="checkbox" class="product-checkbox" ${isSelected ? 'checked' : ''} data-product="${product.name}">
+                                <div class="product-name">${product.name}</div>
+                            </div>
                             <div class="product-capabilities">${capabilitiesHtml}</div>
                         </div>
                     `;
                     }).join('');
+
+                    // Add event listeners for checkboxes
+                    productsList.querySelectorAll('.product-item').forEach(item => {
+                        const checkbox = item.querySelector('.product-checkbox');
+                        const productName = item.dataset.product;
+                        const flowIdx = parseInt(item.dataset.flowIndex);
+
+                        // Toggle on item click (but not on checkbox click to avoid double toggle)
+                        item.addEventListener('click', (e) => {
+                            if (e.target !== checkbox) {
+                                checkbox.checked = !checkbox.checked;
+                                this.toggleProductSelection(flowIdx, productName, checkbox.checked, item);
+                            }
+                        });
+
+                        // Handle checkbox change
+                        checkbox.addEventListener('change', (e) => {
+                            e.stopPropagation();
+                            this.toggleProductSelection(flowIdx, productName, checkbox.checked, item);
+                        });
+                    });
+                },
+
+                toggleProductSelection(flowIndex, productName, isSelected, itemElement) {
+                    StateManager.toggleSelectedProduct(flowIndex, productName, isSelected);
+                    
+                    // Update visual state
+                    if (isSelected) {
+                        itemElement.classList.add('selected');
+                    } else {
+                        itemElement.classList.remove('selected');
+                    }
+                    
+                    // Save to persistence
+                    Persistence.save();
                 },
 
                 updateNotesField(flowIndex) {
@@ -3522,19 +3973,34 @@ TESTZ <- PeSIT PULL <- CFT -> SSH PUSH -> TESTF" spellcheck="false"></textarea>
                     rowNumber.textContent = `Flow ${flowIndex + 1}`;
 
                     const copyBtn = document.createElement('button');
-                    copyBtn.className = 'flow-copy-btn';
+                    copyBtn.className = 'flow-copy-btn flow-action-btn';
                     copyBtn.title = 'Copy flow as PNG';
                     copyBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
                         <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                    </svg>`;
+                    </svg><span class="flow-btn-label">Copy PNG</span>`;
                     copyBtn.addEventListener('click', async (e) => {
                         e.stopPropagation();
                         await UIController.copyFlowAsPng(row, flowIndex);
                     });
 
+                    const migrationBtn = document.createElement('button');
+                    migrationBtn.className = 'flow-copy-btn flow-migration-btn flow-action-btn';
+                    migrationBtn.title = 'Show Migration Options';
+                    migrationBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                        <path d="M12 18v-6"></path>
+                        <path d="M9 15l3 3 3-3"></path>
+                    </svg><span class="flow-btn-label">Migration</span>`;
+                    migrationBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        UIController.showMigrationOptions(flowIndex, flow);
+                    });
+
                     rowHeader.appendChild(rowNumber);
                     rowHeader.appendChild(copyBtn);
+                    rowHeader.appendChild(migrationBtn);
                     row.appendChild(rowHeader);
 
                     // Group edges by their from->to pair to handle parallel steps
@@ -4227,7 +4693,8 @@ TESTZ <- PeSIT PULL <- CFT -> SSH PUSH -> TESTF" spellcheck="false"></textarea>
                                     patternText: ws.patternText || '',
                                     flowNotes: ws.flowNotes || {},
                                     flowDescriptions: ws.flowDescriptions || {},
-                                    annotations: ws.annotations || {}
+                                    annotations: ws.annotations || {},
+                                    selectedProducts: ws.selectedProducts || {}
                                 }
                             };
                             const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
@@ -4267,6 +4734,7 @@ TESTZ <- PeSIT PULL <- CFT -> SSH PUSH -> TESTF" spellcheck="false"></textarea>
                                 newWorkspace.flowNotes = data.workspace.flowNotes || {};
                                 newWorkspace.flowDescriptions = data.workspace.flowDescriptions || {};
                                 newWorkspace.annotations = data.workspace.annotations || {};
+                                newWorkspace.selectedProducts = data.workspace.selectedProducts || {};
                                 Persistence.save();
 
                                 this.updateWorkspaceSelect();
@@ -4344,21 +4812,6 @@ TESTZ <- PeSIT PULL <- CFT -> SSH PUSH -> TESTF" spellcheck="false"></textarea>
                         this.elements.helpPanel.classList.remove('visible');
                     });
 
-                    // Architecture diagram modal
-                    document.getElementById('architectureBtn').addEventListener('click', () => {
-                        this.showArchitectureDiagram();
-                    });
-
-                    document.getElementById('closeArchitectureBtn').addEventListener('click', () => {
-                        this.hideArchitectureDiagram();
-                    });
-
-                    document.getElementById('architectureModal').addEventListener('click', (e) => {
-                        if (e.target.id === 'architectureModal') {
-                            this.hideArchitectureDiagram();
-                        }
-                    });
-
                     // Kroki diagram modal
                     document.getElementById('krokiBtn').addEventListener('click', () => {
                         this.showKrokiDiagram();
@@ -4371,6 +4824,17 @@ TESTZ <- PeSIT PULL <- CFT -> SSH PUSH -> TESTF" spellcheck="false"></textarea>
                     document.getElementById('krokiModal').addEventListener('click', (e) => {
                         if (e.target.id === 'krokiModal') {
                             this.hideKrokiDiagram();
+                        }
+                    });
+
+                    // Migration modal
+                    document.getElementById('closeMigrationBtn').addEventListener('click', () => {
+                        this.hideMigrationModal();
+                    });
+
+                    document.getElementById('migrationModal').addEventListener('click', (e) => {
+                        if (e.target.id === 'migrationModal') {
+                            this.hideMigrationModal();
                         }
                     });
 
@@ -4452,43 +4916,6 @@ TESTZ <- PeSIT PULL <- CFT -> SSH PUSH -> TESTF" spellcheck="false"></textarea>
                         }
                     });
 
-                    // Architecture canvas panning
-                    const archCanvasContainer = document.getElementById('architectureCanvasContainer');
-                    let isPanning = false;
-                    let panStartX = 0;
-                    let panStartY = 0;
-                    let scrollLeft = 0;
-                    let scrollTop = 0;
-
-                    archCanvasContainer.addEventListener('mousedown', (e) => {
-                        isPanning = true;
-                        panStartX = e.pageX - archCanvasContainer.offsetLeft;
-                        panStartY = e.pageY - archCanvasContainer.offsetTop;
-                        scrollLeft = archCanvasContainer.scrollLeft;
-                        scrollTop = archCanvasContainer.scrollTop;
-                        archCanvasContainer.style.cursor = 'grabbing';
-                    });
-
-                    archCanvasContainer.addEventListener('mouseleave', () => {
-                        isPanning = false;
-                        archCanvasContainer.style.cursor = 'grab';
-                    });
-
-                    archCanvasContainer.addEventListener('mouseup', () => {
-                        isPanning = false;
-                        archCanvasContainer.style.cursor = 'grab';
-                    });
-
-                    archCanvasContainer.addEventListener('mousemove', (e) => {
-                        if (!isPanning) return;
-                        e.preventDefault();
-                        const x = e.pageX - archCanvasContainer.offsetLeft;
-                        const y = e.pageY - archCanvasContainer.offsetTop;
-                        const walkX = (x - panStartX) * 1.5;
-                        const walkY = (y - panStartY) * 1.5;
-                        archCanvasContainer.scrollLeft = scrollLeft - walkX;
-                        archCanvasContainer.scrollTop = scrollTop - walkY;
-                    });
 
                     // Modal
                     document.getElementById('modalCancelBtn').addEventListener('click', () => {
@@ -4513,16 +4940,16 @@ TESTZ <- PeSIT PULL <- CFT -> SSH PUSH -> TESTF" spellcheck="false"></textarea>
                     // Keyboard shortcuts
                     document.addEventListener('keydown', (e) => {
                         if (e.key === 'Escape') {
+                            // Close migration modal if open
+                            const migrationModal = document.getElementById('migrationModal');
+                            if (migrationModal.classList.contains('visible')) {
+                                this.hideMigrationModal();
+                                return;
+                            }
                             // Close kroki modal if open
                             const krokiModal = document.getElementById('krokiModal');
                             if (krokiModal.classList.contains('visible')) {
                                 this.hideKrokiDiagram();
-                                return;
-                            }
-                            // Close architecture modal if open
-                            const archModal = document.getElementById('architectureModal');
-                            if (archModal.classList.contains('visible')) {
-                                this.hideArchitectureDiagram();
                                 return;
                             }
                         }
@@ -4621,45 +5048,6 @@ TESTZ <- PeSIT PULL <- CFT -> SSH PUSH -> TESTF" spellcheck="false"></textarea>
                         });
                     } else {
                         protocolTags.innerHTML = '<span style="color: var(--text-muted); font-size: 11px; font-style: italic;">No protocols detected</span>';
-                    }
-
-                    // Update flow navigation combobox
-                    const flowNavSelect = document.getElementById('flowNavSelect');
-                    const lines = text.split('\n');
-
-                    if (flowCount > 0) {
-                        let flowLineIndex = 0;
-                        let optionsHtml = '<option value="">-- Select a flow --</option>';
-
-                        flows.forEach((flow, index) => {
-                            // Find the line for this flow
-                            while (flowLineIndex < lines.length && lines[flowLineIndex].trim() === '') {
-                                flowLineIndex++;
-                            }
-                            const lineNum = flowLineIndex + 1;
-                            flowLineIndex++;
-
-                            // Create preview from nodes
-                            const preview = flow.nodes ? flow.nodes.map(n => n.label).join(' → ') : 'Flow ' + (index + 1);
-                            const isSelected = DiagramRenderer.selectedFlowIndex === index;
-
-                            optionsHtml += `<option value="${index}" data-line="${lineNum}" ${isSelected ? 'selected' : ''}>L${lineNum}: ${preview}</option>`;
-                        });
-
-                        flowNavSelect.innerHTML = optionsHtml;
-
-                        // Add change handler
-                        flowNavSelect.onchange = () => {
-                            const selectedOption = flowNavSelect.options[flowNavSelect.selectedIndex];
-                            if (selectedOption.value !== '') {
-                                const flowIndex = parseInt(selectedOption.value);
-                                const lineNum = parseInt(selectedOption.dataset.line);
-                                DiagramRenderer.selectFlow(flowIndex);
-                                this.scrollToLine(lineNum);
-                            }
-                        };
-                    } else {
-                        flowNavSelect.innerHTML = '<option value="">-- No flows defined --</option>';
                     }
                 },
 
@@ -4940,82 +5328,6 @@ TESTZ <- PeSIT PULL <- CFT -> SSH PUSH -> TESTF" spellcheck="false"></textarea>
                     this.elements.modalOverlay.classList.remove('visible');
                 },
 
-                showArchitectureDiagram() {
-                    const modal = document.getElementById('architectureModal');
-                    const canvas = document.getElementById('architectureCanvas');
-
-                    // Get current flows
-                    const text = this.elements.patternEditor.value;
-                    const result = Parser.parseMultiple(text);
-                    const flows = result.flows;
-
-                    if (flows.length === 0) {
-                        alert('No flows defined. Add some flow patterns first.');
-                        return;
-                    }
-
-                    // Build unique nodes and connections
-                    const uniqueNodes = new Map(); // label -> { type, connections }
-                    const uniqueConnections = new Map(); // "from|to|protocol|direction" -> { from, to, protocol, direction, flowDirection }
-                    const protocolsUsed = new Set();
-
-                    flows.forEach(flow => {
-                        if (!flow || !flow.nodes || !flow.edges) return;
-
-                        // Track nodes with their types
-                        flow.nodes.forEach(node => {
-                            if (!uniqueNodes.has(node.label)) {
-                                uniqueNodes.set(node.label, {
-                                    label: node.label,
-                                    type: node.type,
-                                    connections: new Set()
-                                });
-                            }
-                        });
-
-                        // Track unique connections
-                        flow.edges.forEach(edge => {
-                            const connectionKey = `${edge.fromLabel}|${edge.toLabel}|${edge.protocol}|${edge.direction}|${edge.flowDirection}`;
-                            if (!uniqueConnections.has(connectionKey)) {
-                                uniqueConnections.set(connectionKey, {
-                                    from: edge.fromLabel,
-                                    to: edge.toLabel,
-                                    protocol: edge.protocol,
-                                    direction: edge.direction,
-                                    flowDirection: edge.flowDirection
-                                });
-
-                                // Track connections for each node
-                                uniqueNodes.get(edge.fromLabel).connections.add(edge.toLabel);
-                                uniqueNodes.get(edge.toLabel).connections.add(edge.fromLabel);
-                            }
-                            protocolsUsed.add(edge.protocol);
-                        });
-                    });
-
-                    // Update stats
-                    document.getElementById('archStatNodes').textContent = uniqueNodes.size;
-                    document.getElementById('archStatConnections').textContent = uniqueConnections.size;
-                    document.getElementById('archStatProtocols').textContent = protocolsUsed.size;
-
-                    // Generate the diagram
-                    this.generateArchitectureSVG(canvas, uniqueNodes, uniqueConnections);
-
-                    // Show modal
-                    modal.classList.add('visible');
-
-                    // Center the view
-                    const container = document.getElementById('architectureCanvasContainer');
-                    setTimeout(() => {
-                        container.scrollLeft = (canvas.clientWidth - container.clientWidth) / 2;
-                        container.scrollTop = (canvas.clientHeight - container.clientHeight) / 2;
-                    }, 100);
-                },
-
-                hideArchitectureDiagram() {
-                    document.getElementById('architectureModal').classList.remove('visible');
-                },
-
                 // Kroki diagram state
                 currentKrokiCode: null,
                 currentKrokiUrl: null,
@@ -5189,6 +5501,557 @@ TESTZ <- PeSIT PULL <- CFT -> SSH PUSH -> TESTF" spellcheck="false"></textarea>
                     document.getElementById('krokiZoomLevel').textContent = '100%';
                 },
 
+                // Store current migration state for re-rendering
+                currentMigrationState: null,
+
+                showMigrationOptions(flowIndex, flow, includeScripted = true) {
+                    const modal = document.getElementById('migrationModal');
+                    const content = document.getElementById('migrationContent');
+                    
+                    // Get selected products for this flow
+                    const selectedProducts = StateManager.getSelectedProducts(flowIndex);
+                    
+                    // Store state for toggle functionality
+                    this.currentMigrationState = { flowIndex, flow, selectedProducts };
+                    
+                    if (selectedProducts.length === 0) {
+                        content.innerHTML = `
+                            <div class="migration-empty">
+                                <svg class="migration-empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                                </svg>
+                                <h3>No Products Selected</h3>
+                                <p>Please select at least one product from the "Potential Products" section to see migration options.</p>
+                            </div>
+                        `;
+                        modal.classList.add('visible');
+                        return;
+                    }
+
+                    // Find intermediate nodes that need products
+                    const intermediateNodes = flow.nodes.filter(n => n.type === 'intermediate');
+                    
+                    if (intermediateNodes.length === 0) {
+                        content.innerHTML = `
+                            <div class="migration-empty">
+                                <svg class="migration-empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                                </svg>
+                                <h3>Direct Flow</h3>
+                                <p>This is a direct flow with no intermediate nodes. No migration planning needed.</p>
+                            </div>
+                        `;
+                        modal.classList.add('visible');
+                        return;
+                    }
+
+                    // For each intermediate node, determine required capabilities
+                    const nodeRequirements = this.analyzeNodeRequirements(flow);
+                    
+                    // Find which products can serve each node (with scripting option)
+                    const nodeProductOptions = this.findProductOptionsForNodes(nodeRequirements, selectedProducts, includeScripted);
+                    
+                    // Check if any node has no valid product
+                    const unsatisfiedNodes = Object.entries(nodeProductOptions)
+                        .filter(([node, options]) => options.length === 0);
+                    
+                    if (unsatisfiedNodes.length > 0) {
+                        const nodeList = unsatisfiedNodes.map(([node]) => node).join(', ');
+                        
+                        // Check if there would be options with scripting enabled
+                        let scriptingHint = '';
+                        if (!includeScripted) {
+                            const withScripted = this.findProductOptionsForNodes(nodeRequirements, selectedProducts, true);
+                            const wouldHaveOptions = unsatisfiedNodes.every(([node]) => withScripted[node]?.length > 0);
+                            if (wouldHaveOptions) {
+                                scriptingHint = `<p style="margin-top: 12px; color: var(--accent-primary);">💡 Enable "Include Scripted Options" to see solutions using script capabilities.</p>`;
+                            }
+                        }
+                        
+                        content.innerHTML = `
+                            <div class="migration-toggle-container">
+                                <label class="migration-toggle">
+                                    <input type="checkbox" id="includeScriptedToggle" ${includeScripted ? 'checked' : ''}>
+                                    <span class="migration-toggle-slider"></span>
+                                    <span class="migration-toggle-label">Include Scripted Options</span>
+                                </label>
+                            </div>
+                            <div class="migration-empty">
+                                <svg class="migration-empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <line x1="15" y1="9" x2="9" y2="15"></line>
+                                    <line x1="9" y1="9" x2="15" y2="15"></line>
+                                </svg>
+                                <h3>Incompatible Products</h3>
+                                <p>The selected products cannot satisfy all requirements for node(s): <strong>${nodeList}</strong></p>
+                                <p style="margin-top: 8px;">Please select additional products that support the required protocols.</p>
+                                ${scriptingHint}
+                            </div>
+                        `;
+                        this.attachMigrationToggleListener();
+                        modal.classList.add('visible');
+                        return;
+                    }
+
+                    // Generate all valid combinations
+                    const combinations = this.generateMigrationCombinations(nodeProductOptions, intermediateNodes.map(n => n.label), includeScripted);
+                    
+                    // Count native vs scripted options
+                    const nativeCount = combinations.filter(c => !c.hasScripting).length;
+                    const scriptedCount = combinations.filter(c => c.hasScripting).length;
+                    
+                    // Limit to reasonable number of options
+                    const maxOptions = 10;
+                    const displayCombinations = combinations.slice(0, maxOptions);
+                    
+                    // Build header with toggle and stats
+                    let html = `
+                        <div class="migration-toggle-container">
+                            <label class="migration-toggle">
+                                <input type="checkbox" id="includeScriptedToggle" ${includeScripted ? 'checked' : ''}>
+                                <span class="migration-toggle-slider"></span>
+                                <span class="migration-toggle-label">Include Scripted Options</span>
+                            </label>
+                            <div class="migration-stats">
+                                <span class="migration-stat native">${nativeCount} native</span>
+                                ${scriptedCount > 0 ? `<span class="migration-stat scripted">${scriptedCount} with scripts</span>` : ''}
+                            </div>
+                        </div>
+                    `;
+                    
+                    // Render migration options
+                    displayCombinations.forEach((combo, index) => {
+                        html += this.renderMigrationOption(flow, combo, index + 1, Math.min(combinations.length, maxOptions));
+                    });
+                    
+                    if (combinations.length > maxOptions) {
+                        html += `
+                            <div class="migration-empty" style="padding: 20px;">
+                                <p>Showing ${maxOptions} of ${combinations.length} possible combinations. Select fewer products for fewer options.</p>
+                            </div>
+                        `;
+                    }
+                    
+                    if (combinations.length === 0) {
+                        html += `
+                            <div class="migration-empty">
+                                <svg class="migration-empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                                </svg>
+                                <h3>No Options Available</h3>
+                                <p>No valid migration paths found with current settings.</p>
+                                ${!includeScripted ? `<p style="margin-top: 8px; color: var(--accent-primary);">Try enabling "Include Scripted Options" for more possibilities.</p>` : ''}
+                            </div>
+                        `;
+                    }
+                    
+                    content.innerHTML = html;
+                    this.attachMigrationToggleListener();
+                    modal.classList.add('visible');
+                },
+
+                attachMigrationToggleListener() {
+                    const toggle = document.getElementById('includeScriptedToggle');
+                    if (toggle && this.currentMigrationState) {
+                        toggle.addEventListener('change', (e) => {
+                            const { flowIndex, flow } = this.currentMigrationState;
+                            this.showMigrationOptions(flowIndex, flow, e.target.checked);
+                        });
+                    }
+                },
+
+                analyzeNodeRequirements(flow) {
+                    const requirements = {};
+                    
+                    // Create node type map
+                    const nodeMap = new Map();
+                    flow.nodes.forEach(node => {
+                        nodeMap.set(node.label, node.type);
+                    });
+                    
+                    flow.edges.forEach(edge => {
+                        const fromType = nodeMap.get(edge.fromLabel);
+                        const toType = nodeMap.get(edge.toLabel);
+                        
+                        // Determine client and server based on flow direction
+                        let clientNode, serverNode;
+                        if (edge.flowDirection === 'reverse') {
+                            clientNode = edge.toLabel;
+                            serverNode = edge.fromLabel;
+                        } else {
+                            clientNode = edge.fromLabel;
+                            serverNode = edge.toLabel;
+                        }
+                        
+                        const clientType = nodeMap.get(clientNode);
+                        const serverType = nodeMap.get(serverNode);
+                        
+                        // If client is intermediate, it needs client capability
+                        if (clientType === 'intermediate') {
+                            if (!requirements[clientNode]) {
+                                requirements[clientNode] = { client: [], server: [] };
+                            }
+                            requirements[clientNode].client.push(`${edge.protocol} ${edge.direction}`);
+                        }
+                        
+                        // If server is intermediate, it needs server capability
+                        if (serverType === 'intermediate') {
+                            if (!requirements[serverNode]) {
+                                requirements[serverNode] = { client: [], server: [] };
+                            }
+                            requirements[serverNode].server.push(`${edge.protocol} SERVER`);
+                        }
+                    });
+                    
+                    return requirements;
+                },
+
+                findProductOptionsForNodes(nodeRequirements, selectedProducts, includeScripted = true) {
+                    const nodeProductOptions = {};
+                    
+                    for (const [nodeName, requirements] of Object.entries(nodeRequirements)) {
+                        nodeProductOptions[nodeName] = [];
+                        
+                        for (const productName of selectedProducts) {
+                            const product = PRODUCT_CAPABILITIES[productName];
+                            if (!product) continue;
+                            
+                            // Get extended capabilities (native + scripted if enabled)
+                            const clientCaps = getExtendedCapabilities(productName, 'client');
+                            const serverCaps = getExtendedCapabilities(productName, 'server');
+                            
+                            // Track which capabilities are satisfied natively vs via script
+                            const scriptedCapabilities = [];
+                            let canSatisfy = true;
+                            
+                            // Check client capabilities
+                            for (const cap of requirements.client) {
+                                const capUpper = cap.toUpperCase();
+                                const isNative = clientCaps.native.some(c => c.toUpperCase() === capUpper);
+                                const isScripted = clientCaps.scripted.some(c => c.toUpperCase() === capUpper);
+                                
+                                if (isNative) {
+                                    // Satisfied natively - good
+                                } else if (isScripted && includeScripted) {
+                                    // Satisfied via script
+                                    scriptedCapabilities.push(cap);
+                                } else {
+                                    canSatisfy = false;
+                                    break;
+                                }
+                            }
+                            
+                            // Check server capabilities
+                            if (canSatisfy) {
+                                for (const cap of requirements.server) {
+                                    const capUpper = cap.toUpperCase();
+                                    const isNative = serverCaps.native.some(s => s.toUpperCase() === capUpper);
+                                    const isScripted = serverCaps.scripted.some(s => s.toUpperCase() === capUpper);
+                                    
+                                    if (isNative) {
+                                        // Satisfied natively - good
+                                    } else if (isScripted && includeScripted) {
+                                        // Satisfied via script
+                                        scriptedCapabilities.push(cap);
+                                    } else {
+                                        canSatisfy = false;
+                                        break;
+                                    }
+                                }
+                            }
+                            
+                            if (canSatisfy) {
+                                nodeProductOptions[nodeName].push({
+                                    product: productName,
+                                    scriptedCapabilities: scriptedCapabilities,
+                                    isFullyNative: scriptedCapabilities.length === 0
+                                });
+                            }
+                        }
+                        
+                        // Sort: native solutions first, then scripted
+                        nodeProductOptions[nodeName].sort((a, b) => {
+                            if (a.isFullyNative && !b.isFullyNative) return -1;
+                            if (!a.isFullyNative && b.isFullyNative) return 1;
+                            return a.scriptedCapabilities.length - b.scriptedCapabilities.length;
+                        });
+                    }
+                    
+                    return nodeProductOptions;
+                },
+
+                generateMigrationCombinations(nodeProductOptions, nodeNames, includeScripted = true) {
+                    const combinations = [];
+                    
+                    // Recursive function to generate all combinations
+                    const generate = (index, current) => {
+                        if (index === nodeNames.length) {
+                            // Calculate if this combination uses any scripting
+                            const hasScripting = Object.values(current).some(opt => opt.scriptedCapabilities.length > 0);
+                            combinations.push({
+                                assignments: {...current},
+                                hasScripting: hasScripting,
+                                totalScriptedCount: Object.values(current).reduce((sum, opt) => sum + opt.scriptedCapabilities.length, 0)
+                            });
+                            return;
+                        }
+                        
+                        const nodeName = nodeNames[index];
+                        const options = nodeProductOptions[nodeName] || [];
+                        
+                        for (const option of options) {
+                            // If not including scripted, skip options that require scripting
+                            if (!includeScripted && option.scriptedCapabilities.length > 0) {
+                                continue;
+                            }
+                            current[nodeName] = option;
+                            generate(index + 1, current);
+                        }
+                    };
+                    
+                    generate(0, {});
+                    
+                    // Sort combinations: fully native first, then by scripted count
+                    combinations.sort((a, b) => {
+                        if (!a.hasScripting && b.hasScripting) return -1;
+                        if (a.hasScripting && !b.hasScripting) return 1;
+                        return a.totalScriptedCount - b.totalScriptedCount;
+                    });
+                    
+                    return combinations;
+                },
+
+                renderMigrationOption(flow, combination, optionNumber, totalOptions) {
+                    const { assignments, hasScripting, totalScriptedCount } = combination;
+                    
+                    // Create node type map
+                    const nodeMap = new Map();
+                    flow.nodes.forEach(node => {
+                        nodeMap.set(node.label, node.type);
+                    });
+                    
+                    // Get unique products used (extract product name from assignment object)
+                    const productsUsed = [...new Set(Object.values(assignments).map(a => a.product))];
+                    
+                    // Collect all scripted capabilities
+                    const allScriptedCaps = [];
+                    Object.entries(assignments).forEach(([nodeName, assignment]) => {
+                        if (assignment.scriptedCapabilities.length > 0) {
+                            allScriptedCaps.push({
+                                node: nodeName,
+                                product: assignment.product,
+                                capabilities: assignment.scriptedCapabilities
+                            });
+                        }
+                    });
+                    
+                    // Build the diagram HTML
+                    let diagramHtml = '<div class="migration-flow-row">';
+                    
+                    // Process nodes in order
+                    flow.nodes.forEach((node, nodeIndex) => {
+                        // Add node
+                        const nodeType = node.type;
+                        const assignment = assignments[node.label];
+                        const productName = assignment ? assignment.product : '';
+                        const hasNodeScripting = assignment && assignment.scriptedCapabilities.length > 0;
+                        
+                        // Build product label with scripting indicator
+                        let productLabelHtml = '';
+                        if (productName) {
+                            const scriptedCapsForNode = hasNodeScripting ? assignment.scriptedCapabilities : [];
+                            const scriptedTitle = scriptedCapsForNode.length > 0 
+                                ? `${productName}\n+ Script: ${scriptedCapsForNode.join(', ')}`
+                                : productName;
+                            
+                            productLabelHtml = `
+                                <div class="migration-product-label ${hasNodeScripting ? 'has-scripting' : ''}" title="${scriptedTitle}">
+                                    ${productName}
+                                    ${hasNodeScripting ? '<span class="scripting-indicator">+Script</span>' : ''}
+                                </div>
+                            `;
+                        }
+                        
+                        diagramHtml += `
+                            <div class="migration-node">
+                                <div class="migration-node-box ${nodeType}">${node.label}</div>
+                                ${productLabelHtml}
+                            </div>
+                        `;
+                        
+                        // Add edge after this node (if not last node)
+                        if (nodeIndex < flow.nodes.length - 1) {
+                            // Find ALL edges from this node to next (handles parallel steps)
+                            const nextNode = flow.nodes[nodeIndex + 1];
+                            const edges = flow.edges.filter(e => 
+                                (e.fromLabel === node.label && e.toLabel === nextNode.label) ||
+                                (e.toLabel === node.label && e.fromLabel === nextNode.label)
+                            );
+                            
+                            if (edges.length > 0) {
+                                // Check if first edge determines arrow direction
+                                const firstEdge = edges[0];
+                                const isReverse = firstEdge.flowDirection === 'reverse';
+                                const edgeFromThisNode = firstEdge.fromLabel === node.label;
+                                const showReverse = (edgeFromThisNode && isReverse) || (!edgeFromThisNode && !isReverse);
+                                
+                                // Build label for all edges (parallel if multiple)
+                                const edgeLabels = edges.map(e => `${e.protocol} ${e.direction}`);
+                                const isParallel = edges.length > 1;
+                                const labelText = isParallel 
+                                    ? `(${edgeLabels.join(' & ')})` 
+                                    : edgeLabels[0];
+                                
+                                diagramHtml += `
+                                    <div class="migration-edge ${isParallel ? 'parallel' : ''}">
+                                        ${showReverse ? '<div class="migration-edge-arrow reverse"></div>' : ''}
+                                        <div class="migration-edge-line"></div>
+                                        <div class="migration-edge-label ${isParallel ? 'parallel-label' : ''}">${labelText}</div>
+                                        <div class="migration-edge-line"></div>
+                                        ${!showReverse ? '<div class="migration-edge-arrow"></div>' : ''}
+                                    </div>
+                                `;
+                            }
+                        }
+                    });
+                    
+                    diagramHtml += '</div>';
+                    
+                    // Build summary
+                    const summaryHtml = productsUsed.map(p => `
+                        <div class="migration-summary-item">
+                            <div class="product-dot"></div>
+                            <span>${p}</span>
+                        </div>
+                    `).join('');
+                    
+                    // Build scripted capabilities note if any
+                    let scriptedNoteHtml = '';
+                    if (allScriptedCaps.length > 0) {
+                        const scriptedDetails = allScriptedCaps.map(s => 
+                            `<span class="scripted-detail"><strong>${s.node}</strong> (${s.product}): ${s.capabilities.join(', ')}</span>`
+                        ).join('');
+                        
+                        scriptedNoteHtml = `
+                            <div class="migration-scripted-note">
+                                <div class="scripted-note-header">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path>
+                                    </svg>
+                                    Scripted Capabilities Required:
+                                </div>
+                                <div class="scripted-note-content">${scriptedDetails}</div>
+                            </div>
+                        `;
+                    }
+                    
+                    // Determine badge style based on scripting
+                    const badgeClass = hasScripting ? 'migration-option-badge scripted' : 'migration-option-badge';
+                    const optionClass = hasScripting ? 'migration-option has-scripting' : 'migration-option';
+                    
+                    const optionId = `migration-option-${optionNumber}`;
+                    
+                    return `
+                        <div class="${optionClass}" id="${optionId}">
+                            <div class="migration-option-header">
+                                <div class="migration-option-title">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polyline points="20 6 9 17 4 12"></polyline>
+                                    </svg>
+                                    Option ${optionNumber}${totalOptions > 1 ? ` of ${totalOptions}` : ''}
+                                    ${hasScripting ? '<span class="option-scripting-badge">+ Script</span>' : '<span class="option-native-badge">Native</span>'}
+                                </div>
+                                <div class="migration-option-actions">
+                                    <button class="migration-copy-btn" onclick="UIController.copyMigrationOptionAsPng('${optionId}')" title="Copy as PNG">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                        </svg>
+                                        Copy PNG
+                                    </button>
+                                    <div class="${badgeClass}">${productsUsed.length} product${productsUsed.length !== 1 ? 's' : ''}</div>
+                                </div>
+                            </div>
+                            <div class="migration-diagram">
+                                ${diagramHtml}
+                            </div>
+                            ${scriptedNoteHtml}
+                            <div class="migration-summary">
+                                <div class="migration-summary-title">Products Used:</div>
+                                <div class="migration-summary-list">
+                                    ${summaryHtml}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                },
+
+                hideMigrationModal() {
+                    document.getElementById('migrationModal').classList.remove('visible');
+                },
+
+                async copyMigrationOptionAsPng(optionId) {
+                    const optionElement = document.getElementById(optionId);
+                    if (!optionElement) return;
+
+                    const copyBtn = optionElement.querySelector('.migration-copy-btn');
+                    const originalContent = copyBtn ? copyBtn.innerHTML : '';
+
+                    try {
+                        // Show loading state
+                        if (copyBtn) {
+                            copyBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="spinning"><circle cx="12" cy="12" r="10"></circle></svg> Copying...`;
+                            copyBtn.disabled = true;
+                        }
+
+                        // Use html2canvas to capture the option
+                        const canvas = await html2canvas(optionElement, {
+                            backgroundColor: getComputedStyle(document.body).getPropertyValue('--bg-secondary').trim() || '#ffffff',
+                            scale: 2,
+                            logging: false,
+                            useCORS: true
+                        });
+
+                        // Convert to blob and copy to clipboard
+                        canvas.toBlob(async (blob) => {
+                            try {
+                                await navigator.clipboard.write([
+                                    new ClipboardItem({ 'image/png': blob })
+                                ]);
+                                
+                                // Show success feedback
+                                if (copyBtn) {
+                                    copyBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Copied!`;
+                                    setTimeout(() => {
+                                        copyBtn.innerHTML = originalContent;
+                                        copyBtn.disabled = false;
+                                    }, 2000);
+                                }
+                            } catch (err) {
+                                console.error('Failed to copy to clipboard:', err);
+                                if (copyBtn) {
+                                    copyBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg> Failed`;
+                                    setTimeout(() => {
+                                        copyBtn.innerHTML = originalContent;
+                                        copyBtn.disabled = false;
+                                    }, 2000);
+                                }
+                            }
+                        }, 'image/png');
+                    } catch (err) {
+                        console.error('Failed to generate PNG:', err);
+                        if (copyBtn) {
+                            copyBtn.innerHTML = originalContent;
+                            copyBtn.disabled = false;
+                        }
+                    }
+                },
+
                 generateD2Code(nodes, connections) {
                     const lines = [];
                     
@@ -5272,463 +6135,6 @@ TESTZ <- PeSIT PULL <- CFT -> SSH PUSH -> TESTF" spellcheck="false"></textarea>
                     const base64 = btoa(binary);
                     // Convert to base64url
                     return base64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
-                },
-
-                generateArchitectureSVG(svg, nodes, connections) {
-                    // Clear existing content
-                    svg.innerHTML = '';
-
-                    const nodeArray = Array.from(nodes.values());
-                    const connectionArray = Array.from(connections.values());
-
-                    // Layout configuration
-                    const nodeWidth = 120;
-                    const nodeHeight = 45;
-                    const padding = 120;
-                    const radialDistance = 280; // Distance from hub to connected nodes
-
-                    // Build adjacency map to count connections per node
-                    const adjacencyMap = new Map();
-                    nodeArray.forEach(node => {
-                        adjacencyMap.set(node.label, {
-                            node: node,
-                            connectedTo: new Set(),
-                            connectionCount: 0
-                        });
-                    });
-
-                    connectionArray.forEach(conn => {
-                        if (adjacencyMap.has(conn.from) && adjacencyMap.has(conn.to)) {
-                            adjacencyMap.get(conn.from).connectedTo.add(conn.to);
-                            adjacencyMap.get(conn.to).connectedTo.add(conn.from);
-                            adjacencyMap.get(conn.from).connectionCount++;
-                            adjacencyMap.get(conn.to).connectionCount++;
-                        }
-                    });
-
-                    // Sort nodes by connection count (hubs first)
-                    const sortedNodes = Array.from(adjacencyMap.values())
-                        .sort((a, b) => b.connectionCount - a.connectionCount);
-
-                    const nodePositions = new Map();
-                    const placedNodes = new Set();
-
-                    // Helper function to check if a position overlaps with existing nodes
-                    const checkOverlap = (x, y, minDist = 140) => {
-                        for (const [label, pos] of nodePositions) {
-                            const dx = pos.x + nodeWidth/2 - (x + nodeWidth/2);
-                            const dy = pos.y + nodeHeight/2 - (y + nodeHeight/2);
-                            const dist = Math.sqrt(dx*dx + dy*dy);
-                            if (dist < minDist) return true;
-                        }
-                        return false;
-                    };
-
-                    // Helper to find best position for a node
-                    const findBestPosition = (node, preferredX, preferredY, connectedPositions) => {
-                        let bestX = preferredX;
-                        let bestY = preferredY;
-                        
-                        // Try the preferred position first
-                        if (!checkOverlap(bestX, bestY)) {
-                            return { x: bestX, y: bestY };
-                        }
-                        
-                        // Try positions in a spiral pattern around preferred
-                        for (let radius = 100; radius <= 500; radius += 80) {
-                            for (let angle = 0; angle < Math.PI * 2; angle += Math.PI / 8) {
-                                const testX = preferredX + Math.cos(angle) * radius;
-                                const testY = preferredY + Math.sin(angle) * radius;
-                                if (testX >= padding && testY >= padding && !checkOverlap(testX, testY)) {
-                                    return { x: testX, y: testY };
-                                }
-                            }
-                        }
-                        
-                        return { x: bestX, y: bestY };
-                    };
-
-                    // Place nodes using a hub-centric radial layout
-                    let centerX = padding + 350;
-                    let centerY = padding + 280;
-
-                    sortedNodes.forEach((nodeData, index) => {
-                        if (placedNodes.has(nodeData.node.label)) return;
-
-                        const node = nodeData.node;
-                        const connectedNodes = Array.from(nodeData.connectedTo);
-                        const unplacedConnected = connectedNodes.filter(n => !placedNodes.has(n));
-
-                        // If this is a hub (has multiple connections) and not yet placed
-                        if (nodeData.connectionCount >= 2 && unplacedConnected.length >= 2) {
-                            // Place hub at center
-                            const hubPos = findBestPosition(node, centerX, centerY, []);
-                            nodePositions.set(node.label, { x: hubPos.x, y: hubPos.y, type: node.type });
-                            placedNodes.add(node.label);
-
-                            // Place connected nodes radially around the hub
-                            const hubCenterX = hubPos.x + nodeWidth / 2;
-                            const hubCenterY = hubPos.y + nodeHeight / 2;
-
-                            // Separate connected nodes by type for better organization
-                            const connectedSources = unplacedConnected.filter(n => adjacencyMap.get(n).node.type === 'source');
-                            const connectedTargets = unplacedConnected.filter(n => adjacencyMap.get(n).node.type === 'target');
-                            const connectedIntermediates = unplacedConnected.filter(n => adjacencyMap.get(n).node.type === 'intermediate');
-
-                            // Place sources on the left (around -150 to -210 degrees, i.e., left side)
-                            connectedSources.forEach((connLabel, i) => {
-                                const angleStart = Math.PI * 0.65; // ~120 degrees
-                                const angleRange = Math.PI * 0.7; // spread over 126 degrees
-                                const angle = angleStart + (connectedSources.length > 1 ? (i / (connectedSources.length - 1)) * angleRange : angleRange / 2);
-                                const x = hubCenterX + Math.cos(angle) * radialDistance - nodeWidth / 2;
-                                const y = hubCenterY + Math.sin(angle) * radialDistance - nodeHeight / 2;
-                                const pos = findBestPosition(adjacencyMap.get(connLabel).node, x, y, []);
-                                nodePositions.set(connLabel, { x: pos.x, y: pos.y, type: adjacencyMap.get(connLabel).node.type });
-                                placedNodes.add(connLabel);
-                            });
-
-                            // Place targets on the right (around -30 to 30 degrees)
-                            connectedTargets.forEach((connLabel, i) => {
-                                const angleStart = -Math.PI * 0.35; // -63 degrees
-                                const angleRange = Math.PI * 0.7; // spread over 126 degrees
-                                const angle = angleStart + (connectedTargets.length > 1 ? (i / (connectedTargets.length - 1)) * angleRange : angleRange / 2);
-                                const x = hubCenterX + Math.cos(angle) * radialDistance - nodeWidth / 2;
-                                const y = hubCenterY + Math.sin(angle) * radialDistance - nodeHeight / 2;
-                                const pos = findBestPosition(adjacencyMap.get(connLabel).node, x, y, []);
-                                nodePositions.set(connLabel, { x: pos.x, y: pos.y, type: adjacencyMap.get(connLabel).node.type });
-                                placedNodes.add(connLabel);
-                            });
-
-                            // Place intermediates at top/bottom
-                            connectedIntermediates.forEach((connLabel, i) => {
-                                const angleStart = Math.PI * 0.35;
-                                const angleRange = Math.PI * 0.3;
-                                const angle = (i % 2 === 0 ? -1 : 1) * (angleStart + Math.floor(i/2) * 0.3);
-                                const x = hubCenterX + Math.cos(angle) * radialDistance * 1.2 - nodeWidth / 2;
-                                const y = hubCenterY + Math.sin(angle) * radialDistance * 1.2 - nodeHeight / 2;
-                                const pos = findBestPosition(adjacencyMap.get(connLabel).node, x, y, []);
-                                nodePositions.set(connLabel, { x: pos.x, y: pos.y, type: adjacencyMap.get(connLabel).node.type });
-                                placedNodes.add(connLabel);
-                            });
-
-                            // Move center for next hub
-                            centerX += 650;
-                            if (centerX > 1600) {
-                                centerX = padding + 400;
-                                centerY += 500;
-                            }
-                        }
-                    });
-
-                    // Place any remaining unplaced nodes
-                    sortedNodes.forEach(nodeData => {
-                        if (placedNodes.has(nodeData.node.label)) return;
-
-                        const node = nodeData.node;
-                        const connectedNodes = Array.from(nodeData.connectedTo);
-                        const placedConnected = connectedNodes.filter(n => placedNodes.has(n));
-
-                        if (placedConnected.length > 0) {
-                            // Place near an already-placed connected node
-                            const connectedPos = nodePositions.get(placedConnected[0]);
-                            let preferredX, preferredY;
-                            
-                            // Position based on node type
-                            if (node.type === 'source') {
-                                preferredX = connectedPos.x - radialDistance;
-                                preferredY = connectedPos.y;
-                            } else if (node.type === 'target') {
-                                preferredX = connectedPos.x + radialDistance;
-                                preferredY = connectedPos.y;
-                            } else {
-                                preferredX = connectedPos.x;
-                                preferredY = connectedPos.y - radialDistance;
-                            }
-                            
-                            const pos = findBestPosition(node, preferredX, preferredY, [connectedPos]);
-                            nodePositions.set(node.label, { x: pos.x, y: pos.y, type: node.type });
-                            placedNodes.add(node.label);
-                        } else {
-                            // No connections, place in a default area
-                            const pos = findBestPosition(node, centerX, centerY, []);
-                            nodePositions.set(node.label, { x: pos.x, y: pos.y, type: node.type });
-                            placedNodes.add(node.label);
-                            centerY += nodeHeight + 60;
-                        }
-                    });
-
-                    // Calculate canvas size based on actual node positions
-                    let maxX = 0, maxY = 0, minX = Infinity, minY = Infinity;
-                    nodePositions.forEach(pos => {
-                        maxX = Math.max(maxX, pos.x + nodeWidth);
-                        maxY = Math.max(maxY, pos.y + nodeHeight);
-                        minX = Math.min(minX, pos.x);
-                        minY = Math.min(minY, pos.y);
-                    });
-
-                    // Normalize positions to start from padding
-                    const offsetX = padding - minX;
-                    const offsetY = padding - minY;
-                    nodePositions.forEach((pos, label) => {
-                        pos.x += offsetX;
-                        pos.y += offsetY;
-                    });
-
-                    const canvasWidth = maxX - minX + padding * 2;
-                    const canvasHeight = maxY - minY + padding * 2;
-
-                    svg.setAttribute('width', Math.max(canvasWidth, 800));
-                    svg.setAttribute('height', Math.max(canvasHeight, 500));
-                    svg.setAttribute('viewBox', `0 0 ${Math.max(canvasWidth, 800)} ${Math.max(canvasHeight, 500)}`);
-
-                    // Define arrow markers
-                    const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
-                    defs.innerHTML = `
-                    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
-                        <polygon points="0 0, 10 3.5, 0 7" fill="var(--edge-color)" />
-                    </marker>
-                `;
-                    svg.appendChild(defs);
-
-                    // Group connections by: visual arrow direction (from→to) + PUSH/PULL
-                    // This consolidates multiple protocols into single arrows while keeping
-                    // arrows in different directions separate
-                    const consolidatedConnections = new Map();
-                    
-                    connectionArray.forEach(conn => {
-                        // Determine the visual arrow direction (where the arrowhead points)
-                        // For forward arrows (->): arrow goes from conn.from to conn.to
-                        // For reverse arrows (<-): arrow goes from conn.to to conn.from
-                        const visualFrom = conn.flowDirection === 'reverse' ? conn.to : conn.from;
-                        const visualTo = conn.flowDirection === 'reverse' ? conn.from : conn.to;
-                        
-                        // Key combines: visual direction (from→to) + PUSH/PULL
-                        // This ensures A→B PUSH and B→A PUSH are separate arrows
-                        const directionKey = `${visualFrom}→${visualTo}|${conn.direction}`;
-                        
-                        if (!consolidatedConnections.has(directionKey)) {
-                            consolidatedConnections.set(directionKey, {
-                                from: visualFrom,      // Visual start of arrow
-                                to: visualTo,          // Visual end of arrow (where arrowhead is)
-                                direction: conn.direction,
-                                protocols: new Set()
-                            });
-                        }
-                        consolidatedConnections.get(directionKey).protocols.add(conn.protocol);
-                    });
-
-                    // Group consolidated connections by node pair for offset calculation
-                    // This groups arrows between the same two nodes (regardless of direction)
-                    const connectionsByPair = new Map();
-                    consolidatedConnections.forEach((conn, key) => {
-                        // Sort to get consistent pair key regardless of arrow direction
-                        const pairKey = [conn.from, conn.to].sort().join('|');
-                        if (!connectionsByPair.has(pairKey)) {
-                            connectionsByPair.set(pairKey, []);
-                        }
-                        connectionsByPair.get(pairKey).push(conn);
-                    });
-
-                    // Draw consolidated connections
-                    connectionsByPair.forEach((pairConnections, pairKey) => {
-                        const [nodeA, nodeB] = pairKey.split('|');
-                        
-                        // Get positions for consistent reference direction
-                        const posA = nodePositions.get(nodeA);
-                        const posB = nodePositions.get(nodeB);
-                        if (!posA || !posB) return;
-                        
-                        // Calculate a consistent reference angle from A to B (used for both directions)
-                        const refCenterAX = posA.x + nodeWidth / 2;
-                        const refCenterAY = posA.y + nodeHeight / 2;
-                        const refCenterBX = posB.x + nodeWidth / 2;
-                        const refCenterBY = posB.y + nodeHeight / 2;
-                        const referenceAngle = Math.atan2(refCenterBY - refCenterAY, refCenterBX - refCenterAX);
-                        
-                        // Separate connections by direction: A→B vs B→A
-                        const forwardConns = pairConnections.filter(c => c.from === nodeA && c.to === nodeB);
-                        const reverseConns = pairConnections.filter(c => c.from === nodeB && c.to === nodeA);
-                        
-                        // Calculate base offset: if bidirectional, separate the two directions
-                        const hasBidirectional = forwardConns.length > 0 && reverseConns.length > 0;
-                        const baseOffset = hasBidirectional ? 20 : 0; // Base separation for bidirectional
-                        const offsetStep = 18; // Additional offset for multiple arrows in same direction
-                        
-                        // Helper function to draw a group of connections
-                        // curveSign: +1 for one direction, -1 for opposite (consistent regardless of arrow direction)
-                        const drawConnectionGroup = (connections, curveSign, withinGroupStartIndex) => {
-                            connections.forEach((conn, index) => {
-                                const fromPos = nodePositions.get(conn.from);
-                                const toPos = nodePositions.get(conn.to);
-
-                                if (!fromPos || !toPos) return;
-
-                                // Calculate node centers
-                                const fromCenterX = fromPos.x + nodeWidth / 2;
-                                const fromCenterY = fromPos.y + nodeHeight / 2;
-                                const toCenterX = toPos.x + nodeWidth / 2;
-                                const toCenterY = toPos.y + nodeHeight / 2;
-
-                                // Calculate angle between nodes (from source to target)
-                                const angle = Math.atan2(toCenterY - fromCenterY, toCenterX - fromCenterX);
-
-                                // Calculate edge points - connect from the edge of the node closest to target
-                                let x1, y1, x2, y2;
-                                
-                                // Determine connection points based on angle
-                                const absAngle = Math.abs(angle);
-                                const threshold = Math.atan2(nodeHeight, nodeWidth);
-
-                                if (absAngle < threshold || absAngle > Math.PI - threshold) {
-                                    // Connect horizontally (left/right sides)
-                                    if (angle > -Math.PI / 2 && angle < Math.PI / 2) {
-                                        x1 = fromPos.x + nodeWidth;
-                                        x2 = toPos.x;
-                                    } else {
-                                        x1 = fromPos.x;
-                                        x2 = toPos.x + nodeWidth;
-                                    }
-                                    y1 = fromCenterY;
-                                    y2 = toCenterY;
-                                } else {
-                                    // Connect vertically (top/bottom sides)
-                                    if (angle > 0) {
-                                        y1 = fromPos.y + nodeHeight;
-                                        y2 = toPos.y;
-                                    } else {
-                                        y1 = fromPos.y;
-                                        y2 = toPos.y + nodeHeight;
-                                    }
-                                    x1 = fromCenterX;
-                                    x2 = toCenterX;
-                                }
-
-                                // Create curved path
-                                const midX = (x1 + x2) / 2;
-                                const midY = (y1 + y2) / 2;
-                                const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-                                
-                                // Calculate distance for curvature
-                                const dx = x2 - x1;
-                                const dy = y2 - y1;
-                                const dist = Math.sqrt(dx * dx + dy * dy);
-                                
-                                // Use REFERENCE angle for perpendicular direction (consistent for both arrow directions)
-                                const perpX = -Math.sin(referenceAngle);
-                                const perpY = Math.cos(referenceAngle);
-                                
-                                // Calculate curvature: base + extra for multiple connections
-                                const withinGroupOffset = index * offsetStep;
-                                const totalCurve = baseOffset + withinGroupOffset + dist * 0.08;
-                                
-                                // Control point using consistent perpendicular direction
-                                const ctrl1X = midX + perpX * totalCurve * curveSign;
-                                const ctrl1Y = midY + perpY * totalCurve * curveSign;
-                            
-                                const d = `M ${x1} ${y1} Q ${ctrl1X} ${ctrl1Y}, ${x2} ${y2}`;
-                                
-                                path.setAttribute('d', d);
-                                path.setAttribute('fill', 'none');
-                                path.setAttribute('stroke', 'var(--edge-color)');
-                                path.setAttribute('stroke-width', '2');
-
-                                // Arrow always points to 'to' node (we normalized direction during consolidation)
-                                path.setAttribute('marker-end', 'url(#arrowhead)');
-
-                                svg.appendChild(path);
-
-                                // Create consolidated label: "PUSH: FTP, SFTP, PeSIT" or "PULL: HTTP, HTTPS"
-                                const protocolList = Array.from(conn.protocols).sort().join(', ');
-                                const labelText = `${conn.direction}: ${protocolList}`;
-                                
-                                // Position label at the curve midpoint with offset
-                                const labelX = ctrl1X;
-                                const labelY = ctrl1Y;
-
-                                // Calculate label width based on text length
-                                const labelWidth = Math.max(labelText.length * 5.5 + 16, 80);
-                                const labelHeight = 18;
-
-                                const labelBg = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-                                labelBg.setAttribute('x', labelX - labelWidth / 2);
-                                labelBg.setAttribute('y', labelY - labelHeight / 2);
-                                labelBg.setAttribute('width', labelWidth);
-                                labelBg.setAttribute('height', labelHeight);
-                                labelBg.setAttribute('rx', '9');
-                                labelBg.setAttribute('fill', 'var(--bg-secondary)');
-                                labelBg.setAttribute('stroke', 'var(--border-color)');
-                                labelBg.setAttribute('stroke-width', '1');
-                                svg.appendChild(labelBg);
-
-                                const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-                                label.setAttribute('x', labelX);
-                                label.setAttribute('y', labelY + 4);
-                                label.setAttribute('text-anchor', 'middle');
-                                label.setAttribute('font-size', '10');
-                                label.setAttribute('font-weight', '500');
-                                label.setAttribute('fill', 'var(--text-secondary)');
-                                label.textContent = labelText;
-                                svg.appendChild(label);
-                            });
-                        };
-                        
-                        // Draw forward connections (A→B) curving one way
-                        if (forwardConns.length > 0) {
-                            drawConnectionGroup(forwardConns, hasBidirectional ? 1 : 0, 0);
-                        }
-                        
-                        // Draw reverse connections (B→A) curving the opposite way
-                        if (reverseConns.length > 0) {
-                            drawConnectionGroup(reverseConns, hasBidirectional ? -1 : 0, 0);
-                        }
-                    });
-
-                    // Draw nodes
-                    nodePositions.forEach((pos, label) => {
-                        const group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-
-                        // Node rectangle
-                        const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-                        rect.setAttribute('x', pos.x);
-                        rect.setAttribute('y', pos.y);
-                        rect.setAttribute('width', nodeWidth);
-                        rect.setAttribute('height', nodeHeight);
-                        rect.setAttribute('rx', '8');
-
-                        // Apply colors based on type
-                        if (pos.type === 'source') {
-                            rect.setAttribute('fill', 'var(--node-source)');
-                            rect.setAttribute('stroke', 'var(--node-source-border)');
-                        } else if (pos.type === 'target') {
-                            rect.setAttribute('fill', 'var(--node-target)');
-                            rect.setAttribute('stroke', 'var(--node-target-border)');
-                        } else {
-                            rect.setAttribute('fill', 'var(--node-intermediate)');
-                            rect.setAttribute('stroke', 'var(--node-intermediate-border)');
-                        }
-                        rect.setAttribute('stroke-width', '2');
-                        group.appendChild(rect);
-
-                        // Node label
-                        const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-                        text.setAttribute('x', pos.x + nodeWidth / 2);
-                        text.setAttribute('y', pos.y + nodeHeight / 2 + 4);
-                        text.setAttribute('text-anchor', 'middle');
-                        text.setAttribute('font-size', '13');
-                        text.setAttribute('font-weight', '500');
-
-                        if (pos.type === 'source') {
-                            text.setAttribute('fill', 'var(--node-source-border)');
-                        } else if (pos.type === 'target') {
-                            text.setAttribute('fill', 'var(--node-target-border)');
-                        } else {
-                            text.setAttribute('fill', 'var(--text-primary)');
-                        }
-                        text.textContent = label;
-                        group.appendChild(text);
-
-                        svg.appendChild(group);
-                    });
                 },
 
                 updateThemeIcon() {
