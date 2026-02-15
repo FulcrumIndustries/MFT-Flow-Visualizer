@@ -73,7 +73,7 @@ The right panel automatically shows which Axway products are required based on t
 - With or without scripts
 - With chosen products
 
-![MFT Flow Visualizer Screenshot 2](screenshot2.png)
+![MFT Flow Visualizer Screenshot](screenshot2.png)
 
 ### 6. Export Your Work
 
