@@ -2,7 +2,7 @@
 
 A powerful web-based tool for designing, visualizing, and documenting Managed File Transfer (MFT) flow patterns. Perfect for architects and engineers planning file transfer migrations to Axway products.
 
-![MFT Flow Visualizer Screenshot](screenshot.png)
+![MFT Flow Visualizer Screenshot](images/screenshot.png)
 
 ## Features
 
@@ -73,7 +73,7 @@ The right panel automatically shows which Axway products are required based on t
 - With or without scripts
 - With chosen products
 
-![MFT Flow Visualizer Migration Screenshot](screenshot2.png)
+![MFT Flow Visualizer Migration Screenshot](images/screenshot2.png)
 
 ### 6. Export Your Work
 
