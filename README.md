@@ -95,7 +95,6 @@ The tool recognizes various MFT protocols including:
 - Use one flow per line for multiple flows
 - Entity names can include spaces and special characters
 - Unknown protocols are highlighted with a warning - click to select a valid one
-- The PDF report includes all annotations and notes in a clean format
 
 ## Technology
 
