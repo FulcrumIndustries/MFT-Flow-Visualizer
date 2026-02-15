@@ -15,7 +15,7 @@ A powerful web-based tool for designing, visualizing, and documenting Managed Fi
 - **Invalid Protocol Detection** - Highlights unknown protocols and offers correction suggestions
 - **Workspaces** - Organize flows into separate workspaces
 - **Export/Import** - Share workspaces with colleagues via JSON export
-- **PDF Reports** - Generate professional PDF reports with all flow details
+- **PNG Exports** - Get the PNG of a flow with its details
 - **Dark/Light Theme** - Toggle between themes for comfortable viewing
 
 ## Getting Started
@@ -69,11 +69,17 @@ The right panel automatically shows which Axway products are required based on t
 - API Gateway
 - And more...
 
-### 5. Export Your Work
+### 5. Review The Migration Options
+- With or without scripts
+- With chosen products
+
+![MFT Flow Visualizer Screenshot 2](screenshot2.png)
+
+### 6. Export Your Work
 
 - **Export Workspace** - Save as JSON to share with colleagues
 - **Import Workspace** - Load a previously exported workspace
-- **Download PDF** - Generate a professional report with all flows and notes
+- **Get PNG of the flows** - Copy a PNG of a flow with its notes
 
 ## Supported Protocols
 
@@ -93,9 +99,7 @@ The tool recognizes various MFT protocols including:
 
 ## Technology
 
-Built with vanilla HTML, CSS, and JavaScript. Uses:
-- [html2canvas](https://html2canvas.hertzen.com/) for PDF rendering
-- [jsPDF](https://github.com/parallax/jsPDF) for PDF generation
+Built with vanilla HTML, CSS, and JavaScript. 
 
 ## License
 
