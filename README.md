@@ -95,6 +95,7 @@ The tool recognizes various MFT protocols including:
 - Use one flow per line for multiple flows
 - Entity names can include spaces and special characters
 - Unknown protocols are highlighted with a warning - click to select a valid one
+- When a server receives a file from an unknown or unhandled protocol/method, simply use "FILE PUSH" or "FILE PULL" to indicate that it will receive files
 
 ## Technology
 
