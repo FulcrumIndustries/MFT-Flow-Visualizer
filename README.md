@@ -36,6 +36,7 @@ Source <- PROTOCOL DIRECTION <- Intermediate -> PROTOCOL DIRECTION -> Target
 ```
 Banque <- EBICS PULL <- Gateway -> PeSIT PUSH -> Linux Lyon
 Partner <- SFTP PUSH <- SecureTransport -> HTTPS PULL -> Cloud Storage
+CFT Linux Lyon->PESIT PUSH->CFT Linux Tours->(FILE PUSH & JMS PUSH)->Secure Financial Client->EBICS PUSH->Banque
 ```
 
 **Direction Keywords:**
@@ -45,6 +46,9 @@ Partner <- SFTP PUSH <- SecureTransport -> HTTPS PULL -> Cloud Storage
 **Arrow Direction:**
 - `<-` indicates flow direction to the left
 - `->` indicates flow direction to the right
+
+**Multiple Exchanges Between Two Nodes:**
+- `(FILE PUSH & JMS PUSH)` for example
 
 ### 2. View the Visualization
 
