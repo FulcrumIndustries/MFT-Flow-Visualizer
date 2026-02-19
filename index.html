@@ -203,7 +203,17 @@
             <!-- Pattern Editor - Right Side -->
             <div class="pattern-editor-section">
                 <div class="editor-header">
-                    <span class="editor-title">Flow Patterns (one per line)</span>
+                    <div class="editor-header-left">
+                        <span class="editor-title">Flow Patterns (one per line)</span>
+                        <button id="syntaxExplainBtn" class="btn btn-sm btn-syntax" type="button" title="Show pattern syntax guide">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                                <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                            </svg>
+                            <span>Syntax</span>
+                        </button>
+                    </div>
                     <span id="saveIndicator" class="save-indicator saved">
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="2">
@@ -268,11 +278,11 @@ TESTZ <- PeSIT PULL <- CFT -> SSH PUSH -> TESTF" spellcheck="false"></textarea>
             </div>
         </div>
 
-        <!-- Help Panel -->
+        <!-- Help Panel: Pattern syntax & usage -->
         <div id="helpPanel" class="help-panel">
             <div class="help-panel-header">
-                <span class="help-panel-title">Help & Syntax Guide</span>
-                <button id="closeHelpBtn" class="btn btn-icon">
+                <span class="help-panel-title">Pattern syntax guide</span>
+                <button id="closeHelpBtn" class="btn btn-icon" title="Close">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <line x1="18" y1="6" x2="6" y2="18"></line>
                         <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -280,36 +290,49 @@ TESTZ <- PeSIT PULL <- CFT -> SSH PUSH -> TESTF" spellcheck="false"></textarea>
                 </button>
             </div>
             <div class="help-panel-content">
+                <p class="help-intro">Write one flow per line. The diagram updates as you type. Allowed syntax:</p>
+
                 <div class="help-section">
-                    <h3 class="help-section-title">Pattern Syntax</h3>
-                    <p>Define MFT flows using a simple text-based syntax. Enter one pattern per line.</p>
-                    <div class="help-example">SOURCE -> PROTOCOL DIRECTION -> MIDDLE -> PROTOCOL DIRECTION -> TARGET</div>
+                    <h3 class="help-section-title">1. Linear flow</h3>
+                    <p><code>Entity → PROTOCOL DIRECTION → Entity</code> (repeat for more steps). Use <code>-></code> for left-to-right, <code><-</code> for right-to-left.</p>
+                    <div class="help-example-row">
+                        <div class="help-example">SOURCE -> PeSIT PUSH -> GATEWAY -> SFTP PUSH -> TARGET</div>
+                        <button type="button" class="btn-copy-example" data-copy="SOURCE -> PeSIT PUSH -> GATEWAY -> SFTP PUSH -> TARGET">Copy</button>
+                    </div>
+                    <div class="help-example-row">
+                        <div class="help-example">Banque <- EBICS PULL <- SFC <- FILE PULL <- CFT</div>
+                        <button type="button" class="btn-copy-example" data-copy="Banque <- EBICS PULL <- SFC <- FILE PULL <- CFT">Copy</button>
+                    </div>
                 </div>
+
                 <div class="help-section">
-                    <h3 class="help-section-title">Basic Examples</h3>
-                    <div class="help-example">TESTA -> PeSIT PUSH -> ST -> SFTP PUSH -> TESTB
-TESTZ <- PeSIT PULL <- CFT -> SSH PUSH -> TESTF</div>
+                    <h3 class="help-section-title">2. Parallel inputs</h3>
+                    <p>Several protocols into the same node: <code>(PROTO1 DIR & PROTO2 DIR) -> Entity</code>.</p>
+                    <div class="help-example-row">
+                        <div class="help-example">A -> (JMS PUSH & FILE PUSH) -> SFC</div>
+                        <button type="button" class="btn-copy-example" data-copy="A -> (JMS PUSH & FILE PUSH) -> SFC">Copy</button>
+                    </div>
                 </div>
+
                 <div class="help-section">
-                    <h3 class="help-section-title">Parallel Inputs (multiple protocols to same target)</h3>
-                    <p>Use <code>(PROTO1 PUSH & PROTO2 PUSH)</code> for parallel protocols:</p>
-                    <div class="help-example">A -> (JMS PUSH & FILE PUSH) -> SFC</div>
+                    <h3 class="help-section-title">3. Parallel outputs (branching)</h3>
+                    <p>One node sends to several targets: <code>Entity -> (PROTO1 DIR -> T1 & PROTO2 DIR -> T2)</code>. Each branch can continue with more steps.</p>
+                    <div class="help-example-row">
+                        <div class="help-example">SFC -> (EBICS PUSH -> Banque & FILE PUSH -> CFT -> PeSIT PUSH -> Partner)</div>
+                        <button type="button" class="btn-copy-example" data-copy="SFC -> (EBICS PUSH -> Banque & FILE PUSH -> CFT -> PeSIT PUSH -> Partner)">Copy</button>
+                    </div>
                 </div>
+
                 <div class="help-section">
-                    <h3 class="help-section-title">Multiple Targets (branching)</h3>
-                    <p>Use <code>(PROTO1 DIR -> T1 & PROTO2 DIR -> T2)</code> to branch to multiple targets:</p>
-                    <div class="help-example">SFC -> (EBICS PULL -> Banque & FILE PUSH -> CFT)</div>
+                    <h3 class="help-section-title">Building blocks</h3>
+                    <p><strong>Entities:</strong> Any name (letters, numbers, spaces, e.g. <code>Linux Lyon</code>, <code>Partner 2</code>).</p>
+                    <p><strong>Protocol + direction:</strong> e.g. <code>PeSIT PUSH</code>, <code>SFTP PULL</code>, <code>FILE PUSH</code>. Direction is always <code>PUSH</code> or <code>PULL</code>.</p>
+                    <p><strong>Arrows:</strong> <code>-></code> (flow right) and <code><-</code> (flow left). Both sides of a step must use the same arrow.</p>
                 </div>
-                <div class="help-section">
-                    <h3 class="help-section-title">Components</h3>
-                    <p><strong>Entities:</strong> Names like TESTA, ST, CFT (alphanumeric + underscores + spaces)</p>
-                    <p><strong>Protocols:</strong> SFTP, PeSIT, HTTPS, FTP, AS2, SSH, JMS, EBICS, FILE, etc.</p>
-                    <p><strong>Directions:</strong> PULL (fetch data) or PUSH (send data)</p>
-                    <p><strong>Arrows:</strong> <code><-</code> (left) and <code>-></code> (right) indicate flow direction</p>
-                </div>
+
                 <div class="help-section">
                     <h3 class="help-section-title">Annotations</h3>
-                    <p>Each connection has editable annotation fields for pre-processing and post-processing notes. Click on the yellow dashed boxes to add annotations.</p>
+                    <p>After drawing a flow, you can add pre-processing and post-processing notes on each connection in the diagram.</p>
                 </div>
             </div>
         </div>

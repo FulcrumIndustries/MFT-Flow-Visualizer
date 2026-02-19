@@ -416,10 +416,10 @@ const DiagramRenderer = {
             preInput.type = 'text';
             preInput.className = 'edge-notes-input';
             preInput.placeholder = 'Add notes...';
-            preInput.value = StateManager.getAnnotation(flowIndex, edgeIndex, 'pre') || '';
+            preInput.value = StateManager.getAnnotation(flowIndex, edge, 'pre') || '';
             preInput.addEventListener('click', (e) => e.stopPropagation());
             preInput.addEventListener('input', debounce(() => {
-                StateManager.updateAnnotation(flowIndex, edgeIndex, 'pre', preInput.value);
+                StateManager.updateAnnotation(flowIndex, edge, 'pre', preInput.value);
                 Persistence.save();
             }, 300));
             preContainer.appendChild(preLabel);
@@ -435,10 +435,10 @@ const DiagramRenderer = {
             postInput.type = 'text';
             postInput.className = 'edge-notes-input';
             postInput.placeholder = 'Add notes...';
-            postInput.value = StateManager.getAnnotation(flowIndex, edgeIndex, 'post') || '';
+            postInput.value = StateManager.getAnnotation(flowIndex, edge, 'post') || '';
             postInput.addEventListener('click', (e) => e.stopPropagation());
             postInput.addEventListener('input', debounce(() => {
-                StateManager.updateAnnotation(flowIndex, edgeIndex, 'post', postInput.value);
+                StateManager.updateAnnotation(flowIndex, edge, 'post', postInput.value);
                 Persistence.save();
             }, 300));
             postContainer.appendChild(postLabel);
@@ -517,10 +517,10 @@ const DiagramRenderer = {
             preInput.type = 'text';
             preInput.className = 'edge-notes-input';
             preInput.placeholder = 'Add notes...';
-            preInput.value = StateManager.getAnnotation(flowIndex, edgeIndex, 'pre') || '';
+            preInput.value = StateManager.getAnnotation(flowIndex, edge, 'pre') || '';
             preInput.addEventListener('click', (e) => e.stopPropagation());
             preInput.addEventListener('input', debounce(() => {
-                StateManager.updateAnnotation(flowIndex, edgeIndex, 'pre', preInput.value);
+                StateManager.updateAnnotation(flowIndex, edge, 'pre', preInput.value);
                 Persistence.save();
             }, 300));
             preContainer.appendChild(preLabel);
@@ -536,10 +536,10 @@ const DiagramRenderer = {
             postInput.type = 'text';
             postInput.className = 'edge-notes-input';
             postInput.placeholder = 'Add notes...';
-            postInput.value = StateManager.getAnnotation(flowIndex, edgeIndex, 'post') || '';
+            postInput.value = StateManager.getAnnotation(flowIndex, edge, 'post') || '';
             postInput.addEventListener('click', (e) => e.stopPropagation());
             postInput.addEventListener('input', debounce(() => {
-                StateManager.updateAnnotation(flowIndex, edgeIndex, 'post', postInput.value);
+                StateManager.updateAnnotation(flowIndex, edge, 'post', postInput.value);
                 Persistence.save();
             }, 300));
             postContainer.appendChild(postLabel);
@@ -659,7 +659,7 @@ const DiagramRenderer = {
                             renderedNodeIds.add(targetNode.id);
                         }
                         // Add After Target field with unique key for continuation chain
-                        const uniqueKey = `afterTarget-continuation-${edge.parallelOutputStepNumber}-${targetNode.id}`;
+                        const uniqueKey = `afterTarget-continuation-${edge.parallelOutputStepNumber}-${targetNode.label}`;
                         const afterTargetField = this.createDescriptionField(flowIndex, 'afterTarget', 'After Target', uniqueKey);
                         container.appendChild(afterTargetField);
                     }
@@ -696,7 +696,7 @@ const DiagramRenderer = {
                 // This is a safety check in case the target node check above didn't catch it
                 if (targetNode.type === 'target') {
                     // This shouldn't happen since we check above, but add safety check
-                    const uniqueKey = `afterTarget-continuation-${edge.parallelOutputStepNumber}-${targetNode.id}`;
+                    const uniqueKey = `afterTarget-continuation-${edge.parallelOutputStepNumber}-${targetNode.label}`;
                     const afterTargetField = this.createDescriptionField(flowIndex, 'afterTarget', 'After Target', uniqueKey);
                     container.appendChild(afterTargetField);
                     return;
@@ -722,7 +722,7 @@ const DiagramRenderer = {
                 } else {
                     // No more continuation edges - add After Target field if this is the last node in the chain
                     // Use unique key for continuation chain
-                    const uniqueKey = `afterTarget-continuation-${currentContinuationStep}-${targetNode.id}`;
+                    const uniqueKey = `afterTarget-continuation-${currentContinuationStep}-${targetNode.label}`;
                     const afterTargetField = this.createDescriptionField(flowIndex, 'afterTarget', 'After Target', uniqueKey);
                     container.appendChild(afterTargetField);
                 }
@@ -894,9 +894,9 @@ const DiagramRenderer = {
         preInput.type = 'text';
         preInput.className = 'annotation-input';
         preInput.placeholder = 'Add notes...';
-        preInput.value = StateManager.getAnnotation(flowIndex, edgeIndex, 'pre');
+        preInput.value = StateManager.getAnnotation(flowIndex, edge, 'pre');
         preInput.addEventListener('input', debounce((e) => {
-            StateManager.updateAnnotation(flowIndex, edgeIndex, 'pre', e.target.value);
+            StateManager.updateAnnotation(flowIndex, edge, 'pre', e.target.value);
             this.triggerSave();
         }, 300));
 
@@ -909,9 +909,9 @@ const DiagramRenderer = {
         postInput.type = 'text';
         postInput.className = 'annotation-input';
         postInput.placeholder = 'Add notes...';
-        postInput.value = StateManager.getAnnotation(flowIndex, edgeIndex, 'post');
+        postInput.value = StateManager.getAnnotation(flowIndex, edge, 'post');
         postInput.addEventListener('input', debounce((e) => {
-            StateManager.updateAnnotation(flowIndex, edgeIndex, 'post', e.target.value);
+            StateManager.updateAnnotation(flowIndex, edge, 'post', e.target.value);
             this.triggerSave();
         }, 300));
 

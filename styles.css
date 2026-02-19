@@ -694,6 +694,30 @@
             margin-bottom: 8px;
         }
 
+        .editor-header-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-syntax {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--accent-primary);
+            background: rgba(var(--accent-primary-rgb, 59, 130, 246), 0.08);
+            border: 1px solid var(--accent-primary);
+            border-radius: 6px;
+        }
+
+        .btn-syntax:hover {
+            background: rgba(var(--accent-primary-rgb, 59, 130, 246), 0.15);
+            color: var(--accent-primary);
+        }
+
         .editor-title {
             font-size: 13px;
             font-weight: 600;
@@ -2390,6 +2414,13 @@
             padding: 20px;
         }
 
+        .help-intro {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
         .help-section {
             margin-bottom: 24px;
         }
@@ -2410,6 +2441,18 @@
             margin-bottom: 12px;
         }
 
+        .help-example-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .help-example-row .help-example {
+            flex: 1;
+            min-width: 0;
+        }
+
         .help-example {
             background: var(--bg-tertiary);
             border: 1px solid var(--border-color);
@@ -2420,6 +2463,28 @@
             color: var(--text-primary);
             overflow-x: auto;
             white-space: pre-wrap;
+        }
+
+        .btn-copy-example {
+            flex-shrink: 0;
+            padding: 6px 12px;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--accent-primary);
+            background: rgba(var(--accent-primary-rgb, 59, 130, 246), 0.1);
+            border: 1px solid var(--accent-primary);
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .btn-copy-example:hover {
+            background: rgba(var(--accent-primary-rgb, 59, 130, 246), 0.2);
+        }
+
+        .btn-copy-example.copied {
+            color: var(--accent-success, #22c55e);
+            border-color: var(--accent-success, #22c55e);
+            background: rgba(34, 197, 94, 0.1);
         }
 
         /* ============================================

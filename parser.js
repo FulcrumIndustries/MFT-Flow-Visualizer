@@ -89,7 +89,9 @@ const Parser = {
             return p.replace(/__PARALLEL_(\d+)__/g, (match, idx) => placeholders[parseInt(idx)]);
         });
 
-        if (restoredParts.length < 5) {
+        // Need at least: entity, arrow, and protocol-or-parallel (3 parts).
+        // Linear flow needs 5: entity arrow protocol arrow entity; parallel output needs 3: entity arrow (parallel).
+        if (restoredParts.length < 3) {
             return { error: 'Invalid pattern. Expected: Entity -> PROTOCOL DIRECTION -> Entity' };
         }
 

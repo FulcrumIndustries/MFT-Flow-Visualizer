@@ -1,3 +1,19 @@
+// Stable key for an edge: ties annotations to the connection (from→to + protocol) not to position.
+// When the pattern is edited, annotations stay with the same logical connection.
+const EDGE_KEY_SEP = '\x1e';
+
+function edgeSignature(edge) {
+    if (typeof edge === 'string') return edge;
+    const from = (edge.fromLabel || '').trim();
+    const to = (edge.toLabel || '').trim();
+    const protocol = (edge.protocol || '').trim();
+    const direction = (edge.direction || '').trim();
+    const step = edge.stepNumber != null ? String(edge.stepNumber) : '';
+    const parts = [from, to, protocol, direction];
+    if (step) parts.push(step);
+    return parts.join(EDGE_KEY_SEP);
+}
+
 const StateManager = {
     state: {
         workspaces: new Map(),
@@ -81,26 +97,57 @@ const StateManager = {
         return '';
     },
 
-    updateAnnotation(flowIndex, edgeIndex, field, value) {
+    updateAnnotation(flowIndex, edgeOrSignature, field, value) {
         const workspace = this.getActiveWorkspace();
         if (workspace) {
             if (!workspace.annotations) {
                 workspace.annotations = {};
             }
-            const key = `${flowIndex}-${edgeIndex}-${field}`;
+            const sig = edgeSignature(edgeOrSignature);
+            const key = `${flowIndex}-${sig}-${field}`;
             workspace.annotations[key] = value;
             workspace.metadata.updatedAt = Date.now();
             this.notify({ type: 'ANNOTATION_UPDATED', workspaceId: workspace.id });
         }
     },
 
-    getAnnotation(flowIndex, edgeIndex, field) {
+    getAnnotation(flowIndex, edgeOrSignature, field) {
         const workspace = this.getActiveWorkspace();
         if (workspace && workspace.annotations) {
-            const key = `${flowIndex}-${edgeIndex}-${field}`;
+            const sig = edgeSignature(edgeOrSignature);
+            const key = `${flowIndex}-${sig}-${field}`;
             return workspace.annotations[key] || '';
         }
         return '';
+    },
+
+    // One-time migration: copy index-based annotation keys to signature-based keys for this flow.
+    // Call after parse when we have current edges, so old indices map to edges and we can migrate.
+    migrateAnnotationsToSignature(flowIndex, edges) {
+        const workspace = this.getActiveWorkspace();
+        if (!workspace || !workspace.annotations || !Array.isArray(edges)) return;
+        const annotations = workspace.annotations;
+        const indexKeyRegex = new RegExp(`^${flowIndex}-(\\d+)-(pre|post)$`);
+        let migrated = false;
+        Object.keys(annotations).forEach(key => {
+            const m = key.match(indexKeyRegex);
+            if (!m) return;
+            const edgeIndex = parseInt(m[1], 10);
+            const field = m[2];
+            if (edgeIndex < 0 || edgeIndex >= edges.length) return;
+            const edge = edges[edgeIndex];
+            const value = annotations[key];
+            if (value == null || value === '') return;
+            const sig = edgeSignature(edge);
+            const newKey = `${flowIndex}-${sig}-${field}`;
+            if (newKey === key) return;
+            annotations[newKey] = value;
+            delete annotations[key];
+            migrated = true;
+        });
+        if (migrated) {
+            workspace.metadata.updatedAt = Date.now();
+        }
     },
 
     updateEdgeNotes(flowIndex, edgeIndex, type, text) {

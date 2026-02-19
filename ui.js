@@ -189,8 +189,30 @@ const UIController = {
             this.elements.helpPanel.classList.add('visible');
         });
 
+        document.getElementById('syntaxExplainBtn').addEventListener('click', () => {
+            this.elements.helpPanel.classList.add('visible');
+        });
+
         document.getElementById('closeHelpBtn').addEventListener('click', () => {
             this.elements.helpPanel.classList.remove('visible');
+        });
+
+        // Copy example buttons in help panel
+        this.elements.helpPanel.querySelectorAll('.btn-copy-example').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const text = btn.getAttribute('data-copy');
+                if (text) {
+                    navigator.clipboard.writeText(text).then(() => {
+                        const orig = btn.textContent;
+                        btn.textContent = 'Copied!';
+                        btn.classList.add('copied');
+                        setTimeout(() => {
+                            btn.textContent = orig;
+                            btn.classList.remove('copied');
+                        }, 1500);
+                    });
+                }
+            });
         });
 
         // Kroki diagram modal
@@ -333,6 +355,11 @@ const UIController = {
                     this.hideKrokiDiagram();
                     return;
                 }
+                // Close help/syntax panel if open
+                if (this.elements.helpPanel.classList.contains('visible')) {
+                    this.elements.helpPanel.classList.remove('visible');
+                    return;
+                }
             }
             if (e.ctrlKey && e.shiftKey && e.key === 'T') {
                 e.preventDefault();
@@ -378,6 +405,13 @@ const UIController = {
         } else {
             this.hideError();
         }
+
+        // Migrate annotations from index-based to signature-based keys so comments stay with the same connection when the pattern is edited
+        result.flows.forEach((flow, flowIndex) => {
+            if (flow && flow.edges) {
+                StateManager.migrateAnnotationsToSignature(flowIndex, flow.edges);
+            }
+        });
 
         DiagramRenderer.render(result.flows, this.elements.canvasContainer);
 
