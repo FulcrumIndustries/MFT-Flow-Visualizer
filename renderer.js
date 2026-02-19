@@ -223,22 +223,16 @@ const DiagramRenderer = {
         rowHeader.appendChild(migrationBtn);
         row.appendChild(rowHeader);
 
-        // Separate main flow and post-processing
-        const mainFlowNodes = flow.nodes.filter(n => !n.isPostProcessing);
-        const postProcessingNodes = flow.nodes.filter(n => n.isPostProcessing);
-        const mainFlowEdges = flow.edges.filter(e => !e.isPostProcessing);
-        const postProcessingEdges = flow.edges.filter(e => e.isPostProcessing);
-
-        // Group main flow edges by their fromNodeId
-        const mainEdgesByFromNodeId = new Map();
-        mainFlowEdges.forEach((edge, idx) => {
+        // Group edges by their fromNodeId
+        const edgesByFromNodeId = new Map();
+        flow.edges.forEach((edge, idx) => {
             const key = edge.fromNodeId;
             // Only group edges that have valid node IDs
             if (key !== null && key !== undefined) {
-                if (!mainEdgesByFromNodeId.has(key)) {
-                    mainEdgesByFromNodeId.set(key, []);
+                if (!edgesByFromNodeId.has(key)) {
+                    edgesByFromNodeId.set(key, []);
                 }
-                mainEdgesByFromNodeId.get(key).push({ edge, edgeIndex: edge.index });
+                edgesByFromNodeId.get(key).push({ edge, edgeIndex: edge.index });
             }
         });
 
@@ -246,13 +240,13 @@ const DiagramRenderer = {
         const renderedEdgeIndices = new Set();
         const renderedNodeIds = new Set();
 
-        // Helper function to render main flow edges from a node
-        const renderMainFlowEdgesFromNode = (nodeId) => {
-            const edgesFromThisNode = mainEdgesByFromNodeId.get(nodeId) || [];
-            // Filter out continuation edges - they should only be rendered in continuation chains, not in main flow
+        // Helper function to render edges from a node
+        const renderEdgesFromNode = (nodeId) => {
+            const edgesFromThisNode = edgesByFromNodeId.get(nodeId) || [];
+            // Filter out continuation edges - they should only be rendered in continuation chains
             const unrenderedEdges = edgesFromThisNode.filter(({ edge, edgeIndex }) => {
                 if (renderedEdgeIndices.has(edgeIndex)) return false;
-                // Exclude continuation edges from main flow rendering
+                // Exclude continuation edges from main rendering
                 if (edge.isContinuation) return false;
                 return true;
             });
@@ -266,24 +260,21 @@ const DiagramRenderer = {
             if (hasParallelOutputs && uniqueTargets.size > 1) {
                 // PARALLEL OUTPUTS: one source branching to multiple targets
                 // All parallel output targets get rendered inline
-                // Pass post-processing data so chains can continue from targets
                 const parallelOutputContainer = this.createParallelOutputsElement(
                     unrenderedEdges, 
                     flowIndex, 
                     new Set(unrenderedEdges.map(({edge}) => edge.toLabel)),
-                    postProcessingEdges,
-                    postProcessingNodes,
                     renderedEdgeIndices,
                     renderedNodeIds,
-                    mainFlowNodes,
-                    mainEdgesByFromNodeId,
-                    mainFlowEdges
+                    flow.nodes,
+                    edgesByFromNodeId,
+                    flow.edges
                 );
                 row.appendChild(parallelOutputContainer);
                 unrenderedEdges.forEach(({ edgeIndex }) => renderedEdgeIndices.add(edgeIndex));
                 // Mark all parallel output target nodes as rendered
                 unrenderedEdges.forEach(({ edge }) => {
-                    const targetNode = mainFlowNodes.find(n => n.id === edge.toNodeId);
+                    const targetNode = flow.nodes.find(n => n.id === edge.toNodeId);
                     if (targetNode) renderedNodeIds.add(targetNode.id);
                 });
             } else {
@@ -307,13 +298,13 @@ const DiagramRenderer = {
                         
                         // Render target node if not already rendered
                         if (!renderedNodeIds.has(targetNodeId)) {
-                            const targetNode = mainFlowNodes.find(n => n.id === targetNodeId);
+                            const targetNode = flow.nodes.find(n => n.id === targetNodeId);
                             if (targetNode) {
                                 const nodeElement = this.createNodeElement(targetNode);
                                 row.appendChild(nodeElement);
                                 renderedNodeIds.add(targetNode.id);
                                 // Recursively render edges from this node
-                                renderMainFlowEdgesFromNode(targetNode.id);
+                                renderEdgesFromNode(targetNode.id);
                             }
                         }
                     } else {
@@ -324,12 +315,12 @@ const DiagramRenderer = {
                         
                         // Render target node
                         if (!renderedNodeIds.has(targetNodeId)) {
-                            const targetNode = mainFlowNodes.find(n => n.id === targetNodeId);
+                            const targetNode = flow.nodes.find(n => n.id === targetNodeId);
                             if (targetNode) {
                                 const nodeElement = this.createNodeElement(targetNode);
                                 row.appendChild(nodeElement);
                                 renderedNodeIds.add(targetNode.id);
-                                renderMainFlowEdgesFromNode(targetNode.id);
+                                renderEdgesFromNode(targetNode.id);
                             }
                         }
                     }
@@ -337,8 +328,8 @@ const DiagramRenderer = {
             }
         };
         
-        // Render main flow nodes and edges
-        mainFlowNodes.forEach((node, nodeIndex) => {
+        // Render nodes and edges
+        flow.nodes.forEach((node, nodeIndex) => {
             // Skip if already rendered
             if (renderedNodeIds.has(node.id)) {
                 return;
@@ -356,92 +347,19 @@ const DiagramRenderer = {
             renderedNodeIds.add(node.id);
 
             // Render edges from this node
-            renderMainFlowEdgesFromNode(node.id);
+            renderEdgesFromNode(node.id);
         });
         
-        // Now render post-processing chain (as a separate visual sequence)
-        // BUT: Skip edges that start from bridge nodes (they're rendered inline with parallel outputs)
-        if (postProcessingEdges.length > 0) {
-            // Group post-processing edges by fromNodeId
-            const ppEdgesByFromNodeId = new Map();
-            postProcessingEdges.forEach((edge) => {
-                const key = edge.fromNodeId;
-                if (!ppEdgesByFromNodeId.has(key)) {
-                    ppEdgesByFromNodeId.set(key, []);
-                }
-                ppEdgesByFromNodeId.get(key).push({ edge, edgeIndex: edge.index });
-            });
-            
-            // Find bridge nodes (main flow nodes that have post-processing edges)
-            const bridgeNodeIds = new Set();
-            mainFlowNodes.forEach((node) => {
-                if (ppEdgesByFromNodeId.has(node.id)) {
-                    bridgeNodeIds.add(node.id);
-                }
-            });
-            
-            // Render remaining post-processing nodes and their edges
-            // Skip nodes that are bridge nodes (they're already rendered in main flow)
-            postProcessingNodes.forEach((node, nodeIndex) => {
-                // Skip if this is a bridge node (already rendered in main flow)
-                if (bridgeNodeIds.has(node.id)) return;
-                
-                // Add node if not already rendered
-                if (!renderedNodeIds.has(node.id)) {
-                    const nodeElement = this.createNodeElement(node);
-                    row.appendChild(nodeElement);
-                    renderedNodeIds.add(node.id);
-                }
-                
-                // Render edges from this node
-                const edgesFromNode = ppEdgesByFromNodeId.get(node.id) || [];
-                edgesFromNode.forEach(({ edge, edgeIndex }) => {
-                    if (renderedEdgeIndices.has(edgeIndex)) return;
-                    
-                    const edgeElement = this.createEdgeElement(edge, flowIndex, edgeIndex);
-                    row.appendChild(edgeElement);
-                    renderedEdgeIndices.add(edgeIndex);
-                    
-                    // Render target node if not already rendered
-                    const targetNode = postProcessingNodes.find(n => n.id === edge.toNodeId);
-                    if (targetNode && !renderedNodeIds.has(targetNode.id) && !bridgeNodeIds.has(targetNode.id)) {
-                        const targetNodeElement = this.createNodeElement(targetNode);
-                        row.appendChild(targetNodeElement);
-                        renderedNodeIds.add(targetNode.id);
-                    }
-                });
-            });
-            
-            // Add "After Target" field after the last post-processing node
-            const lastPPNode = postProcessingNodes.find(n => n.type === 'target' && !bridgeNodeIds.has(n.id));
-            if (lastPPNode) {
-                const afterTargetField = this.createDescriptionField(flowIndex, 'afterTarget', 'After Target');
-                row.appendChild(afterTargetField);
-            }
-        } else {
-            // Add "After Target" field for main flow if no post-processing
-            const lastMainNode = mainFlowNodes.find(n => n.type === 'target');
-            if (lastMainNode) {
-                const afterTargetField = this.createDescriptionField(flowIndex, 'afterTarget', 'After Target');
-                row.appendChild(afterTargetField);
-            }
+        // Add "After Target" field for the last target node
+        const lastTargetNode = flow.nodes.find(n => n.type === 'target');
+        if (lastTargetNode) {
+            const afterTargetField = this.createDescriptionField(flowIndex, 'afterTarget', 'After Target');
+            row.appendChild(afterTargetField);
         }
 
         return row;
     },
 
-    createPostProcessingSeparator() {
-        const separator = document.createElement('div');
-        separator.className = 'post-processing-separator';
-        
-        const symbol = document.createElement('span');
-        symbol.className = 'post-processing-separator-symbol';
-        symbol.textContent = '>>';
-        symbol.title = 'Post-processing chain (triggered after completion)';
-        
-        separator.appendChild(symbol);
-        return separator;
-    },
 
     createParallelEdgesElement(edges, flowIndex) {
         const container = document.createElement('div');
@@ -540,20 +458,10 @@ const DiagramRenderer = {
         return container;
     },
 
-    createParallelOutputsElement(edges, flowIndex, inlineTargets = new Set(), ppEdges = [], ppNodes = [], renderedEdgeIndices = new Set(), renderedNodeIds = new Set(), mainFlowNodes = [], mainEdgesByFromNodeId = new Map(), mainFlowEdges = []) {
+    createParallelOutputsElement(edges, flowIndex, inlineTargets = new Set(), renderedEdgeIndices = new Set(), renderedNodeIds = new Set(), allNodes = [], edgesByFromNodeId = new Map(), allEdges = []) {
         // Container for branching outputs (one source to multiple targets)
         const container = document.createElement('div');
         container.className = 'parallel-outputs-container';
-
-        // Group post-processing edges by fromNodeId for easy lookup
-        const ppEdgesByFromNodeId = new Map();
-        ppEdges.forEach((edge) => {
-            const key = edge.fromNodeId;
-            if (!ppEdgesByFromNodeId.has(key)) {
-                ppEdgesByFromNodeId.set(key, []);
-            }
-            ppEdgesByFromNodeId.get(key).push({ edge, edgeIndex: edge.index });
-        });
 
         // Create each branch (arrow + target node + optional post-processing chain)
         edges.forEach(({ edge, edgeIndex }) => {
@@ -652,7 +560,7 @@ const DiagramRenderer = {
             const currentParallelStep = edge.stepNumber; // The step number of the parallel output we're rendering
             
             // Find edges from this target node by node ID only
-            let edgesFromTarget = mainEdgesByFromNodeId.get(edge.toNodeId) || [];
+            let edgesFromTarget = edgesByFromNodeId.get(edge.toNodeId) || [];
             
             const continuationEdges = edgesFromTarget
                 .filter(({ edge: contEdge, edgeIndex }) => {
@@ -667,17 +575,13 @@ const DiagramRenderer = {
                 });
             const hasContinuation = continuationEdges.length > 0;
             
-            // Also check for post-processing edges (bridge node)
-            const ppEdgesFromTarget = ppEdgesByFromNodeId.get(edge.toNodeId) || [];
-            const hasPPChain = ppEdgesFromTarget.length > 0;
-            
             const nodeBox = document.createElement('div');
-            nodeBox.className = (hasContinuation || hasPPChain) ? 'node-box intermediate' : 'node-box target';
+            nodeBox.className = hasContinuation ? 'node-box intermediate' : 'node-box target';
             nodeBox.textContent = edge.toLabel;
             
             const nodeType = document.createElement('div');
             nodeType.className = 'node-type';
-            nodeType.textContent = (hasContinuation || hasPPChain) ? 'INTERMEDIATE' : 'TARGET';
+            nodeType.textContent = hasContinuation ? 'INTERMEDIATE' : 'TARGET';
             
             targetNodeElement.appendChild(nodeBox);
             targetNodeElement.appendChild(nodeType);
@@ -692,13 +596,10 @@ const DiagramRenderer = {
                 continuationWrapper.style.alignItems = 'center';
                 continuationWrapper.style.gap = '0';
                 
-                // Render continuation chain inline (main flow)
+                // Render continuation chain inline
                 // Pass a new Set to track nodes rendered in this continuation chain
-                this.renderContinuationChainInline(continuationWrapper, continuationEdges, mainFlowNodes, mainEdgesByFromNodeId, flowIndex, renderedEdgeIndices, renderedNodeIds, mainFlowEdges, new Set());
+                this.renderContinuationChainInline(continuationWrapper, continuationEdges, allNodes, edgesByFromNodeId, flowIndex, renderedEdgeIndices, renderedNodeIds, allEdges, new Set());
                 branchRow.appendChild(continuationWrapper);
-            } else if (hasPPChain) {
-                // Render the post-processing chain inline
-                this.renderPPChainInline(branchRow, ppEdgesFromTarget, ppNodes, ppEdgesByFromNodeId, flowIndex, renderedEdgeIndices, renderedNodeIds, mainFlowNodes);
             } else {
                 // No continuation - show After Target field
                 const afterTargetField = document.createElement('div');
@@ -729,20 +630,20 @@ const DiagramRenderer = {
         return container;
     },
 
-    renderContinuationChainInline(container, startingEdges, mainFlowNodes, mainEdgesByFromNodeId, flowIndex, renderedEdgeIndices, renderedNodeIds, mainFlowEdges = [], continuationRenderedNodes = new Set()) {
-        // Recursively render continuation chain inline (main flow)
+    renderContinuationChainInline(container, startingEdges, allNodes, edgesByFromNodeId, flowIndex, renderedEdgeIndices, renderedNodeIds, allEdges = [], continuationRenderedNodes = new Set()) {
+        // Recursively render continuation chain inline
         // continuationRenderedNodes tracks nodes rendered specifically in this continuation chain
         // to avoid duplicates within the continuation while allowing nodes that appeared earlier
         startingEdges.forEach(({ edge, edgeIndex }) => {
             if (renderedEdgeIndices.has(edgeIndex)) return;
             
-            // Create edge element (regular main flow style)
+            // Create edge element
             const edgeElement = this.createEdgeElement(edge, flowIndex, edgeIndex);
             container.appendChild(edgeElement);
             renderedEdgeIndices.add(edgeIndex);
             
             // Find target node by ID only
-            let targetNode = mainFlowNodes.find(n => n.id === edge.toNodeId);
+            let targetNode = allNodes.find(n => n.id === edge.toNodeId);
             
             if (targetNode) {
                 // Stop continuation chain IMMEDIATELY if this is a target node
@@ -765,7 +666,7 @@ const DiagramRenderer = {
                     // ALWAYS stop here if it's a target node - don't look for or render any more edges
                     // Mark ALL edges FROM this target node as rendered to prevent them from being rendered elsewhere
                     // This prevents any edges from appearing after a target node
-                    const remainingEdgesFromTarget = mainEdgesByFromNodeId.get(targetNode.id) || [];
+                    const remainingEdgesFromTarget = edgesByFromNodeId.get(targetNode.id) || [];
                     remainingEdgesFromTarget.forEach(({ edge: remainingEdge, edgeIndex }) => {
                         // Mark ALL edges from target nodes as rendered, regardless of type
                         if (!renderedEdgeIndices.has(edgeIndex)) {
@@ -802,7 +703,7 @@ const DiagramRenderer = {
                 }
                 
                 // Find edges from this target node by node ID only
-                let nextEdgesFromNode = mainEdgesByFromNodeId.get(targetNode.id) || [];
+                let nextEdgesFromNode = edgesByFromNodeId.get(targetNode.id) || [];
                 
                 const nextEdges = nextEdgesFromNode
                     .filter(({ edge: nextEdge, edgeIndex }) => {
@@ -817,7 +718,7 @@ const DiagramRenderer = {
                 
                 // Only continue if there are continuation edges and this is not a target node
                 if (nextEdges.length > 0) {
-                    this.renderContinuationChainInline(container, nextEdges, mainFlowNodes, mainEdgesByFromNodeId, flowIndex, renderedEdgeIndices, renderedNodeIds, mainFlowEdges, continuationRenderedNodes);
+                    this.renderContinuationChainInline(container, nextEdges, allNodes, edgesByFromNodeId, flowIndex, renderedEdgeIndices, renderedNodeIds, allEdges, continuationRenderedNodes);
                 } else {
                     // No more continuation edges - add After Target field if this is the last node in the chain
                     // Use unique key for continuation chain
@@ -829,39 +730,6 @@ const DiagramRenderer = {
         });
     },
 
-    renderPPChainInline(container, startingEdges, ppNodes, ppEdgesByFromNodeId, flowIndex, renderedEdgeIndices, renderedNodeIds, mainFlowNodes = []) {
-        // Recursively render post-processing chain inline
-        startingEdges.forEach(({ edge, edgeIndex }) => {
-            if (renderedEdgeIndices.has(edgeIndex)) return;
-            
-            // Create edge element (green post-processing style)
-            const edgeElement = this.createEdgeElement(edge, flowIndex, edgeIndex);
-            container.appendChild(edgeElement);
-            renderedEdgeIndices.add(edgeIndex);
-            
-            // Find target node (could be in ppNodes or mainFlowNodes if it's a bridge)
-            let targetNode = ppNodes.find(n => n.id === edge.toNodeId);
-            if (!targetNode) {
-                targetNode = mainFlowNodes.find(n => n.id === edge.toNodeId);
-            }
-            
-            if (targetNode && !renderedNodeIds.has(targetNode.id)) {
-                const nodeElement = this.createNodeElement(targetNode);
-                container.appendChild(nodeElement);
-                renderedNodeIds.add(targetNode.id);
-                
-                // Check if this node has more PP edges
-                const nextEdges = ppEdgesByFromNodeId.get(targetNode.id) || [];
-                if (nextEdges.length > 0) {
-                    this.renderPPChainInline(container, nextEdges, ppNodes, ppEdgesByFromNodeId, flowIndex, renderedEdgeIndices, renderedNodeIds, mainFlowNodes);
-                } else if (targetNode.type === 'target') {
-                    // This is the final node - add After Target field
-                    const afterTargetField = this.createDescriptionField(flowIndex, 'afterTarget', 'After Target');
-                    container.appendChild(afterTargetField);
-                }
-            }
-        });
-    },
 
     createDescriptionField(flowIndex, type, label, uniqueKey = null) {
         const container = document.createElement('div');
@@ -920,7 +788,7 @@ const DiagramRenderer = {
 
     createEdgeElement(edge, flowIndex, edgeIndex) {
         const container = document.createElement('div');
-        container.className = 'flow-edge' + (edge.isPostProcessing ? ' post-processing-edge' : '');
+        container.className = 'flow-edge';
 
         // Check if protocol+direction is valid
         const currentCapability = `${edge.protocol} ${edge.direction}`;

@@ -301,18 +301,11 @@ TESTZ <- PeSIT PULL <- CFT -> SSH PUSH -> TESTF</div>
                     <div class="help-example">SFC -> (EBICS PULL -> Banque & FILE PUSH -> CFT)</div>
                 </div>
                 <div class="help-section">
-                    <h3 class="help-section-title">Post-Processing Chains</h3>
-                    <p>Use <code>>></code> to define additional flows triggered after previous operations complete. These are shown as extra edges from existing nodes:</p>
-                    <div class="help-example">A -> PESIT PUSH -> B -> (X PUSH -> C & Y PUSH -> D) >> D -> Z PUSH -> E -> W PUSH -> F</div>
-                    <p style="margin-top: 8px; font-size: 11px; color: var(--text-secondary);">Node D receives data, then triggers a chain to E and F. Post-processing edges are shown in green.</p>
-                </div>
-                <div class="help-section">
                     <h3 class="help-section-title">Components</h3>
                     <p><strong>Entities:</strong> Names like TESTA, ST, CFT (alphanumeric + underscores + spaces)</p>
                     <p><strong>Protocols:</strong> SFTP, PeSIT, HTTPS, FTP, AS2, SSH, JMS, EBICS, FILE, etc.</p>
                     <p><strong>Directions:</strong> PULL (fetch data) or PUSH (send data)</p>
                     <p><strong>Arrows:</strong> <code><-</code> (left) and <code>-></code> (right) indicate flow direction</p>
-                    <p><strong>Post-processing:</strong> <code>>></code> defines chains triggered after completion (shown in green)</p>
                 </div>
                 <div class="help-section">
                     <h3 class="help-section-title">Annotations</h3>

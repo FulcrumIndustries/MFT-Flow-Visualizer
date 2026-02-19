@@ -57,59 +57,18 @@ const Parser = {
     },
 
     tokenize(text) {
-        const allSegments = [];
-        const postProcessingChainData = [];
-
-        // First, check for post-processing chain separator >>
-        // Use a more careful split that doesn't confuse >> with ->
-        // Split by >> (with optional spaces) but not by ->
-        const chainParts = text.split(/\s*>>\s*(?!>)/);
-        const mainFlow = chainParts[0];
-        const postProcessingChains = chainParts.slice(1);
-
-        // Parse the main flow
-        const mainResult = this.tokenizeChain(mainFlow, false);
-        if (mainResult.error) {
-            return mainResult;
-        }
-        allSegments.push(...mainResult.segments);
-
-        // Parse post-processing chains
-        for (let i = 0; i < postProcessingChains.length; i++) {
-            const chainResult = this.tokenizeChain(postProcessingChains[i], true);
-            if (chainResult.error) {
-                return { error: `Post-processing chain ${i + 1}: ${chainResult.error}` };
-            }
-            
-            // Mark segments as post-processing and track the chain
-            let markedFirst = false;
-            const chainSegments = [];
-            chainResult.segments.forEach(seg => {
-                if (seg.type === 'connection' && !markedFirst) {
-                    seg.isPostProcessingStart = true;
-                    markedFirst = true;
-                }
-                seg.isPostProcessing = true;
-                seg.postProcessingChainIndex = i;
-                chainSegments.push(seg);
-            });
-            
-            postProcessingChainData.push({
-                chainIndex: i,
-                segments: chainSegments
-            });
-            
-            allSegments.push(...chainSegments);
+        // Parse the flow pattern
+        const result = this.tokenizeChain(text);
+        if (result.error) {
+            return result;
         }
 
         return { 
-            segments: allSegments,
-            hasPostProcessing: postProcessingChains.length > 0,
-            postProcessingChains: postProcessingChainData
+            segments: result.segments
         };
     },
 
-    tokenizeChain(text, isPostProcessing) {
+    tokenizeChain(text) {
         const segments = [];
 
         // Protect content inside parentheses from arrow splitting
@@ -138,7 +97,7 @@ const Parser = {
 
         // First entity - accept any string (no validation)
         const firstEntity = restoredParts[currentIndex];
-        segments.push({ type: 'entity', value: firstEntity, isPostProcessing: isPostProcessing });
+        segments.push({ type: 'entity', value: firstEntity });
         currentIndex++;
 
         while (currentIndex < restoredParts.length) {
@@ -208,13 +167,12 @@ const Parser = {
                         if (hasContinuation) {
                             // The continuation text starts from the target entity
                             // Format: "TARGET -> PROTO DIR -> ENTITY -> PROTO DIR -> ENTITY ..."
-                            // Continuation in parallel outputs is always main flow, not post-processing
+                            // Continuation in parallel outputs
                             const continuationText = restAfterFirstArrow;
                             
                             // Parse the continuation as a regular chain (starting from target)
                             // This will correctly handle multiple steps
-                            // IMPORTANT: Continuation is always main flow, not post-processing
-                            const continuationResult = this.tokenizeChain(continuationText, false);
+                            const continuationResult = this.tokenizeChain(continuationText);
                             if (continuationResult.error) {
                                 return continuationResult;
                             }
@@ -232,8 +190,6 @@ const Parser = {
                                 contSeg.isContinuation = true;
                                 // Mark which parallel output branch this continuation belongs to
                                 contSeg.parallelOutputStepNumber = i + 1;
-                                // Ensure continuation is marked as main flow (not post-processing)
-                                contSeg.isPostProcessing = false;
                                 segments.push(contSeg);
                             }
                         }
@@ -341,89 +297,44 @@ const Parser = {
         const nodes = [];
         const edges = [];
         
-        // We need to create separate node instances for:
-        // 1. Main flow entities (unique by label within main flow)
-        // 2. Post-processing entities (new copies even if same label exists in main flow)
-        
-        const mainFlowNodeMap = new Map(); // label -> node for main flow
-        const postProcessingNodeMap = new Map(); // label -> node for post-processing
+        const nodeMap = new Map(); // label -> node
         
         let nodeIndex = 0;
         let edgeIndex = 0;
 
-        // First pass: create nodes for main flow (non-post-processing)
+        // First pass: create nodes
         segments.forEach(seg => {
-            if (seg.type === 'entity' && !seg.isPostProcessing) {
-                if (!mainFlowNodeMap.has(seg.value)) {
+            if (seg.type === 'entity') {
+                if (!nodeMap.has(seg.value)) {
                     const node = {
                         id: 'node_' + nodeIndex,
                         label: seg.value,
                         type: 'intermediate',
-                        index: nodeIndex,
-                        isPostProcessing: false
+                        index: nodeIndex
                     };
                     nodes.push(node);
-                    mainFlowNodeMap.set(seg.value, node);
+                    nodeMap.set(seg.value, node);
                     nodeIndex++;
                 }
             }
         });
 
-        // Set source type for first main flow node
-        const mainFlowLabels = [...mainFlowNodeMap.keys()];
-        if (mainFlowLabels.length > 0) {
-            mainFlowNodeMap.get(mainFlowLabels[0]).type = 'source';
+        // Set source type for first node
+        const nodeLabels = [...nodeMap.keys()];
+        if (nodeLabels.length > 0) {
+            nodeMap.get(nodeLabels[0]).type = 'source';
         }
 
-        // Second pass: create nodes for post-processing entities
-        // EXCEPTION: If a post-processing START entity exists in main flow, reuse it (bridge node)
-        let postProcessingBridgeLabel = null;
-        segments.forEach(seg => {
-            if (seg.type === 'entity' && seg.isPostProcessing) {
-                // Check if this is the post-processing start and exists in main flow
-                if (seg.isPostProcessingStart && mainFlowNodeMap.has(seg.value)) {
-                    // Reuse the main flow node - don't create a duplicate
-                    postProcessingBridgeLabel = seg.value;
-                    // Map to the main flow node so edge building works
-                    postProcessingNodeMap.set(seg.value, mainFlowNodeMap.get(seg.value));
-                } else if (!postProcessingNodeMap.has(seg.value)) {
-                    const node = {
-                        id: 'node_pp_' + nodeIndex,
-                        label: seg.value,
-                        type: 'intermediate',
-                        index: nodeIndex,
-                        isPostProcessing: true
-                    };
-                    nodes.push(node);
-                    postProcessingNodeMap.set(seg.value, node);
-                    nodeIndex++;
-                }
-            }
-        });
-
-        // Set target type for the last post-processing node (or last main flow if no PP)
-        // We'll update this after edges are built to correctly identify terminal nodes
-        const postProcessingLabels = [...postProcessingNodeMap.keys()];
-        if (postProcessingLabels.length > 0) {
-            postProcessingNodeMap.get(postProcessingLabels[postProcessingLabels.length - 1]).type = 'target';
-        } else if (mainFlowLabels.length > 0) {
-            // Temporarily mark the last node as target - will be corrected after edges are built
-            mainFlowNodeMap.get(mainFlowLabels[mainFlowLabels.length - 1]).type = 'target';
-        }
-
-        // Third pass: build edges
+        // Second pass: build edges
         let lastEntityLabel = null;
-        let lastEntityIsPostProcessing = false;
         let parallelSourceLabel = null;
-        let parallelSourceIsPostProcessing = false;
         // Track parallel output targets by step number
-        const parallelOutputTargetsByStep = new Map(); // stepNumber -> {label, isPostProcessing}
+        const parallelOutputTargetsByStep = new Map(); // stepNumber -> label
         let currentParallelOutputStep = null;
         let inParallelGroup = false;
         
         segments.forEach((seg, segIndex) => {
             if (seg.type === 'entity') {
-                const isPostProcessing = seg.isPostProcessing || false;
                 const isParallelOutputTarget = seg.isParallelOutputTarget || false;
                 const isContinuation = seg.isContinuation || false;
                 
@@ -436,34 +347,24 @@ const Parser = {
                     // targets with continuation (isParallelOutputTarget=false but in parallel group)
                     // ALSO handle continuation entities - they need to be tracked so next continuation segments can use them
                     if (!isContinuation || (isContinuation && seg.parallelOutputStepNumber === currentParallelOutputStep)) {
-                        parallelOutputTargetsByStep.set(currentParallelOutputStep, {
-                            label: seg.value,
-                            isPostProcessing: isPostProcessing
-                        });
+                        parallelOutputTargetsByStep.set(currentParallelOutputStep, seg.value);
                     }
                     // Don't update lastEntity - parallel output targets don't become the next source
                     // Don't reset parallel tracking - we're still in the parallel output group
                 } else if (isParallelOutputTarget) {
                     // Explicit parallel output target (no continuation) - fallback case
                     if (currentParallelOutputStep !== null) {
-                        parallelOutputTargetsByStep.set(currentParallelOutputStep, {
-                            label: seg.value,
-                            isPostProcessing: isPostProcessing
-                        });
+                        parallelOutputTargetsByStep.set(currentParallelOutputStep, seg.value);
                     }
                     // Don't update lastEntity - parallel output targets don't become the next source
                     // Don't reset parallel tracking - we're still in the parallel output group
                 } else {
                     // For continuation entities, update the map entry so next continuation segments can use them
                     if (isContinuation && seg.parallelOutputStepNumber) {
-                        parallelOutputTargetsByStep.set(seg.parallelOutputStepNumber, {
-                            label: seg.value,
-                            isPostProcessing: isPostProcessing
-                        });
+                        parallelOutputTargetsByStep.set(seg.parallelOutputStepNumber, seg.value);
                     }
                     
                     lastEntityLabel = seg.value;
-                    lastEntityIsPostProcessing = isPostProcessing;
                     // Reset parallel tracking when we hit a non-parallel-output-target entity
                     // BUT: if this is a continuation entity, keep tracking active
                     if (!isContinuation) {
@@ -476,16 +377,13 @@ const Parser = {
                 }
             } else if (seg.type === 'connection' && lastEntityLabel) {
                 let fromLabel;
-                let fromIsPostProcessing;
                 
                 // For parallel inputs or outputs, all connections share the same source
                 if (seg.isParallelInput || seg.isParallelOutput) {
                     if (parallelSourceLabel === null) {
                         parallelSourceLabel = lastEntityLabel;
-                        parallelSourceIsPostProcessing = lastEntityIsPostProcessing;
                     }
                     fromLabel = parallelSourceLabel;
-                    fromIsPostProcessing = parallelSourceIsPostProcessing;
                     inParallelGroup = true;
                     // Track which parallel output step we're processing (only for parallel outputs, not inputs)
                     if (seg.isParallelOutput) {
@@ -494,21 +392,15 @@ const Parser = {
                         // This ensures the map entry exists even if the entity segment hasn't been processed yet
                         const targetLabel = seg.toEntity;
                         if (targetLabel && !parallelOutputTargetsByStep.has(seg.stepNumber)) {
-                            // Check if target is post-processing (shouldn't be for parallel outputs, but be safe)
-                            const targetIsPostProcessing = seg.isPostProcessing || false;
-                            parallelOutputTargetsByStep.set(seg.stepNumber, {
-                                label: targetLabel,
-                                isPostProcessing: targetIsPostProcessing
-                            });
+                            parallelOutputTargetsByStep.set(seg.stepNumber, targetLabel);
                         }
                     }
                 } else if (seg.isContinuation && seg.parallelOutputStepNumber) {
                     // Continuation segments after parallel output targets should use the target as source
                     // The map entry gets updated after each continuation segment, so this will use the correct source
-                    const targetInfo = parallelOutputTargetsByStep.get(seg.parallelOutputStepNumber);
-                    if (targetInfo) {
-                        fromLabel = targetInfo.label;
-                        fromIsPostProcessing = targetInfo.isPostProcessing;
+                    const targetLabel = parallelOutputTargetsByStep.get(seg.parallelOutputStepNumber);
+                    if (targetLabel) {
+                        fromLabel = targetLabel;
                     } else {
                         // Fallback: if map entry doesn't exist, try to infer from the segment order
                         // For the first continuation segment, use the parallel output target
@@ -516,40 +408,26 @@ const Parser = {
                         if (lastEntityLabel && lastEntityLabel !== parallelSourceLabel) {
                             // lastEntityLabel has been updated by a previous continuation segment
                             fromLabel = lastEntityLabel;
-                            fromIsPostProcessing = lastEntityIsPostProcessing;
                         } else {
                             // First continuation segment - use the target from the parallel output edge
                             // This is a fallback - the map should have been populated
                             fromLabel = lastEntityLabel;
-                            fromIsPostProcessing = lastEntityIsPostProcessing;
                         }
                     }
                     // Don't update lastEntityLabel here - we'll update it after processing the connection
                     // Keep parallel tracking active for continuation chains
                 } else {
                     fromLabel = lastEntityLabel;
-                    fromIsPostProcessing = lastEntityIsPostProcessing;
                     parallelSourceLabel = null;
                     currentParallelOutputStep = null;
                     inParallelGroup = false;
                 }
                 
                 const toLabel = seg.toEntity;
-                const toIsPostProcessing = seg.isPostProcessing || false;
 
-                // Get the correct node IDs - use node maps only (no label-based lookups)
-                let fromNodeId, toNodeId;
-                if (fromIsPostProcessing && postProcessingNodeMap.has(fromLabel)) {
-                    fromNodeId = postProcessingNodeMap.get(fromLabel).id;
-                } else if (mainFlowNodeMap.has(fromLabel)) {
-                    fromNodeId = mainFlowNodeMap.get(fromLabel).id;
-                }
-                
-                if (toIsPostProcessing && postProcessingNodeMap.has(toLabel)) {
-                    toNodeId = postProcessingNodeMap.get(toLabel).id;
-                } else if (mainFlowNodeMap.has(toLabel)) {
-                    toNodeId = mainFlowNodeMap.get(toLabel).id;
-                }
+                // Get the correct node IDs
+                let fromNodeId = nodeMap.get(fromLabel)?.id;
+                let toNodeId = nodeMap.get(toLabel)?.id;
                 
                 // Ensure node IDs are set - if not, this indicates a parsing/graph building issue
                 if (!fromNodeId) {
@@ -568,17 +446,13 @@ const Parser = {
                     toLabel: toLabel,
                     fromNodeId: fromNodeId,
                     toNodeId: toNodeId,
-                    fromIsPostProcessing: fromIsPostProcessing,
-                    toIsPostProcessing: toIsPostProcessing,
                     protocol: seg.protocol,
                     direction: seg.direction,
                     flowDirection: flowDirection,
                     stepNumber: seg.stepNumber,
-                    parallelOutputStepNumber: seg.parallelOutputStepNumber || null, // Track which parallel output branch this continuation belongs to
+                    parallelOutputStepNumber: seg.parallelOutputStepNumber || null,
                     isParallelOutput: seg.isParallelOutput || false,
                     isParallelInput: seg.isParallelInput || false,
-                    isPostProcessing: seg.isPostProcessing || false,
-                    isPostProcessingStart: seg.isPostProcessingStart || false,
                     isContinuation: seg.isContinuation || false,
                     index: edgeIndex
                 });
@@ -591,20 +465,16 @@ const Parser = {
                     if (seg.isContinuation && seg.parallelOutputStepNumber) {
                         // For continuation segments, update the map entry so subsequent continuation segments use the correct source
                         // But DON'T update lastEntityLabel to avoid interfering with other logic
-                        parallelOutputTargetsByStep.set(seg.parallelOutputStepNumber, {
-                            label: toLabel,
-                            isPostProcessing: toIsPostProcessing
-                        });
+                        parallelOutputTargetsByStep.set(seg.parallelOutputStepNumber, toLabel);
                     } else {
                         // Regular (non-continuation) segments update lastEntityLabel normally
                         lastEntityLabel = toLabel;
-                        lastEntityIsPostProcessing = toIsPostProcessing;
                     }
                 }
             }
         });
 
-        // After edges are built, correctly identify target nodes (nodes with no outgoing main flow edges)
+        // After edges are built, correctly identify target nodes (nodes with no outgoing edges)
         // Reset all node types to intermediate first (except source)
         nodes.forEach(node => {
             if (node.type === 'source') return; // Keep source nodes
@@ -614,9 +484,8 @@ const Parser = {
         // Find nodes that are targets of edges but have no outgoing edges
         const nodesWithOutgoingEdges = new Set();
         edges.forEach(edge => {
-            if (!edge.isPostProcessing && edge.fromNodeId) {
-                // Find the node by ID only
-                const fromNode = nodes.find(n => n.id === edge.fromNodeId && !n.isPostProcessing);
+            if (edge.fromNodeId) {
+                const fromNode = nodes.find(n => n.id === edge.fromNodeId);
                 if (fromNode) {
                     nodesWithOutgoingEdges.add(fromNode.id);
                 }
@@ -625,7 +494,7 @@ const Parser = {
         
         // Mark nodes without outgoing edges as targets
         nodes.forEach(node => {
-            if (node.type === 'source' || node.isPostProcessing) return;
+            if (node.type === 'source') return;
             if (!nodesWithOutgoingEdges.has(node.id)) {
                 node.type = 'target';
             }

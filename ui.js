@@ -1207,6 +1207,106 @@ const UIController = {
         return combinations;
     },
 
+    /**
+     * Renders one segment of the migration diagram from a given node, handling
+     * parallel inputs (multiple protocols to same target) and parallel outputs (branching).
+     */
+    renderMigrationSegment(nodeId, flow, assignments, nodeMap, nodeById, edgesByFromNodeId) {
+        const node = nodeById.get(nodeId);
+        if (!node) return '';
+
+        const nodeType = node.type;
+        const assignment = assignments[node.label];
+        const productName = assignment ? assignment.product : '';
+        const hasNodeScripting = assignment && assignment.scriptedCapabilities.length > 0;
+
+        let productLabelHtml = '';
+        if (productName) {
+            const scriptedCapsForNode = hasNodeScripting ? assignment.scriptedCapabilities : [];
+            const scriptedTitle = scriptedCapsForNode.length > 0
+                ? `${productName}\n+ Script: ${scriptedCapsForNode.join(', ')}`
+                : productName;
+            productLabelHtml = `
+                <div class="migration-product-label ${hasNodeScripting ? 'has-scripting' : ''}" title="${scriptedTitle.replace(/"/g, '&quot;')}">
+                    ${productName}
+                    ${hasNodeScripting ? '<span class="scripting-indicator">+Script</span>' : ''}
+                </div>
+            `;
+        }
+
+        let html = `
+            <div class="migration-node">
+                <div class="migration-node-box ${nodeType}">${node.label}</div>
+                ${productLabelHtml}
+            </div>
+        `;
+
+        const outEdges = edgesByFromNodeId.get(nodeId) || [];
+        if (outEdges.length === 0) return html;
+
+        // Group edges by target node (toNodeId)
+        const byTarget = new Map();
+        outEdges.forEach(e => {
+            const tid = e.toNodeId;
+            if (!tid) return;
+            if (!byTarget.has(tid)) byTarget.set(tid, []);
+            byTarget.get(tid).push(e);
+        });
+
+        if (byTarget.size === 1) {
+            // Single target: one or more edges = parallel inputs when multiple
+            const [targetId, edges] = [...byTarget.entries()][0];
+            const firstEdge = edges[0];
+            const isReverse = firstEdge.flowDirection === 'reverse';
+            const edgeFromThisNode = firstEdge.fromLabel === node.label;
+            const showReverse = (edgeFromThisNode && isReverse) || (!edgeFromThisNode && !isReverse);
+            const edgeLabels = edges.map(e => `${e.protocol} ${e.direction}`);
+            const isParallelInput = edges.length > 1;
+            const labelText = isParallelInput ? `(${edgeLabels.join(' & ')})` : edgeLabels[0];
+            html += `
+                <div class="migration-edge ${isParallelInput ? 'parallel' : ''}">
+                    ${showReverse ? '<div class="migration-edge-arrow reverse"></div>' : ''}
+                    <div class="migration-edge-line"></div>
+                    <div class="migration-edge-label ${isParallelInput ? 'parallel-label' : ''}">${labelText}</div>
+                    <div class="migration-edge-line"></div>
+                    ${!showReverse ? '<div class="migration-edge-arrow"></div>' : ''}
+                </div>
+            `;
+            html += this.renderMigrationSegment(targetId, flow, assignments, nodeMap, nodeById, edgesByFromNodeId);
+        } else {
+            // Parallel outputs: multiple targets, render one branch per target (order by step number when present)
+            const entries = [...byTarget.entries()].sort((a, b) => {
+                const stepA = Math.min(...a[1].map(e => e.stepNumber || 999));
+                const stepB = Math.min(...b[1].map(e => e.stepNumber || 999));
+                return stepA - stepB;
+            });
+            html += '<div class="migration-parallel-outputs">';
+            entries.forEach(([targetId, edges]) => {
+                html += '<div class="migration-parallel-branch">';
+                const firstEdge = edges[0];
+                const isReverse = firstEdge.flowDirection === 'reverse';
+                const edgeFromThisNode = firstEdge.fromLabel === node.label;
+                const showReverse = (edgeFromThisNode && isReverse) || (!edgeFromThisNode && !isReverse);
+                const edgeLabels = edges.map(e => `${e.protocol} ${e.direction}`);
+                const isParallelInput = edges.length > 1;
+                const labelText = isParallelInput ? `(${edgeLabels.join(' & ')})` : edgeLabels[0];
+                html += `
+                    <div class="migration-edge ${isParallelInput ? 'parallel' : ''}">
+                        ${showReverse ? '<div class="migration-edge-arrow reverse"></div>' : ''}
+                        <div class="migration-edge-line"></div>
+                        <div class="migration-edge-label ${isParallelInput ? 'parallel-label' : ''}">${labelText}</div>
+                        <div class="migration-edge-line"></div>
+                        ${!showReverse ? '<div class="migration-edge-arrow"></div>' : ''}
+                    </div>
+                `;
+                html += this.renderMigrationSegment(targetId, flow, assignments, nodeMap, nodeById, edgesByFromNodeId);
+                html += '</div>';
+            });
+            html += '</div>';
+        }
+        return html;
+    },
+
     renderMigrationOption(flow, combination, optionNumber, totalOptions) {
         const { assignments, hasScripting, totalScriptedCount } = combination;
         
@@ -1231,77 +1331,25 @@ const UIController = {
             }
         });
         
-        // Build the diagram HTML
-        let diagramHtml = '<div class="migration-flow-row">';
-        
-        // Process nodes in order
-        flow.nodes.forEach((node, nodeIndex) => {
-            // Add node
-            const nodeType = node.type;
-            const assignment = assignments[node.label];
-            const productName = assignment ? assignment.product : '';
-            const hasNodeScripting = assignment && assignment.scriptedCapabilities.length > 0;
-            
-            // Build product label with scripting indicator
-            let productLabelHtml = '';
-            if (productName) {
-                const scriptedCapsForNode = hasNodeScripting ? assignment.scriptedCapabilities : [];
-                const scriptedTitle = scriptedCapsForNode.length > 0 
-                    ? `${productName}\n+ Script: ${scriptedCapsForNode.join(', ')}`
-                    : productName;
-                
-                productLabelHtml = `
-                    <div class="migration-product-label ${hasNodeScripting ? 'has-scripting' : ''}" title="${scriptedTitle}">
-                        ${productName}
-                        ${hasNodeScripting ? '<span class="scripting-indicator">+Script</span>' : ''}
-                    </div>
-                `;
+        // Build edges by from-node for structure-aware rendering
+        const nodeById = new Map();
+        flow.nodes.forEach(n => { nodeById.set(n.id, n); });
+
+        const edgesByFromNodeId = new Map();
+        flow.edges.forEach(e => {
+            if (!e.fromNodeId) return;
+            if (!edgesByFromNodeId.has(e.fromNodeId)) {
+                edgesByFromNodeId.set(e.fromNodeId, []);
             }
-            
-            diagramHtml += `
-                <div class="migration-node">
-                    <div class="migration-node-box ${nodeType}">${node.label}</div>
-                    ${productLabelHtml}
-                </div>
-            `;
-            
-            // Add edge after this node (if not last node)
-            if (nodeIndex < flow.nodes.length - 1) {
-                // Find ALL edges from this node to next (handles parallel steps)
-                const nextNode = flow.nodes[nodeIndex + 1];
-                const edges = flow.edges.filter(e => 
-                    (e.fromLabel === node.label && e.toLabel === nextNode.label) ||
-                    (e.toLabel === node.label && e.fromLabel === nextNode.label)
-                );
-                
-                if (edges.length > 0) {
-                    // Check if first edge determines arrow direction
-                    const firstEdge = edges[0];
-                    const isReverse = firstEdge.flowDirection === 'reverse';
-                    const edgeFromThisNode = firstEdge.fromLabel === node.label;
-                    const showReverse = (edgeFromThisNode && isReverse) || (!edgeFromThisNode && !isReverse);
-                    
-                    // Build label for all edges (parallel if multiple)
-                    const edgeLabels = edges.map(e => `${e.protocol} ${e.direction}`);
-                    const isParallel = edges.length > 1;
-                    const labelText = isParallel 
-                        ? `(${edgeLabels.join(' & ')})` 
-                        : edgeLabels[0];
-                    
-                    diagramHtml += `
-                        <div class="migration-edge ${isParallel ? 'parallel' : ''}">
-                            ${showReverse ? '<div class="migration-edge-arrow reverse"></div>' : ''}
-                            <div class="migration-edge-line"></div>
-                            <div class="migration-edge-label ${isParallel ? 'parallel-label' : ''}">${labelText}</div>
-                            <div class="migration-edge-line"></div>
-                            ${!showReverse ? '<div class="migration-edge-arrow"></div>' : ''}
-                        </div>
-                    `;
-                }
-            }
+            edgesByFromNodeId.get(e.fromNodeId).push(e);
         });
-        
-        diagramHtml += '</div>';
+
+        const sourceNode = flow.nodes.find(n => n.type === 'source');
+        const diagramHtml = '<div class="migration-flow-row">' +
+            (sourceNode
+                ? this.renderMigrationSegment(sourceNode.id, flow, assignments, nodeMap, nodeById, edgesByFromNodeId)
+                : '')
+            + '</div>';
         
         // Build summary
         const summaryHtml = productsUsed.map(p => `
