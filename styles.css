@@ -2121,6 +2121,16 @@
             margin-left: 4px;
         }
 
+        .flow-explain-btn {
+            margin-left: 4px;
+        }
+
+        .flow-explain-btn:hover {
+            background: #6366f1;
+            border-color: #6366f1;
+            color: white;
+        }
+
         /* Migration Toggle */
         .migration-toggle-container {
             display: flex;
@@ -2763,4 +2773,255 @@
                 width: 100%;
                 max-height: 300px;
             }
+        }
+
+        /* =============================================
+           Migration Complexity Banner
+           ============================================= */
+
+        .migration-complexity-banner {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 14px 18px;
+            border-radius: 10px;
+            margin-bottom: 16px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-secondary);
+        }
+
+        .complexity-score-badge {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 62px;
+            height: 62px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            border: 3px solid currentColor;
+        }
+
+        .complexity-score-number {
+            font-size: 22px;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        .complexity-score-label {
+            font-size: 10px;
+            font-weight: 500;
+            opacity: 0.75;
+            margin-top: 2px;
+        }
+
+        .complexity-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .complexity-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 6px;
+        }
+
+        .complexity-level-tag {
+            font-size: 11px;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 20px;
+            letter-spacing: 0.04em;
+        }
+
+        .complexity-factors {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .complexity-factor {
+            font-size: 11px;
+            color: var(--text-secondary);
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            padding: 2px 8px;
+            border-radius: 12px;
+        }
+
+        /* Complexity color themes */
+        .complexity-low .complexity-score-badge {
+            color: #16a34a;
+            background: #dcfce7;
+        }
+
+        .complexity-low .complexity-level-tag {
+            background: #dcfce7;
+            color: #15803d;
+        }
+
+        .complexity-medium .complexity-score-badge {
+            color: #d97706;
+            background: #fef3c7;
+        }
+
+        .complexity-medium .complexity-level-tag {
+            background: #fef3c7;
+            color: #b45309;
+        }
+
+        .complexity-high .complexity-score-badge {
+            color: #dc2626;
+            background: #fee2e2;
+        }
+
+        .complexity-high .complexity-level-tag {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        [data-theme="dark"] .complexity-low .complexity-score-badge {
+            background: rgba(22, 163, 74, 0.15);
+        }
+
+        [data-theme="dark"] .complexity-low .complexity-level-tag {
+            background: rgba(22, 163, 74, 0.15);
+            color: #4ade80;
+        }
+
+        [data-theme="dark"] .complexity-medium .complexity-score-badge {
+            background: rgba(217, 119, 6, 0.15);
+        }
+
+        [data-theme="dark"] .complexity-medium .complexity-level-tag {
+            background: rgba(217, 119, 6, 0.15);
+            color: #fbbf24;
+        }
+
+        [data-theme="dark"] .complexity-high .complexity-score-badge {
+            background: rgba(220, 38, 38, 0.15);
+        }
+
+        [data-theme="dark"] .complexity-high .complexity-level-tag {
+            background: rgba(220, 38, 38, 0.15);
+            color: #f87171;
+        }
+
+        /* =============================================
+           Flow Explanation Modal
+           ============================================= */
+
+        .flow-explanation-modal-content {
+            max-width: 660px;
+            width: 90%;
+        }
+
+        .flow-explanation-modal-body {
+            padding: 20px 24px 24px;
+            overflow-y: auto;
+            max-height: calc(90vh - 120px);
+        }
+
+        .flow-explanation-content {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .explanation-flow-label {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 10px 14px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            flex-wrap: wrap;
+        }
+
+        .explanation-flow-badge {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--accent-primary);
+            background: color-mix(in srgb, var(--accent-primary) 12%, transparent);
+            border: 1px solid color-mix(in srgb, var(--accent-primary) 30%, transparent);
+            padding: 2px 8px;
+            border-radius: 12px;
+            white-space: nowrap;
+            flex-shrink: 0;
+            align-self: center;
+        }
+
+        .explanation-flow-pattern {
+            font-size: 12px;
+            font-family: monospace;
+            color: var(--text-secondary);
+            word-break: break-all;
+            line-height: 1.5;
+            padding-top: 1px;
+        }
+
+        .explanation-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .explanation-step {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px 14px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            transition: border-color var(--transition-speed), background var(--transition-speed);
+        }
+
+        .explanation-step:hover {
+            border-color: var(--accent-primary);
+            background: color-mix(in srgb, var(--accent-primary) 4%, var(--bg-primary));
+        }
+
+        .explanation-step-number {
+            flex-shrink: 0;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            background: var(--accent-primary);
+            color: white;
+            font-size: 12px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 1px;
+        }
+
+        .explanation-step-text {
+            font-size: 13.5px;
+            color: var(--text-primary);
+            line-height: 1.6;
+            flex: 1;
+        }
+
+        .explanation-step-text strong {
+            color: var(--accent-primary);
+            font-weight: 600;
+        }
+
+        .step-branch-item {
+            display: inline-block;
+            margin-top: 4px;
+        }
+
+        .explanation-empty {
+            text-align: center;
+            color: var(--text-secondary);
+            padding: 24px;
+            font-size: 13px;
         }

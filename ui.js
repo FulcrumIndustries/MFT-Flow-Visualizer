@@ -241,6 +241,17 @@ const UIController = {
             }
         });
 
+        // Flow Explanation modal
+        document.getElementById('closeFlowExplanationBtn').addEventListener('click', () => {
+            this.hideFlowExplanationModal();
+        });
+
+        document.getElementById('flowExplanationModal').addEventListener('click', (e) => {
+            if (e.target.id === 'flowExplanationModal') {
+                this.hideFlowExplanationModal();
+            }
+        });
+
         document.getElementById('krokiCopyCodeBtn').addEventListener('click', () => {
             if (this.currentKrokiCode) {
                 navigator.clipboard.writeText(this.currentKrokiCode).then(() => {
@@ -343,6 +354,12 @@ const UIController = {
         // Keyboard shortcuts
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
+                // Close flow explanation modal if open
+                const flowExplanationModal = document.getElementById('flowExplanationModal');
+                if (flowExplanationModal.classList.contains('visible')) {
+                    this.hideFlowExplanationModal();
+                    return;
+                }
                 // Close migration modal if open
                 const migrationModal = document.getElementById('migrationModal');
                 if (migrationModal.classList.contains('visible')) {
@@ -929,8 +946,10 @@ const UIController = {
         // Store state for toggle functionality
         this.currentMigrationState = { flowIndex, flow, selectedProducts };
         
+        const complexityBannerHtml = this.buildComplexityBannerHtml(flow);
+
         if (selectedProducts.length === 0) {
-            content.innerHTML = `
+            content.innerHTML = complexityBannerHtml + `
                 <div class="migration-empty">
                     <svg class="migration-empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <circle cx="12" cy="12" r="10"></circle>
@@ -949,7 +968,7 @@ const UIController = {
         const intermediateNodes = flow.nodes.filter(n => n.type === 'intermediate');
         
         if (intermediateNodes.length === 0) {
-            content.innerHTML = `
+            content.innerHTML = complexityBannerHtml + `
                 <div class="migration-empty">
                     <svg class="migration-empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
@@ -966,53 +985,181 @@ const UIController = {
         // For each intermediate node, determine required capabilities
         const nodeRequirements = this.analyzeNodeRequirements(flow);
         
-        // Find which products can serve each node (with scripting option)
+        // Find which products can serve each node (with scripting option) for the CURRENT selection
         const nodeProductOptions = this.findProductOptionsForNodes(nodeRequirements, selectedProducts, includeScripted);
         
-        // Check if any node has no valid product
+        // Check if any node has no valid product with the current selection
         const unsatisfiedNodes = Object.entries(nodeProductOptions)
             .filter(([node, options]) => options.length === 0);
-        
+
+        // Independently, check if there is ANY standard migration option when considering ALL available products.
+        // This is used to decide if we are allowed to explore "adding node" ideas.
+        const allProductNames = Object.keys(PRODUCT_CAPABILITIES || {}).filter(name => {
+            const product = PRODUCT_CAPABILITIES[name];
+            return !(product && product.isScriptProduct);
+        });
+        const globalNodeProductOptions = this.findProductOptionsForNodes(nodeRequirements, allProductNames, includeScripted);
+        const globalCombinations = this.generateMigrationCombinations(
+            globalNodeProductOptions,
+            intermediateNodes.map(n => n.label),
+            includeScripted
+        );
+        const hasGlobalStandardCombination = globalCombinations.length > 0;
+
         if (unsatisfiedNodes.length > 0) {
             const nodeList = unsatisfiedNodes.map(([node]) => node).join(', ');
-            
-            // Check if there would be options with scripting enabled
-            let scriptingHint = '';
-            if (!includeScripted) {
-                const withScripted = this.findProductOptionsForNodes(nodeRequirements, selectedProducts, true);
-                const wouldHaveOptions = unsatisfiedNodes.every(([node]) => withScripted[node]?.length > 0);
-                if (wouldHaveOptions) {
-                    scriptingHint = `<p style="margin-top: 12px; color: var(--accent-primary);">💡 Enable "Include Scripted Options" to see solutions using script capabilities.</p>`;
+
+            // If there IS at least one standard combination when looking at all products,
+            // we keep the existing "incompatible" UX and encourage selecting more products.
+            // We do NOT explore "add node" ideas yet.
+            if (hasGlobalStandardCombination) {
+                // Check if there would be options with scripting enabled
+                let scriptingHint = '';
+                if (!includeScripted) {
+                    const withScripted = this.findProductOptionsForNodes(nodeRequirements, selectedProducts, true);
+                    const wouldHaveOptions = unsatisfiedNodes.every(([node]) => withScripted[node]?.length > 0);
+                    if (wouldHaveOptions) {
+                        scriptingHint = `<p style="margin-top: 12px; color: var(--accent-primary);">Enable "Include Scripted Options" to see solutions using script capabilities.</p>`;
+                    }
                 }
+
+                content.innerHTML = complexityBannerHtml + `
+                    <div class="migration-toggle-container">
+                        <label class="migration-toggle">
+                            <input type="checkbox" id="includeScriptedToggle" ${includeScripted ? 'checked' : ''}>
+                            <span class="migration-toggle-slider"></span>
+                            <span class="migration-toggle-label">Include Scripted Options</span>
+                        </label>
+                    </div>
+                    <div class="migration-empty">
+                        <svg class="migration-empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="15" y1="9" x2="9" y2="15"></line>
+                            <line x1="9" y1="9" x2="15" y2="15"></line>
+                        </svg>
+                        <h3>Incompatible Products</h3>
+                        <p>The selected products cannot satisfy all requirements for node(s): <strong>${nodeList}</strong></p>
+                        <p style="margin-top: 8px;">Please select additional products that support the required protocols.</p>
+                        ${scriptingHint}
+                    </div>
+                `;
+                this.attachMigrationToggleListener();
+                modal.classList.add('visible');
+                return;
             }
-            
-            content.innerHTML = `
+
+            // No standard migration option exists EVEN when considering all available products.
+            // At this point we are allowed to explore the "add node" idea by allowing
+            // certain nodes to be implemented by a combination of products instead of just one.
+            const multiProductOptions = this.findMultiProductOptionsForNodes(nodeRequirements, allProductNames, includeScripted);
+
+            // Merge standard (single-product) and multi-product options for all nodes
+            const augmentedNodeProductOptions = {};
+            Object.keys(nodeRequirements).forEach(nodeName => {
+                const singleOptions = nodeProductOptions[nodeName] || [];
+                const multiOptionsForNode = multiProductOptions[nodeName] || [];
+                augmentedNodeProductOptions[nodeName] = [...singleOptions, ...multiOptionsForNode];
+            });
+
+            // If some nodes still have no options at all (even after allowing multi-product nodes), we
+            // fall back to the original "no options" UX.
+            const stillUnsatisfied = Object.entries(augmentedNodeProductOptions)
+                .filter(([node, options]) => options.length === 0);
+
+            if (stillUnsatisfied.length > 0) {
+                const stillNodeList = stillUnsatisfied.map(([node]) => node).join(', ');
+                content.innerHTML = complexityBannerHtml + `
+                    <div class="migration-toggle-container">
+                        <label class="migration-toggle">
+                            <input type="checkbox" id="includeScriptedToggle" ${includeScripted ? 'checked' : ''}>
+                            <span class="migration-toggle-slider"></span>
+                            <span class="migration-toggle-label">Include Scripted Options</span>
+                        </label>
+                    </div>
+                    <div class="migration-empty">
+                        <svg class="migration-empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="8" x2="12" y2="12"></line>
+                            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                        </svg>
+                        <h3>No Options Available</h3>
+                        <p>No valid migration paths found for node(s): <strong>${stillNodeList}</strong> even when allowing combined products.</p>
+                    </div>
+                `;
+                this.attachMigrationToggleListener();
+                modal.classList.add('visible');
+                return;
+            }
+
+            // We have at least one node where a combination of products can satisfy all requirements.
+            // Generate migration combinations using these augmented options.
+            const augmentedCombinations = this.generateMigrationCombinations(
+                augmentedNodeProductOptions,
+                intermediateNodes.map(n => n.label),
+                includeScripted
+            );
+
+            const nativeCountAug = augmentedCombinations.filter(c => !c.hasScripting).length;
+            const scriptedCountAug = augmentedCombinations.filter(c => c.hasScripting).length;
+            const maxOptionsAug = 10;
+            const displayCombinationsAug = augmentedCombinations.slice(0, maxOptionsAug);
+
+            let htmlAug = complexityBannerHtml + `
                 <div class="migration-toggle-container">
                     <label class="migration-toggle">
                         <input type="checkbox" id="includeScriptedToggle" ${includeScripted ? 'checked' : ''}>
                         <span class="migration-toggle-slider"></span>
                         <span class="migration-toggle-label">Include Scripted Options</span>
                     </label>
+                    <div class="migration-stats">
+                        <span class="migration-stat native">${nativeCountAug} native</span>
+                        ${scriptedCountAug > 0 ? `<span class="migration-stat scripted">${scriptedCountAug} with scripts</span>` : ''}
+                    </div>
                 </div>
-                <div class="migration-empty">
-                    <svg class="migration-empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <line x1="15" y1="9" x2="9" y2="15"></line>
-                        <line x1="9" y1="9" x2="15" y2="15"></line>
-                    </svg>
-                    <h3>Incompatible Products</h3>
-                    <p>The selected products cannot satisfy all requirements for node(s): <strong>${nodeList}</strong></p>
-                    <p style="margin-top: 8px;">Please select additional products that support the required protocols.</p>
-                    ${scriptingHint}
+                <div class="migration-info-banner">
+                    <strong>Note:</strong> No single-product migration exists for this flow, even when considering all Axway products.
+                    Some options below introduce additional internal nodes where multiple products collaborate at the same logical point in the flow.
                 </div>
             `;
+
+            if (displayCombinationsAug.length === 0) {
+                htmlAug += `
+                    <div class="migration-empty">
+                        <svg class="migration-empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="8" x2="12" y2="12"></line>
+                            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                        </svg>
+                        <h3>No Options Available</h3>
+                        <p>No valid migration paths found, even when allowing combined products per node.</p>
+                    </div>
+                `;
+            } else {
+                displayCombinationsAug.forEach((combo, index) => {
+                    htmlAug += this.renderMigrationOption(flow, combo, index + 1, Math.min(augmentedCombinations.length, maxOptionsAug));
+                });
+
+                if (augmentedCombinations.length > maxOptionsAug) {
+                    htmlAug += `
+                        <div class="migration-empty" style="padding: 20px;">
+                            <p>Showing ${maxOptionsAug} of ${augmentedCombinations.length} possible combinations. Narrow the product set for a shorter list.</p>
+                        </div>
+                    `;
+                }
+            }
+
+            content.innerHTML = htmlAug;
             this.attachMigrationToggleListener();
             modal.classList.add('visible');
             return;
         }
 
-        // Generate all valid combinations
-        const combinations = this.generateMigrationCombinations(nodeProductOptions, intermediateNodes.map(n => n.label), includeScripted);
+        // Generate all valid combinations for the CURRENT selection (single-product-per-node only)
+        const combinations = this.generateMigrationCombinations(
+            nodeProductOptions,
+            intermediateNodes.map(n => n.label),
+            includeScripted
+        );
         
         // Count native vs scripted options
         const nativeCount = combinations.filter(c => !c.hasScripting).length;
@@ -1022,8 +1169,8 @@ const UIController = {
         const maxOptions = 10;
         const displayCombinations = combinations.slice(0, maxOptions);
         
-        // Build header with toggle and stats
-        let html = `
+        // Build header with complexity banner + toggle and stats
+        let html = complexityBannerHtml + `
             <div class="migration-toggle-container">
                 <label class="migration-toggle">
                     <input type="checkbox" id="includeScriptedToggle" ${includeScripted ? 'checked' : ''}>
@@ -1200,6 +1347,123 @@ const UIController = {
         return nodeProductOptions;
     },
 
+    /**
+     * When no single product can satisfy all capabilities required by a node (client + server),
+     * this helper explores SMALL combinations of products (currently pairs) that together cover
+     * all of the node's required capabilities. This is the implementation of the "add a node"
+     * idea: instead of forcing one product at that logical point, we allow two collaborating
+     * products to sit there.
+     *
+     * Returns a map of:
+     *   nodeName -> [
+     *     {
+     *       products: [productA, productB],
+     *       scriptedCapabilities: [...capabilities covered via script across both products],
+     *       isFullyNative: boolean
+     *     },
+     *     ...
+     *   ]
+     */
+    findMultiProductOptionsForNodes(nodeRequirements, productNames, includeScripted = true) {
+        const multiProductOptions = {};
+
+        const ensureEntry = (nodeName) => {
+            if (!multiProductOptions[nodeName]) {
+                multiProductOptions[nodeName] = [];
+            }
+        };
+
+        const canProductCoverCap = (productName, cap, capabilityType, allowScript, scriptedAccumulator) => {
+            const caps = getExtendedCapabilities(productName, capabilityType);
+            const capUpper = cap.toUpperCase();
+            const isNative = caps.native.some(c => c.toUpperCase() === capUpper);
+            const isScripted = caps.scripted.some(c => c.toUpperCase() === capUpper);
+
+            if (isNative) {
+                return true;
+            }
+            if (isScripted && allowScript) {
+                if (scriptedAccumulator) {
+                    scriptedAccumulator.push({ product: productName, capability: cap });
+                }
+                return true;
+            }
+            return false;
+        };
+
+        for (const [nodeName, requirements] of Object.entries(nodeRequirements)) {
+            ensureEntry(nodeName);
+
+            // Try all unordered pairs of products
+            for (let i = 0; i < productNames.length; i++) {
+                for (let j = i + 1; j < productNames.length; j++) {
+                    const productA = productNames[i];
+                    const productB = productNames[j];
+
+                    const scriptedCaps = [];
+                    let canSatisfyAll = true;
+
+                    // Check client capabilities
+                    for (const cap of requirements.client) {
+                        const acc = [];
+                        const coveredByA = canProductCoverCap(productA, cap, 'client', includeScripted, acc);
+                        const coveredByB = coveredByA ? false : canProductCoverCap(productB, cap, 'client', includeScripted, acc);
+
+                        if (!coveredByA && !coveredByB) {
+                            canSatisfyAll = false;
+                            break;
+                        }
+
+                        if (acc.length > 0) {
+                            scriptedCaps.push(...acc);
+                        }
+                    }
+
+                    if (!canSatisfyAll) {
+                        continue;
+                    }
+
+                    // Check server capabilities
+                    for (const cap of requirements.server) {
+                        const acc = [];
+                        const coveredByA = canProductCoverCap(productA, cap, 'server', includeScripted, acc);
+                        const coveredByB = coveredByA ? false : canProductCoverCap(productB, cap, 'server', includeScripted, acc);
+
+                        if (!coveredByA && !coveredByB) {
+                            canSatisfyAll = false;
+                            break;
+                        }
+
+                        if (acc.length > 0) {
+                            scriptedCaps.push(...acc);
+                        }
+                    }
+
+                    if (!canSatisfyAll) {
+                        continue;
+                    }
+
+                    const flattenedScriptedCaps = scriptedCaps.map(s => s.capability);
+
+                    multiProductOptions[nodeName].push({
+                        products: [productA, productB],
+                        scriptedCapabilities: flattenedScriptedCaps,
+                        isFullyNative: flattenedScriptedCaps.length === 0
+                    });
+                }
+            }
+
+            // Sort multi-product options for this node: prefer fully native, then fewer scripted caps
+            multiProductOptions[nodeName].sort((a, b) => {
+                if (a.isFullyNative && !b.isFullyNative) return -1;
+                if (!a.isFullyNative && b.isFullyNative) return 1;
+                return a.scriptedCapabilities.length - b.scriptedCapabilities.length;
+            });
+        }
+
+        return multiProductOptions;
+    },
+
     generateMigrationCombinations(nodeProductOptions, nodeNames, includeScripted = true) {
         const combinations = [];
         
@@ -1207,11 +1471,14 @@ const UIController = {
         const generate = (index, current) => {
             if (index === nodeNames.length) {
                 // Calculate if this combination uses any scripting
-                const hasScripting = Object.values(current).some(opt => opt.scriptedCapabilities.length > 0);
+                const hasScripting = Object.values(current).some(opt => (opt.scriptedCapabilities || []).length > 0);
                 combinations.push({
                     assignments: {...current},
                     hasScripting: hasScripting,
-                    totalScriptedCount: Object.values(current).reduce((sum, opt) => sum + opt.scriptedCapabilities.length, 0)
+                    totalScriptedCount: Object.values(current).reduce((sum, opt) => {
+                        const caps = opt.scriptedCapabilities || [];
+                        return sum + caps.length;
+                    }, 0)
                 });
                 return;
             }
@@ -1221,7 +1488,8 @@ const UIController = {
             
             for (const option of options) {
                 // If not including scripted, skip options that require scripting
-                if (!includeScripted && option.scriptedCapabilities.length > 0) {
+                const hasScriptCaps = (option.scriptedCapabilities || []).length > 0;
+                if (!includeScripted && hasScriptCaps) {
                     continue;
                 }
                 current[nodeName] = option;
@@ -1244,25 +1512,70 @@ const UIController = {
     /**
      * Renders one segment of the migration diagram from a given node, handling
      * parallel inputs (multiple protocols to same target) and parallel outputs (branching).
+     *
+     * IMPORTANT:
+     * - We allow multiple visual occurrences of the same logical node along a path
+     *   (e.g. cycles like A -> ... -> A -> ... -> B), because this makes migration
+     *   diagrams easier to read and mirrors the main flow visualization.
+     * - To avoid infinite recursion on cyclic graphs while still allowing repeated
+     *   nodes, we track visited EDGES instead of visited NODES. A given edge will
+     *   only be rendered once per path, but its endpoint nodes may appear multiple times.
+     * - Continuation edges that belong to a specific parallel output branch are only
+     *   followed when we are rendering that branch (via currentParallelStep), so they
+     *   don't appear as independent "extra" branches elsewhere in the diagram.
      */
-    renderMigrationSegment(nodeId, flow, assignments, nodeMap, nodeById, edgesByFromNodeId) {
+    renderMigrationSegment(nodeId, flow, assignments, nodeMap, nodeById, edgesByFromNodeId, visitedEdges = new Set(), currentParallelStep = null) {
         const node = nodeById.get(nodeId);
         if (!node) return '';
 
         const nodeType = node.type;
         const assignment = assignments[node.label];
-        const productName = assignment ? assignment.product : '';
-        const hasNodeScripting = assignment && assignment.scriptedCapabilities.length > 0;
+
+        // Support both single-product and multi-product assignments on a node.
+        // Legacy shape: { product, scriptedCapabilities }
+        // New shape:    { products: [..], scriptedCapabilities }
+        let productsForNode = [];
+        if (assignment) {
+            if (Array.isArray(assignment.products) && assignment.products.length > 0) {
+                productsForNode = assignment.products;
+            } else if (assignment.product) {
+                productsForNode = [assignment.product];
+            }
+        }
+
+        const hasNodeScripting = assignment && (assignment.scriptedCapabilities || []).length > 0;
 
         let productLabelHtml = '';
-        if (productName) {
-            const scriptedCapsForNode = hasNodeScripting ? assignment.scriptedCapabilities : [];
+        if (productsForNode.length === 1) {
+            const productName = productsForNode[0];
+            const scriptedCapsForNode = hasNodeScripting ? (assignment.scriptedCapabilities || []) : [];
             const scriptedTitle = scriptedCapsForNode.length > 0
                 ? `${productName}\n+ Script: ${scriptedCapsForNode.join(', ')}`
                 : productName;
             productLabelHtml = `
                 <div class="migration-product-label ${hasNodeScripting ? 'has-scripting' : ''}" title="${scriptedTitle.replace(/"/g, '&quot;')}">
                     ${productName}
+                    ${hasNodeScripting ? '<span class="scripting-indicator">+Script</span>' : ''}
+                </div>
+            `;
+        } else if (productsForNode.length > 1) {
+            const scriptedCapsForNode = hasNodeScripting ? (assignment.scriptedCapabilities || []) : [];
+            const titleLines = [
+                `Combined products at node "${node.label}":`,
+                ...productsForNode.map(p => `- ${p}`),
+            ];
+            if (scriptedCapsForNode.length > 0) {
+                titleLines.push('', `Scripted capabilities: ${scriptedCapsForNode.join(', ')}`);
+            }
+            const titleAttr = titleLines.join('\n').replace(/"/g, '&quot;');
+
+            const productsHtml = productsForNode.map(p => `
+                <div class="migration-product-chip">${p}</div>
+            `).join('');
+
+            productLabelHtml = `
+                <div class="migration-product-label multi-product ${hasNodeScripting ? 'has-scripting' : ''}" title="${titleAttr}">
+                    ${productsHtml}
                     ${hasNodeScripting ? '<span class="scripting-indicator">+Script</span>' : ''}
                 </div>
             `;
@@ -1275,7 +1588,18 @@ const UIController = {
             </div>
         `;
 
-        const outEdges = edgesByFromNodeId.get(nodeId) || [];
+        // Filter out edges we've already rendered on this path to prevent cycles
+        // and only include continuation edges that belong to the current parallel branch.
+        const allOutEdges = edgesByFromNodeId.get(nodeId) || [];
+        const outEdges = allOutEdges.filter(e => {
+            if (visitedEdges.has(e.id)) return false;
+            if (e.isContinuation) {
+                // Only follow continuation edges when we are inside their branch
+                if (currentParallelStep === null) return false;
+                return e.parallelOutputStepNumber === currentParallelStep;
+            }
+            return true;
+        });
         if (outEdges.length === 0) return html;
 
         // Group edges by target node (toNodeId)
@@ -1287,7 +1611,7 @@ const UIController = {
             byTarget.get(tid).push(e);
         });
 
-        if (byTarget.size === 1) {
+            if (byTarget.size === 1) {
             // Single target: one or more edges = parallel inputs when multiple
             const [targetId, edges] = [...byTarget.entries()][0];
             const firstEdge = edges[0];
@@ -1305,8 +1629,13 @@ const UIController = {
                     <div class="migration-edge-line"></div>
                     ${!showReverse ? '<div class="migration-edge-arrow"></div>' : ''}
                 </div>
-            `;
-            html += this.renderMigrationSegment(targetId, flow, assignments, nodeMap, nodeById, edgesByFromNodeId);
+                `;
+
+            // Mark these edges as visited for the next step in this path
+            const nextVisitedEdges = new Set(visitedEdges);
+            edges.forEach(e => nextVisitedEdges.add(e.id));
+
+            html += this.renderMigrationSegment(targetId, flow, assignments, nodeMap, nodeById, edgesByFromNodeId, nextVisitedEdges, currentParallelStep);
         } else {
             // Parallel outputs: multiple targets, render one branch per target (order by step number when present)
             const entries = [...byTarget.entries()].sort((a, b) => {
@@ -1333,7 +1662,16 @@ const UIController = {
                         ${!showReverse ? '<div class="migration-edge-arrow"></div>' : ''}
                     </div>
                 `;
-                html += this.renderMigrationSegment(targetId, flow, assignments, nodeMap, nodeById, edgesByFromNodeId);
+
+                // Each parallel branch gets its own visited-edges set cloned from the current path
+                const branchVisitedEdges = new Set(visitedEdges);
+                edges.forEach(e => branchVisitedEdges.add(e.id));
+
+                // Use the step number of this parallel output so that its continuation
+                // chain is rendered only inside this branch.
+                const branchStep = firstEdge.stepNumber || null;
+
+                html += this.renderMigrationSegment(targetId, flow, assignments, nodeMap, nodeById, edgesByFromNodeId, branchVisitedEdges, branchStep);
                 html += '</div>';
             });
             html += '</div>';
@@ -1350,17 +1688,33 @@ const UIController = {
             nodeMap.set(node.label, node.type);
         });
         
-        // Get unique products used (extract product name from assignment object)
-        const productsUsed = [...new Set(Object.values(assignments).map(a => a.product))];
+        // Get unique products used (single- and multi-product assignments)
+        const productsUsed = [...new Set(
+            Object.values(assignments).flatMap(a => {
+                if (!a) return [];
+                if (Array.isArray(a.products) && a.products.length > 0) {
+                    return a.products;
+                }
+                if (a.product) {
+                    return [a.product];
+                }
+                return [];
+            })
+        )];
         
         // Collect all scripted capabilities
         const allScriptedCaps = [];
         Object.entries(assignments).forEach(([nodeName, assignment]) => {
-            if (assignment.scriptedCapabilities.length > 0) {
+            if (!assignment) return;
+            const caps = assignment.scriptedCapabilities || [];
+            if (caps.length > 0) {
                 allScriptedCaps.push({
                     node: nodeName,
-                    product: assignment.product,
-                    capabilities: assignment.scriptedCapabilities
+                    // In multi-product cases we list all products contributing at this node
+                    product: Array.isArray(assignment.products) && assignment.products.length > 0
+                        ? assignment.products.join(' + ')
+                        : assignment.product,
+                    capabilities: caps
                 });
             }
         });
@@ -1456,6 +1810,167 @@ const UIController = {
 
     hideMigrationModal() {
         document.getElementById('migrationModal').classList.remove('visible');
+    },
+
+    computeMigrationComplexityScore(flow) {
+        const intermediateNodes = flow.nodes.filter(n => n.type === 'intermediate');
+        const nodeCount = intermediateNodes.length;
+
+        const uniqueProtocols = new Set(flow.edges.map(e => e.protocol.toUpperCase()));
+        const protocolCount = uniqueProtocols.size;
+
+        // Count distinct parallel branches (output + input)
+        const parallelOutputSteps = new Set(
+            flow.edges.filter(e => e.isParallelOutput).map(e => `out_${e.fromNodeId}_${e.stepNumber}`)
+        );
+        const parallelInputSteps = new Set(
+            flow.edges.filter(e => e.isParallelInput).map(e => `in_${e.toNodeId}_${e.stepNumber}`)
+        );
+        const parallelBranches = parallelOutputSteps.size + parallelInputSteps.size;
+
+        const edgeCount = flow.edges.length;
+
+        // Weighted scoring
+        const nodeScore     = Math.min(nodeCount * 2, 5);
+        const protocolScore = Math.min(protocolCount * 0.7, 2.5);
+        const parallelScore = Math.min(parallelBranches * 0.5, 1.5);
+        const chainScore    = Math.min(edgeCount * 0.12, 1);
+
+        const raw = nodeScore + protocolScore + parallelScore + chainScore;
+        return Math.max(1, Math.min(10, Math.round(raw) || 1));
+    },
+
+    buildComplexityBannerHtml(flow) {
+        const score = this.computeMigrationComplexityScore(flow);
+
+        const intermediateCount = flow.nodes.filter(n => n.type === 'intermediate').length;
+        const uniqueProtocols   = new Set(flow.edges.map(e => e.protocol.toUpperCase()));
+        const parallelEdges     = flow.edges.filter(e => e.isParallelOutput || e.isParallelInput);
+        const hasBranching      = parallelEdges.length > 0;
+
+        let level, levelClass;
+        if (score <= 3)       { level = 'Low';    levelClass = 'complexity-low'; }
+        else if (score <= 6)  { level = 'Medium'; levelClass = 'complexity-medium'; }
+        else                  { level = 'High';   levelClass = 'complexity-high'; }
+
+        const factors = [
+            `${intermediateCount} intermediate node${intermediateCount !== 1 ? 's' : ''}`,
+            `${uniqueProtocols.size} protocol${uniqueProtocols.size !== 1 ? 's' : ''} (${[...uniqueProtocols].join(', ')})`,
+            hasBranching ? 'Parallel branches present' : 'Linear flow',
+            `${flow.edges.length} connection${flow.edges.length !== 1 ? 's' : ''}`
+        ];
+
+        return `
+            <div class="migration-complexity-banner ${levelClass}">
+                <div class="complexity-score-badge">
+                    <span class="complexity-score-number">${score}</span>
+                    <span class="complexity-score-label">/ 10</span>
+                </div>
+                <div class="complexity-info">
+                    <div class="complexity-title">
+                        Migration Complexity
+                        <span class="complexity-level-tag ${levelClass}">${level}</span>
+                    </div>
+                    <div class="complexity-factors">
+                        ${factors.map(f => `<span class="complexity-factor">${f}</span>`).join('')}
+                    </div>
+                </div>
+            </div>
+        `;
+    },
+
+    generateFlowSteps(flow) {
+        const steps = [];
+        const processedIndices = new Set();
+        const sortedEdges = [...flow.edges].sort((a, b) => a.index - b.index);
+
+        const edgeSentence = (edge) => {
+            const active  = edge.flowDirection === 'forward' ? edge.fromLabel : edge.toLabel;
+            const passive = edge.flowDirection === 'forward' ? edge.toLabel   : edge.fromLabel;
+            if (edge.direction === 'PUSH') {
+                return `<strong>${active}</strong> pushes a file using <strong>${edge.protocol}</strong> to <strong>${passive}</strong>.`;
+            } else {
+                return `<strong>${active}</strong> pulls a file using <strong>${edge.protocol}</strong> from <strong>${passive}</strong>.`;
+            }
+        };
+
+        for (const edge of sortedEdges) {
+            if (processedIndices.has(edge.index)) continue;
+            processedIndices.add(edge.index);
+
+            if (edge.isParallelOutput) {
+                const siblings = sortedEdges.filter(e =>
+                    e.isParallelOutput &&
+                    e.fromNodeId === edge.fromNodeId &&
+                    !processedIndices.has(e.index)
+                );
+                siblings.forEach(e => processedIndices.add(e.index));
+                const allBranches = [edge, ...siblings];
+
+                if (allBranches.length > 1) {
+                    const branchList = allBranches
+                        .map((e, i) => `<span class="step-branch-item">(${i + 1}) ${edgeSentence(e)}</span>`)
+                        .join(' ');
+                    steps.push(`In parallel, <strong>${edge.fromLabel}</strong> sends to multiple destinations: ${branchList}`);
+                } else {
+                    steps.push(edgeSentence(edge));
+                }
+            } else if (edge.isParallelInput) {
+                const siblings = sortedEdges.filter(e =>
+                    e.isParallelInput &&
+                    e.toNodeId === edge.toNodeId &&
+                    !processedIndices.has(e.index)
+                );
+                siblings.forEach(e => processedIndices.add(e.index));
+                const allInputs = [edge, ...siblings];
+
+                if (allInputs.length > 1) {
+                    const active  = edge.flowDirection === 'forward' ? edge.fromLabel : edge.toLabel;
+                    const passive = edge.flowDirection === 'forward' ? edge.toLabel   : edge.fromLabel;
+                    const protoList = allInputs
+                        .map(e => `<strong>${e.protocol} ${e.direction}</strong>`)
+                        .join(' and ');
+                    steps.push(`<strong>${active}</strong> sends files to <strong>${passive}</strong> simultaneously via ${protoList}.`);
+                } else {
+                    steps.push(edgeSentence(edge));
+                }
+            } else {
+                steps.push(edgeSentence(edge));
+            }
+        }
+
+        return steps;
+    },
+
+    showFlowExplanation(flowIndex, flow) {
+        const modal   = document.getElementById('flowExplanationModal');
+        const content = document.getElementById('flowExplanationContent');
+
+        const steps = this.generateFlowSteps(flow);
+
+        const stepsHtml = steps.length > 0
+            ? steps.map((step, i) => `
+                <div class="explanation-step">
+                    <div class="explanation-step-number">${i + 1}</div>
+                    <div class="explanation-step-text">${step}</div>
+                </div>`).join('')
+            : '<div class="explanation-empty">No steps to display for this flow.</div>';
+
+        content.innerHTML = `
+            <div class="explanation-flow-label">
+                <span class="explanation-flow-badge">Flow ${flowIndex + 1}</span>
+                <span class="explanation-flow-pattern">${flow.originalText}</span>
+            </div>
+            <div class="explanation-steps">
+                ${stepsHtml}
+            </div>
+        `;
+
+        modal.classList.add('visible');
+    },
+
+    hideFlowExplanationModal() {
+        document.getElementById('flowExplanationModal').classList.remove('visible');
     },
 
     async copyMigrationOptionAsPng(optionId) {
